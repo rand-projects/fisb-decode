@@ -1,0 +1,12 @@
+# Run harvest, should never exit.
+
+# Delete any existing error files
+if test -f "HARVEST.ERR"; then
+   rm HARVEST.ERR
+fi
+
+../db/harvest/harvest.py $*
+
+
+
+

@@ -1,0 +1,153 @@
+#!/bin/bash
+
+# IMPORTANT: REMOVE SPACES FROM THE INPUT FILENAME.
+if [ $# -ne 1 ]
+     then
+      echo 'format: install-imported-tg <filename WITHOUT ANY SPACES>'
+      exit 1
+fi
+echo 'removing files from ../tg/tg-source/imported'
+rm -rf ../tg/tg-source/imported/*.zip
+rm -rf ../tg/tg-source/imported/TG??
+
+cd ../tg/tg-source/imported
+
+echo 'extracting...'
+7zz x $1
+
+mkdir TG01
+cd  TG01
+7zz x ../TG01.zip
+cd ..
+
+mkdir TG02
+cd  TG02
+7zz x ../TG02.zip
+cd ..
+
+mkdir TG03
+cd  TG03
+7zz x ../TG03.zip
+cd ..
+
+mkdir TG04
+cd  TG04
+7zz x ../TG04.zip
+cd ..
+
+mkdir TG05
+cd  TG05
+7zz x ../TG05.zip
+cd ..
+
+mkdir TG06
+cd  TG06
+7zz x ../TG06.zip
+cd ..
+
+mkdir TG07
+cd  TG07
+7zz x ../TG07.zip
+cd ..
+
+mkdir TG08
+cd  TG08
+7zz x ../TG08.zip
+cd ..
+
+mkdir TG09
+cd  TG09
+7zz x ../TG09.zip
+cd ..
+
+mkdir TG10
+cd  TG10
+7zz x ../TG10.zip
+cd ..
+
+mkdir TG11
+cd  TG11
+7zz x ../TG11.zip
+cd ..
+
+mkdir TG12
+cd  TG12
+7zz x ../TG12.zip
+cd ..
+
+mkdir TG13
+cd  TG13
+7zz x ../TG13.zip
+cd ..
+
+mkdir TG14
+cd  TG14
+7zz x ../TG14.zip
+cd ..
+
+mkdir TG15
+cd  TG15
+7zz x ../TG15.zip
+cd ..
+
+mkdir TG16
+cd  TG16
+7zz x ../TG16.zip
+cd ..
+
+mkdir TG17
+cd  TG17
+7zz x ../TG17.zip
+cd ..
+
+mkdir TG18
+cd  TG18
+7zz x ../TG18.zip
+cd ..
+
+mkdir TG19
+cd  TG19
+7zz x ../TG19.zip
+cd ..
+
+mkdir TG20
+cd  TG20
+7zz x ../TG20.zip
+cd ..
+
+mkdir TG21
+cd  TG21
+7zz x ../TG21.zip
+cd ..
+
+mkdir TG22
+cd  TG22
+7zz x ../TG22.zip
+cd ..
+
+mkdir TG23
+cd  TG23
+7zz x ../TG23.zip
+cd ..
+
+mkdir TG24
+cd  TG24
+7zz x ../TG24.zip
+cd ..
+
+mkdir TG25
+cd  TG25
+7zz x ../TG25.zip
+cd ..
+
+mkdir TG26
+cd  TG26
+7zz x ../TG26.zip
+cd ..
+
+mkdir TG27
+cd  TG27
+7zz x ../TG27.zip
+cd ..
+
+rm *.zip

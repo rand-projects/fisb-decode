@@ -1,0 +1,4 @@
+# same as make clean; make html
+
+make clean
+make html

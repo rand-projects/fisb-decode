@@ -1,0 +1,8 @@
+48000, 30, 1, [1] Verify NOTAM and CRL
+48600, 30, 2, [4] Verify NOTAM and CRL
+49800, 30, 3, [7] Verify NOTAM and CRL
+50400, -11, 4, [8] Verify NOTAM-TFR and CRL
+51300, 30, 5, [11] Verify NOTAM-TFR and CRL
+52200, 0, 6, [17-20] Verify CRL complete
+52200, 30, 7, [21] Verify one CRL gone
+52500, 30, 8, [22] Verify no CRL

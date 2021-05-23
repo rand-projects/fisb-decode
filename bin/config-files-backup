@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]
+     then
+      echo 'format: config-files-backup <filename>'
+      exit 1
+fi
+cd ..
+tar -cvzf $1 `find . -name '*Config.py'`

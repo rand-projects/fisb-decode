@@ -1,0 +1,196 @@
+General Notes:
+ * Use test configuration files. For TG-20 change the parameter as shown.
+ * Make sure level0/DLAC_4BIT_HACK is set to True. Some messages don't
+   support 6 bit tab spacing as required by the standard.
+ * 'Passes all tests' doesn't actually mean that. It passes all the tests
+   it can pass, or could provide information to be used to pass a test.
+   'Fisb-decode' is a parsing and back-end database for FIS-B. Not a
+   display system with a user interface.
+ * All winds forecasts have the altitudes stripped off. These are easy to
+   put back and allows for construction of better displays (see localwx).
+   
+TG01
+----
+
+Passes all tests.
+
+TG02
+----
+
+Passes all tests.
+
+TG03
+----
+
+Passes all tests.
+
+TG04
+----
+
+Passes all tests.
+
+TG05
+----
+
+Passes all tests.
+
+TG06
+----
+
+Passes all tests.
+
+TG07
+----
+
+Passes all tests.
+
+TG08
+----
+
+Passes all tests.
+
+TG09
+----
+
+Passes all tests.
+
+TG10
+----
+
+Passes all tests.
+
+TG11
+----
+
+Fails at item 9
+
+TG12
+----
+
+Passes all tests.
+
+TG13
+----
+
+Worst. Test. Ever. There is a patch that needs to be applied
+before running this test. This test makes up TFR-NOTAMs, SIGMETs,
+and AIRMETs that do not in any way resemble what the FAA would send.
+So if your system, like 'fisb-decode', checks for sane data,
+this test fails out of the gate. The patch will make the feeble
+attempts at data passable. The instructions are confusing--
+the pictures make look like the graphics appear in a sequential
+fashion. In reality, the graphics pretty much happen
+all at once. All other
+test groups except this one stop sending packets, then have one final
+check. Nope. There are two minutes of useless packets after the
+final check. For no purpose.
+
+TG14
+----
+
+Passes all tests.
+
+TG15
+----
+
+You will get LEVEL0 errors. That's expected.
+
+TG16
+----
+
+Passed all tests.
+
+TG17
+----
+
+Passes all tests.
+
+TG18
+----
+
+Passes all tests.
+
+TG19
+----
+
+With BYPASS_TWGO_SMART_EXPIRATION set to True, the NOTAM-TFRs
+will persist, even though the contents are expired. This is
+acceptable for the test.
+
+TG20
+----
+
+With BYPASS_TWGO_SMART_EXPIRATION set to True, at trigger 8,
+various reports which are shown as not present will still be present.
+The status of all of these reports are expired, but since we need to
+keep them around for an hour after the last time they were sent, the
+message will not have expired (even though the parts are expired).
+This is expected behavior.
+
+Set level2/BYPASS_TWGO_SMART_EXPIRATION to False. Most tests do better
+with this set to True (although leave it at False for normal use).
+This TG doesn't send refresh messages so messages will expire after an
+hour or so (before their stop date).
+
+With level2/BYPASS_TWOGO_SMART_EXPIRATION set to False, toward the end of the
+test new versions of the 06_HR G-AIRMETS are sent out that are already
+expired. This means that the CRL that should be complete will not be
+complete (because of the two 06_HR G-AIRMETS, otherwise it is complete).
+I think fisb-decode's behavior is correct here. The test actually
+states that it doesn't apply to the two 06_HR G-AIRMETS, so think we are safe
+here.
+
+TG21
+----
+
+Passes all tests.
+
+TG22
+----
+
+Passes all tests.
+
+TG23
+----
+
+Passes all tests.
+
+TG24
+----
+
+Passes all tests.
+
+TG25
+----
+
+Passes all tests.
+
+This TG is the 'master class' of all test groups. Extremely well constructed,
+tests lots of concepts not tested in other groups. Tests many
+realistic edge-cases. I understood lots of
+concepts much better after struggling to get this TG working.
+
+TG26
+----
+
+Passes all tests.
+
+TG27
+----
+
+Passes all tests.
+
+TG28
+----
+
+Passes all tests.
+
+TG29
+----
+
+Passes all tests.
+
+TG30
+----
+
+Passes all tests.

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]
+     then
+      echo 'format: config-files-restore <filename>'
+      exit 1
+fi
+cd ..
+tar -xvzf $1

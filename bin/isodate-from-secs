@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Given the number of seconds since epoch, return
+# an ISO date.
+#
+# ./isodate-from-secs 1604048447
+#
+# returns 2020-10-30T09:00:47Z
+#
+
+date -u -d"@$1" +%FT%H:%M:%SZ

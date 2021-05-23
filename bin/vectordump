@@ -1,0 +1,4 @@
+#!/bin/bash
+# Run vectordump
+
+../db/vectordump/vectordump.py

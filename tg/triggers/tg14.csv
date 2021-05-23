@@ -1,0 +1,5 @@
+8140, -5, 1, [4] Verify all items are incomplete
+8235, 15, 2, [5,7] Verify SIGMETS and polygons.
+8530, -5, 3, [6] Verify AIRMETS for CRL completeness and presence. Check CRL look ahead.
+8740, 30, 4, [8] Verify SIGMET (12) CRL is expired.
+8835, 30, 5, [9] Verify AIRMET (11) CRL is expired.

@@ -1,0 +1,7 @@
+Contains utilities related to creating fisb-decode
+support structures, such as creating database tables
+to support PIREP location.
+
+Data is available from:
+     https://adds-faa.opendata.arcgis.com/
+

@@ -1,0 +1,8 @@
+# Run file through all levels. Pretty print the results
+
+# Delete any existing error files
+if test -f "LEVEL0.ERR"; then
+   rm LEVEL0.ERR
+fi
+
+../fisb/level0/level0.py --test $1 --pp

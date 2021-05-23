@@ -1,0 +1,36 @@
+--- dump978/soapy_source.cc	2021-05-07 06:37:39.000000000 -0400
++++ dump978-old/soapy_source.cc	2020-08-29 05:32:57.530834643 -0400
+@@ -144,7 +144,7 @@
+ SoapySampleSource::SoapySampleSource(boost::asio::io_service &service, const std::string &device_name, const boost::program_options::variables_map &options) : timer_(service), device_name_(device_name), options_(options) {
+     if (!log_handler_registered_.exchange(true)) {
+         SoapySDR::registerLogHandler(SoapyLogger);
+-        SoapySDR::setLogLevel(SOAPY_SDR_NOTICE);
++        SoapySDR::setLogLevel(SOAPY_SDR_TRACE);
+     }
+ }
+ 
+@@ -163,9 +163,12 @@
+     }
+ 
+     // hacky mchackerson
+-    device_->setSampleRate(SOAPY_SDR_RX, 0, 2083333.0);
+     device_->setFrequency(SOAPY_SDR_RX, 0, 978000000);
+-    device_->setBandwidth(SOAPY_SDR_RX, 0, 3.0e6);
++    device_->setBandwidth(SOAPY_SDR_RX, 0, 1.536e6);
++    device_->setSampleRate(SOAPY_SDR_RX, 0, 2083333.0);
++    //device_->setSampleRate(SOAPY_SDR_RX, 0, 8333332.0);
++    //device_->setSampleRate(SOAPY_SDR_RX, 0, 4166666.0);
++    std::cerr << "samplerate: " << device_->getSampleRate(SOAPY_SDR_RX, 0) << std::endl;
+ 
+     if (options_.count("sdr-auto-gain")) {
+         if (!device_->hasGainMode(SOAPY_SDR_RX, 0)) {
+@@ -291,7 +294,8 @@
+ void SoapySampleSource::Stop() {
+     if (stream_) {
+         // rtlsdr needs the rx thread to drain data before this returns..
+-        device_->deactivateStream(stream_.get());
++        // UNCOMMENT if using rtlsdr. Disabled for SDRPLAY
++        //device_->deactivateStream(stream_.get());
+     }
+     if (rx_thread_) {
+         halt_ = true;

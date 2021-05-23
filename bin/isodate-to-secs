@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Given an ISO date as an argument, return the number of
+# seconds since the epoch.
+#
+# ./isodate-to-secs 2020-10-30T09:00:47Z
+#
+# returns 1604048447
+#
+# This is helpful when looking at a level0 rcvd_date and
+# turning it to seconds and using that to find a
+# particular message in a .978 file.
+
+date -d"$1" +%s

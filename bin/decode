@@ -1,0 +1,17 @@
+# Run file through all levels. Pretty print the results
+
+# Delete any existing error files
+if test -f "LEVEL0.ERR"; then
+   rm LEVEL0.ERR
+fi
+if test -f "LEVEL1.ERR"; then
+   rm LEVEL1.ERR
+fi
+if test -f "LEVEL2.ERR"; then
+   rm LEVEL2.ERR
+fi
+if test -f "LEVEL3.ERR"; then
+   rm LEVEL3.ERR
+fi
+
+cat $1 | ../fisb/level0/level0.py | ../fisb/level1/level1.py | ../fisb/level2/level2.py | ../fisb/level3/level3.py --pp

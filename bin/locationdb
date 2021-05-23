@@ -1,0 +1,8 @@
+# Run locationdb
+
+../db/location/locationdb.py $*
+
+
+
+
+

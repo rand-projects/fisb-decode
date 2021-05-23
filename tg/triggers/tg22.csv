@@ -1,0 +1,5 @@
+47800, 10, 1, [6-7] Verify Lightning data
+47850, 10, 2, [8] Verify APDU header time
+48100, 10, 3, [9a] Verify Lightning data
+48400, 10, 4, [9b] Verify Lightning data
+52800, 30, 5, [10] Verify no data

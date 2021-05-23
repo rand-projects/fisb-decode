@@ -1,0 +1,4 @@
+540, 1, 1, [5] Verify CRL status complete
+600, -10, 2, [4] Verify NOTAM TRAs present
+1740, 20, 3, [6] Verify CRL status removed
+3900, -1, 4, [7-8] Verify TRAs still available

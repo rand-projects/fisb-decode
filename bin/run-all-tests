@@ -1,0 +1,62 @@
+# Run all tests
+
+./harvest --test 1
+cp *.ERR ../tg/results/tg01 2>/dev/null
+./harvest --test 2
+cp *.ERR ../tg/results/tg02 2>/dev/null
+./harvest --test 3
+cp *.ERR ../tg/results/tg03 2>/dev/null
+./harvest --test 4
+cp *.ERR ../tg/results/tg04 2>/dev/null
+./harvest --test 5
+cp *.ERR ../tg/results/tg05 2>/dev/null
+./harvest --test 6
+cp *.ERR ../tg/results/tg06 2>/dev/null
+./harvest --test 7
+cp *.ERR ../tg/results/tg07 2>/dev/null
+./harvest --test 8
+cp *.ERR ../tg/results/tg08 2>/dev/null
+./harvest --test 9
+cp *.ERR ../tg/results/tg09 2>/dev/null
+./harvest --test 10
+cp *.ERR ../tg/results/tg10 2>/dev/null
+./harvest --test 11
+cp *.ERR ../tg/results/tg11 2>/dev/null
+./harvest --test 12
+cp *.ERR ../tg/results/tg12 2>/dev/null
+./harvest --test 13
+cp *.ERR ../tg/results/tg13 2>/dev/null
+./harvest --test 14
+cp *.ERR ../tg/results/tg14 2>/dev/null
+./harvest --test 15
+cp *.ERR ../tg/results/tg15 2>/dev/null
+./harvest --test 16
+cp *.ERR ../tg/results/tg16 2>/dev/null
+./harvest --test 17
+cp *.ERR ../tg/results/tg17 2>/dev/null
+./harvest --test 18
+cp *.ERR ../tg/results/tg18 2>/dev/null
+./harvest --test 19
+cp *.ERR ../tg/results/tg19 2>/dev/null
+./harvest --test 20
+cp *.ERR ../tg/results/tg20 2>/dev/null
+./harvest --test 21
+cp *.ERR ../tg/results/tg21 2>/dev/null
+./harvest --test 22
+cp *.ERR ../tg/results/tg22 2>/dev/null
+./harvest --test 23
+cp *.ERR ../tg/results/tg23 2>/dev/null
+./harvest --test 24
+cp *.ERR ../tg/results/tg24 2>/dev/null
+./harvest --test 25
+cp *.ERR ../tg/results/tg25 2>/dev/null
+./harvest --test 26
+cp *.ERR ../tg/results/tg26 2>/dev/null
+./harvest --test 27
+cp *.ERR ../tg/results/tg27 2>/dev/null
+./harvest --test 28
+cp *.ERR ../tg/results/tg28 2>/dev/null
+./harvest --test 29
+cp *.ERR ../tg/results/tg29 2>/dev/null
+./harvest --test 30
+cp *.ERR ../tg/results/tg30 2>/dev/null

@@ -1,0 +1,2 @@
+dump978-fa --sdr device=sdrplay --sdr-device-settings "biasT_ctrl=true,rfgain_sel=1" --sdr-gain 25 --raw-stdout --format CF32H
+
