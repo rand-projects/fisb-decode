@@ -69,14 +69,14 @@ LIGHTNING_EXPIRATION_MINUTES = 75
 #: is a fair choice (so a PIREP lives for 2 hours after the
 #: report time). If you are using time after last reception,
 #: use something close to 75 (like 76).
-PIREP_EXPIRATION_MINUTES = 76
+PIREP_EXPIRATION_MINUTES = 120
 
 #: Use the report time rather than the received time for
 #: expiring PIREPs. For standard compliance set this to
 #: ``False``. If you use this in conjunction with Harvest,
 #: expect to get a lot of ``*DOA*`` messages. The FAA can keep
 #: PIREPs around for a LONG time (like 4 hours).
-PIREP_USE_REPORT_TIME_TO_EXPIRE = False
+PIREP_USE_REPORT_TIME_TO_EXPIRE = True
 
 #: Default TWGO option for expiration time if no
 #: better options exist. The minimum retention time after
@@ -100,4 +100,4 @@ TWGO_DEFAULT_EXPIRATION_TIME = 61
 #: If a message doesn't have a stop date, it will fall back to the 'at least 60
 #: minutes rule'. If a message has multiple records with different stop dates,
 #: it will pick the latest one.
-BYPASS_TWGO_SMART_EXPIRATION = True
+BYPASS_TWGO_SMART_EXPIRATION = False

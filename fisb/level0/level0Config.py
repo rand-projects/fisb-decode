@@ -13,14 +13,14 @@ DETAILED_MESSAGES = False
 
 #: Set to ``True`` if SUA (Special Use Airspace, TWGO type 13) messages should be blocked.
 #: Required to be ``True`` to pass test groups.
-BLOCK_SUA_MESSAGES = True
+BLOCK_SUA_MESSAGES = False
 
 #: Set to ``False`` if we block frame type 15 service status messages.
 #: If ``True``, these messages will be passed.
 #: Set to ``False`` for testing. *Service Status* lets you know
 #: how many (and which) aircraft are getting TIS-B 'hockey puck'
 #: assistance  from the ground station.
-ALLOW_SERVICE_STATUS = False
+ALLOW_SERVICE_STATUS = True
 
 #: Set to ``True`` to archive messages in a file. Storing
 #: messages in an archive is a good thing if you want to keep
@@ -65,7 +65,7 @@ CALCULATE_RSR = True
 #: many seconds*'. For testing, set this to ``1``.
 #: If you have a system that refreshes every
 #: 30 seconds, set this to 30.
-RSR_CALCULATE_EVERY_X_SECS = 1
+RSR_CALCULATE_EVERY_X_SECS = 30
 
 #: Calculate the RSR over this many seconds.
 #: This is different from ``RSR_CALCULATE_EVERY_X_SECS``.
@@ -76,7 +76,7 @@ RSR_CALCULATE_EVERY_X_SECS = 1
 #: system that refreshes every 30 seconds,
 #: set this to 30. That way the result will
 #: include data over the entire interval.
-RSR_CALCULATE_OVER_X_SECS = 10
+RSR_CALCULATE_OVER_X_SECS = 30
 
 #: Uses the expected packet count per second for 
 #: calculating RSR instead of a count. This is
@@ -85,7 +85,7 @@ RSR_CALCULATE_OVER_X_SECS = 10
 #: DO NOT use this for TG06 test. They alter the
 #: packets and using the expected value doesn't
 #: work.
-RSR_USE_EXPECTED_PACKET_COUNT = False
+RSR_USE_EXPECTED_PACKET_COUNT = True
 
 #: MONGO URL (used only for RSR)
 #: This won't be used at all if ``CALCULATE_RSR`` is ``False``.
@@ -97,7 +97,7 @@ MONGO_URL = 'mongodb://localhost:27017/'
 #: to 4 bits.
 #: Set to ``False`` for normal operation (if you don't
 #: you run a risk of DLAC decoding not working).
-DLAC_4BIT_HACK = True
+DLAC_4BIT_HACK = False
 
 #: Path to where the test group generated files are
 #: located. Used only when using the --test option.

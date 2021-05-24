@@ -18,7 +18,7 @@ EXPUNGE_HASHTABLE_MINS = 10
 #: time and doesn't really affect desired behavior. This is especially
 #: true if using PIREP augmentation to add location information. It 
 #: will greatly decrease database lookups.
-PIREP_STORE_LEVEL3 = False
+PIREP_STORE_LEVEL3 = True
 
 #: Set to ``True`` if the message should be printed to standard output.
 #: If you use pretty printing (``--pp``) this will be forced to True.

@@ -64,7 +64,7 @@ IMMEDIATE_CRL_UPDATE = True
 
 #: Number of seconds we have to receive no new image data
 #: before creating an image. Set to 0 for testing.
-IMAGE_QUIET_SECONDS = 0
+IMAGE_QUIET_SECONDS = 10
 
 #: Sometimes messages that arrive are already past
 #: their expiration date. There are a number of reasons
@@ -79,7 +79,7 @@ PRINT_IMMEDIATE_EXPIRATIONS = False
 #: to METARs, TAFs, and WIND data.
 #: Set to ``False`` for testing, but doesn't really have any
 #: effect.
-TEXT_WX_LOCATION_SUPPORT = False
+TEXT_WX_LOCATION_SUPPORT = True
 
 #: Set to ``True`` if you have the location database filled
 #: with location data and wish to add location information
@@ -87,7 +87,7 @@ TEXT_WX_LOCATION_SUPPORT = False
 #: problematic at best since it relies on human input data.
 #: Set to ``False`` for testing, but doesn't really have any
 #: effect.
-PIREP_LOCATION_SUPPORT = False
+PIREP_LOCATION_SUPPORT = True
 
 #: If ``True``, store the contents of any unmatched PIREP to
 #: the file in SAVE_UNMATCHED_PIREPS_FILE.
@@ -115,4 +115,4 @@ NOT_INCLUDED_BLUE = 0x96
 #:   Maps specifically for testing. Shows all values.
 #: SHOW_NO_DATA (2)
 #:   Same as ``GENERAL``, but shows areas of NO-DATA.
-IMAGE_MAP_CONFIGURATION = 1
+IMAGE_MAP_CONFIGURATION = 0
