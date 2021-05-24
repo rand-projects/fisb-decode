@@ -256,7 +256,7 @@ def prepareDirectories(testNumber):
         for f in os.listdir(cfg.HARVEST_DIRECTORY)]
 
     for f in deleteFiles:
-        if 'FILES.txt' not in f:
+        if 'README.txt' not in f:
             os.remove(f)
 
     # remove any existing directory (and subdirs), then make new tree

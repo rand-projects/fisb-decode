@@ -392,8 +392,8 @@ def harvest(tgTestNumber):
                 continue
         
             for f in fileList:
-                # Skip FILES.txt
-                if 'FILES.txt' in f:
+                # Skip README.txt
+                if 'README.txt' in f:
                     continue
                 
                 # Open and read contents. Contents are assumed

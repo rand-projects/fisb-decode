@@ -1554,7 +1554,7 @@ The basic procedure goes something like this (paraphrased): ::
 
   # Should give you these files when done.
   ls
-  FILES.txt  TG02  TG04  TG06  TG08  TG10  TG12  TG14  TG16  TG18  TG20  TG22  TG24
+  README.txt TG02  TG04  TG06  TG08  TG10  TG12  TG14  TG16  TG18  TG20  TG22  TG24
   TG26       TG01  TG03  TG05  TG07  TG09  TG11  TG13  TG15  TG17  TG19  TG21  TG23
   TG25       TG27
 
