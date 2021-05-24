@@ -1,8 +1,8 @@
-85500, 0, 1, [4-8] Verify CWA, CRL
-86100, 0, 2, [9-13] Verify CWA, CRL
-86700, -30, 3, [14-18] Verify CWA, CRL incomplete
-86700, 20, 4, [19] Verify CWA, CRL complete
-87300, 0, 5, [20-24] Verify CWA, CRL
+85500, 0, 1, [4-8] Verify CWA CRL
+86100, 0, 2, [9-13] Verify CWA CRL
+86700, -30, 3, [14-18] Verify CWA CRL incomplete
+86700, 20, 4, [19] Verify CWA CRL complete
+87300, 0, 5, [20-24] Verify CWA CRL
 88800, -1, 6, [27] Verify CWA and graphics
 89100, -10, 7, [25] Verify CRL Status
 89100, 20, 8, [26] Verify CRL Status

@@ -1,5 +1,5 @@
 8251, -5, 1, [4] Verify AIRMET & SIGMET latency text test
 8400, -5, 2, [5] Verify SIGMET latency text test. No graphics available
 8554, -5, 3, [6-7] Verify AIRMET and SIGMET graphics available
-8700, -5, 4, [8-9] Verify NOTAM graphics available, for multiple NOTAMS
+8700, -5, 4, [8-9] Verify NOTAM graphics available for multiple NOTAMS
 8790, 0, 5, [NA] Time wasting for useless packets
