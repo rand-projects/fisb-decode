@@ -1,1 +1,2 @@
+# Convert pretty printed json to non-pretty printed json.
 ../misc/pp2nopp.py

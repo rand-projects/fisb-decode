@@ -1,1 +1,2 @@
+# Convert single-line json (non-pretty-printed) to pretty-printed json.
 ../misc/nopp2pp.py
