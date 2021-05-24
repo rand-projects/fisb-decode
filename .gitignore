@@ -10,6 +10,8 @@ db/location/ov.txt
 docs/source/_build/
 docs/build/
 runtime/images/*.tif
+runtime/images/.nfs*
+runtime/images/*.tif.aux.xml
 runtime/harvest/*.msg
 runtime/misc/PIREPS-UNMATCHED.txt
 runtime/misc/sync.fisb
