@@ -1,5 +1,5 @@
 """Vectordump configuration information.
 """
 
-#: MONGO URL
-MONGO_URL = 'mongodb://localhost:27017/'
+#: MONGO URI
+MONGO_URI = 'mongodb://localhost:27017/'

@@ -398,7 +398,9 @@ for your platform. Follow the
 and make sure
 it starts up whenever you reboot.
 Please take note that I use **no security** with Mongo. If you want,
-security you can add it. You should not expose the mongo database to the internet
+security you can add it (add security using Mongo commands, then change
+``MONGO_URI`` in the configuration parameters to add username and password).
+You should not expose the mongo database to the internet
 or other places you don't trust without adding security.
 
 Images in harvest require GDAL and its python bindings to be installed.
@@ -474,7 +476,7 @@ Change ``../db/harvest/harvestConfig.py``: ::
 
   HARVEST_DIRECTORY = '../runtime/harvest'
   MAINT_TASKS_INTERVAL_SECS = 10
-  MONGO_URL = 'mongodb://localhost:27017/' (*change this for your connection*)
+  MONGO_URI = 'mongodb://localhost:27017/' (*change this for your connection*)
   RETRY_DB_CONN_SECS = 60
   EXPIRE_MESSAGES = True
   ANNOTATE_CRL_REPORTS = True
@@ -731,8 +733,8 @@ should get: ::
 As always, there is a config file to update.
 Edit ``../db/localwx/localwxConfig.py`` to see: ::
 
-  #: MONGO URL
-  MONGO_URL = 'mongodb://localhost:27017/'
+  #: MONGO URI
+  MONGO_URI = 'mongodb://localhost:27017/'
 
   #: List of WIND forecasts you want to get.
   WINDS_LIST = ['IND']
@@ -751,7 +753,7 @@ Edit ``../db/localwx/localwxConfig.py`` to see: ::
   MY_LOC = (-86.255593, 40.0383)
 
 The changes you need to make should be obvious. Enter the station IDs
-in the appropriate places, and change ``MONGO_URL`` and ``MY_LOC``
+in the appropriate places, and change ``MONGO_URI`` and ``MY_LOC``
 to reflect your specifics.
 
 When run from the command line you will get something like: ::
@@ -1612,7 +1614,7 @@ don't need to be changed.
   RSR_CALCULATE_EVERY_X_SECS = 1
   RSR_CALCULATE_OVER_X_SECS = 10
   RSR_USE_EXPECTED_PACKET_COUNT = False
-  MONGO_URL = 'mongodb://localhost:27017/' (set for your system)
+  MONGO_URI = 'mongodb://localhost:27017/' (set for your system)
   DLAC_4BIT_HACK = True
   GENERATED_TEST_DIR = '../tg/tg-source/generated'
 
@@ -1648,7 +1650,7 @@ don't need to be changed.
 
   HARVEST_DIRECTORY = '../runtime/harvest'
   MAINT_TASKS_INTERVAL_SECS = 10
-  MONGO_URL = 'mongodb://localhost:27017/' (set for your system)
+  MONGO_URI = 'mongodb://localhost:27017/' (set for your system)
   EXPIRE_MESSAGES = True
   ANNOTATE_CRL_REPORTS = True
   PROCESS_IMAGES = True

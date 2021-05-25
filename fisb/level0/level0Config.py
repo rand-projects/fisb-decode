@@ -29,7 +29,7 @@ ALLOW_SERVICE_STATUS = True
 #: as a new file in the form ``YYYY-MM-DD.978``. It's a good idea
 #: to compress old files as each file is about 155MB from a
 #: medium tier (3 messages a second) station.
-ARCHIVE_MESSAGES = False
+ARCHIVE_MESSAGES = True
 
 #: Directory to store archived messages in.
 ARCHIVE_DIRECTORY = '../runtime/msg-archive'
@@ -87,9 +87,9 @@ RSR_CALCULATE_OVER_X_SECS = 30
 #: work.
 RSR_USE_EXPECTED_PACKET_COUNT = True
 
-#: MONGO URL (used only for RSR)
+#: MONGO URI (used only for RSR)
 #: This won't be used at all if ``CALCULATE_RSR`` is ``False``.
-MONGO_URL = 'mongodb://localhost:27017/'
+MONGO_URI = 'mongodb://localhost:27017/'
 
 #: Enable this only for test group testing.
 #: Per the standard, you can use all 6 bits for a

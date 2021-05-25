@@ -55,7 +55,7 @@ import db.location.locationdbConfig as cfg
 BASE_DIRECTORY = '.'
 
 # Get items from configuration
-mongoUrl = cfg.MONGO_URL
+mongoUri = cfg.MONGO_URI
 
 def calculateDeclinations(db, table):
     """Calculate magnetic delinations for all points using the World Magnetic Model.
@@ -314,7 +314,7 @@ def locationDb():
     Process and fill database with the 3 .csv files contents. Will
     also add magnetic declination information.
     """
-    client = MongoClient(mongoUrl, tz_aware=True)
+    client = MongoClient(mongoUri, tz_aware=True)
     db = client.fisb_location
 
     # Basic sanity check, make sure files exist

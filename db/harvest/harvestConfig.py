@@ -10,8 +10,8 @@ HARVEST_DIRECTORY = '../runtime/harvest'
 #: Number of seconds to run routine maintenance tasks
 MAINT_TASKS_INTERVAL_SECS = 10
 
-#: MONGO URL
-MONGO_URL = 'mongodb://localhost:27017/'
+#: MONGO URI
+MONGO_URI = 'mongodb://localhost:27017/'
 
 #: Number of seconds between retrying failed database connection
 RETRY_DB_CONN_SECS = 60
@@ -91,7 +91,7 @@ PIREP_LOCATION_SUPPORT = True
 
 #: If ``True``, store the contents of any unmatched PIREP to
 #: the file in SAVE_UNMATCHED_PIREPS_FILE.
-SAVE_UNMATCHED_PIREPS = False
+SAVE_UNMATCHED_PIREPS = True
 
 #: If SAVE_UNMATCHED_PIREPS is ``True``, append the contents of
 #: PIREP to this file. Full path must be supplied.

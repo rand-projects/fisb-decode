@@ -38,8 +38,8 @@ from db.harvest.MsgBLOCK import MsgBLOCK
 # Directory where Harvest fetches messages from
 harvestDir = cfg.HARVEST_DIRECTORY
 
-# URL of MongoDB
-mongoUrl = cfg.MONGO_URL
+# URI of MongoDB
+mongoUri = cfg.MONGO_URI
 
 # Active database connection for MongoDB ('fisb')
 dbConn = None
@@ -134,7 +134,7 @@ def dbConnect():
 
     while True:
         try:
-            client = MongoClient(cfg.MONGO_URL, tz_aware=True)
+            client = MongoClient(cfg.MONGO_URI, tz_aware=True)
 
             # uUse the 'fisb' database and possibly location database
             dbConn = client.fisb
@@ -442,7 +442,7 @@ if __name__ == "__main__":
         help="Directory containing FIS-B messages.", \
         type=str)
     parser.add_argument('--db', \
-        help="MongoDB URL.", \
+        help="MongoDB URI.", \
         type=str)      
     parser.add_argument('--test', \
         choices=range(1,31), \
@@ -452,7 +452,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.db:
-        mongoUrl = args.db
+        mongoUri = args.db
 
     if args.dir:
         harvestDir = args.dir

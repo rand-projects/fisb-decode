@@ -101,7 +101,7 @@ CRL_TABLES = ['CRL_11', 'CRL_12', 'CRL_14', 'CRL_15', \
     'CRL_16', 'CRL_17', 'CRL_8']
 
 # Get items to display from configuration
-mongoUrl = cfg.MONGO_URL
+mongoUri = cfg.MONGO_URI
 WINDS_LIST = cfg.WINDS_LIST
 METAR_LIST = cfg.METAR_LIST
 TAF_LIST = cfg.TAF_LIST
@@ -746,7 +746,7 @@ def localwx():
     Create database connection and produce desired report.
     Initialize curses if using it.
     """
-    client = MongoClient(mongoUrl, tz_aware=True)
+    client = MongoClient(mongoUri, tz_aware=True)
     db = client.fisb
 
     if USE_CURSES:

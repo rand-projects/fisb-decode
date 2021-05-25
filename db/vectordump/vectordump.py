@@ -22,7 +22,7 @@ import db.harvest.vectors as vec
 import db.vectordump.vectordumpConfig as cfg
 
 # Get items to display from configuration
-mongoUrl = cfg.MONGO_URL
+mongoUri = cfg.MONGO_URI
 
 # Possible file names
 OUTPUT_FILES = ['V-AIRMET-PG.csv', 'V-G_AIRMET_00_HR-LS.csv', \
@@ -36,7 +36,7 @@ OUTPUT_FILES = ['V-AIRMET-PG.csv', 'V-G_AIRMET_00_HR-LS.csv', \
 def vectordump():
     """Dump all vector data to ``.csv`` files.
     """
-    client = MongoClient(mongoUrl, tz_aware=True)
+    client = MongoClient(mongoUri, tz_aware=True)
     db = client.fisb
 
     currentPath = '.'

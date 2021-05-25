@@ -170,7 +170,7 @@ if __name__ == "__main__":
                     'time_dict': {}}
 
         # Open mongo db
-        client = MongoClient(cfg.MONGO_URL, tz_aware=True)
+        client = MongoClient(cfg.MONGO_URI, tz_aware=True)
         rsrDict['db'] = client.fisb
 
     for line in inStream:

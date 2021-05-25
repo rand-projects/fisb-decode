@@ -23,7 +23,7 @@ import db.location.locationdbConfig as cfg
 import db.harvest.location as loc
 
 # Get items from configuration
-mongoUrl = cfg.MONGO_URL
+mongoUri = cfg.MONGO_URI
 
 def pirepTest():
     """Main routine for pirepTest
@@ -33,7 +33,7 @@ def pirepTest():
     to be run from the fisb-decode/db/location directory
     and to have the file ``ov.txt`` in the same directory.
     """
-    client = MongoClient(mongoUrl, tz_aware=True)
+    client = MongoClient(mongoUri, tz_aware=True)
     db = client.fisb_location
 
     # msg to use. Since we don't read stations, use 'IND' if one is needed.

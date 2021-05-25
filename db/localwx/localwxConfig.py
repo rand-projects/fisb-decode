@@ -4,8 +4,8 @@ Change these settings to display weather from the locations you
 are interested in.
 """
 
-#: MONGO URL
-MONGO_URL = 'mongodb://localhost:27017/'
+#: MONGO URI
+MONGO_URI = 'mongodb://localhost:27017/'
 
 #: List of WIND forecasts you want to get.
 WINDS_LIST = ['IND']
