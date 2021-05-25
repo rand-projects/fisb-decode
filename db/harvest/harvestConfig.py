@@ -108,6 +108,10 @@ NOT_INCLUDED_GREEN = 0xDA
 NOT_INCLUDED_BLUE = 0x96
 
 #: Set the type of image map you want to display.
+#: Setting this to 1 (testing) forces a set of color 
+#: maps. For ``GENERAL``` and ``SHOW_NO_DATA`` it only
+#: changes the behavior of 'no-data' and 'no-information'
+#: values.
 #:
 #: GENERAL (0)
 #:   For general ground use. Doesn't display NO-DATA areas.
@@ -116,3 +120,22 @@ NOT_INCLUDED_BLUE = 0x96
 #: SHOW_NO_DATA (2)
 #:   Same as ``GENERAL``, but shows areas of NO-DATA.
 IMAGE_MAP_CONFIGURATION = 0
+
+#: Set the cloudtop map colors to use (this doesn't apply when
+#: performing test group tests).
+#:
+#: 0 - map used for testing
+#: 1 - gray scale
+#: 2 - colorful
+#: 3 - red gradient
+#: 4 - brown gradient
+CLOUDTOP_MAP = 4
+
+#: Set the cloudtop map colors to use (this doesn't apply when
+#: performing test group tests).
+#:
+#: 0 - map used for testing and the general FIS-B scale values.
+#:     Tends to make any rainstorm look intense.
+#: 1 - more conventional scale (basically takes each color down a notch
+#:     to look more like a conventional radar).
+RADAR_MAP = 1
