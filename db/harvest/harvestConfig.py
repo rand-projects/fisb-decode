@@ -131,7 +131,7 @@ IMAGE_MAP_CONFIGURATION = 0
 #: 4 - brown gradient
 CLOUDTOP_MAP = 4
 
-#: Set the cloudtop map colors to use (this doesn't apply when
+#: Set the radar map colors to use (this doesn't apply when
 #: performing test group tests).
 #:
 #: 0 - map used for testing and the general FIS-B scale values.
