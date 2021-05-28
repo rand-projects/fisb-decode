@@ -952,6 +952,23 @@ Other Topics
 Images
 ------
 
+.. sidebar:: Getting Image Data
+
+   If you want to follow along in this section, but don't have any image
+   data to view, don't worry.
+   Read the `Running Test Groups 28-30`_ section, then come back
+   here. Be sure you are in the ``bin`` directory and type: ::
+
+     ./harvest --test 30
+
+     <will run for a little over
+      8 minutes, then type:>
+
+     cd ../tg/results/tg30/01
+
+   You will find plenty of ``.tif`` images and vector data to use
+   in the instructions that follow.
+     
 Images are always geotiff files and are normally stored in
 ``fisb-decode/runtime/images``. The image system is pretty much
 self-managed by harvest. They are created when they arrive and removed after
@@ -967,7 +984,7 @@ to harvest, all images are rectangles. When harvest is making an image, it looks
 to see what the smallest bounding box would be (i.e. biggest and smallest
 latitude and longitude) and that becomes the limit of the rectangle. The area
 of the rectangle that isn't a part of the FIS-B image is referred to (by me,
-FISB has no concept of this) as the '*not included*' portion.
+FIS-B has no concept of this) as the '*not included*' portion.
 
 FIS-B has the concept of '*no data*'. These are areas where the FIS-B system
 knows it doesn't have any data.
@@ -1226,6 +1243,8 @@ and did all the steps we did above to get
 the following image:
 
 .. image:: images/bh.png
+
+.. _Running Test Groups 28-30:
 
 Running Test Groups 28-30
 -------------------------
@@ -1903,7 +1922,7 @@ directory for processing by harvest. There are a few things to consider:
   assigned address, which can't happen until Stratux is running.
 
 * Internally, Stratux uses another version of dump978 to capture FIS-B packets.
-  It converts its output to Garmin GDL format, which
+  It converts its output to Garmin GDL 90 format, which
   ``decodeStratux`` receives. The data then gets converted back to dump978 format
   for processing. The FIS-B data will have no associated time. ``decodeStratux``
   will use the local clock UTC time as the message received time.
