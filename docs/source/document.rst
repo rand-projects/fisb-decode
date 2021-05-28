@@ -1879,3 +1879,31 @@ dates make no sense. As of now, there is code to ignore these messages, both
 at the message level and at the CRL level. If this becomes a more common
 problem, it would be better to create a system to read these from a file
 and ignore them.
+
+Using Stratux as a data source
+------------------------------
+
+If you have a `Stratux <https://stratux.me>`_ box, you can use it as a
+data feed. In the ``bin`` directory there are the scripts
+``decodeStratux`` and ``decodeStratusToDir``. They work exactly like
+``decodeNet`` and ``decodeNetToDir``. ``decodeStratux`` will dump level 3
+messages to the terminal, and ``decodeStratusToDir`` will send them to a
+directory for processing by harvest. There are a few things to consider:
+
+* You need to have a somewhat accurate time set. Plus or minus 30 seconds, or even
+  a minute, is fine. Stratux may not provide a time (it might if it has a working
+  GPS, but GPS is not manditory, or it might be intermittant). Having a time source
+  such as a real time clock, internet source, or even setting the date and time
+  by hand, are
+  required. 'fisb-decode' has lots of logic to take FAA partial times and make them
+  complete times, but it needs a little help from a clock source.
+
+* Always start Stratux first (and let it boot up) before starting ``decodeStratux``.
+  Stratux serves as the DHCP provider and ``decodeStratux`` needs to know its
+  assigned address, which can't happen until Stratux is running.
+
+* Internally, Stratux uses another version of dump978 to capture FIS-B packets.
+  It converts its output to Garmin GDL format, which
+  ``decodeStratux`` receives. The data then gets converted back to dump978 format
+  for processing. The FIS-B data will have no associated time. ``decodeStratux``
+  will use the local clock UTC time as the message received time.

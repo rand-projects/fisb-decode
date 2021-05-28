@@ -1,5 +1,6 @@
 *~
 .vscode
+.nfs*
 *.978
 *.pyx
 __pycache__

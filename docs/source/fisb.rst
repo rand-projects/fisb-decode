@@ -48,6 +48,14 @@ different ways:
   to your acquisition system (usually *dump978* running in server
   mode).
 
+- **levelStratux:** This is an optional level if you are feeding ``fisb-decode``
+  with live data from a Stratux box, rather than from a file or *dump978*.
+  Actually, Stratux uses another dump978 program and converts FIS-B to
+  GDL format. ``levelStratux`` then converts it back to dump978 format.
+  If you use this, it is critical that your computer has somewhat accurate
+  clock (within 30 seconds or so) as Stratux doesn't provide clock data to
+  the messages. The local clock on the machine you are using provides the source.
+
 - **trickle:** Trickle is a program used for testing. Primarily for the
   official series of test groups and a few tests I added. Trickle will
   read a set of messages and pretend that they are being read at the
@@ -68,4 +76,5 @@ different ways:
    fisb.level2
    fisb.level3
    fisb.levelNet
+   fisb.levelStratux
    fisb.trickle
