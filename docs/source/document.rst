@@ -1924,5 +1924,5 @@ directory for processing by harvest. There are a few things to consider:
 * Internally, Stratux uses another version of dump978 to capture FIS-B packets.
   It converts its output to Garmin GDL 90 format, which
   ``decodeStratux`` receives. The data then gets converted back to dump978 format
-  for processing. The FIS-B data will have no associated time. ``decodeStratux``
+  for processing. The FIS-B data will have no associated time. 'fisb' level 0
   will use the local clock UTC time as the message received time.
