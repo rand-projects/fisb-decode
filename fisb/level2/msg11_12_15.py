@@ -17,6 +17,9 @@ import fisb.level2.level2Exceptions as ex
 # RegEx for a TWGO
 TWGO_RE = re.compile(r"([^ ]+) ([^ ]+) ([0-3]\d[0-2]\d[0-5]\d)")
 
+# Special case for SIGMET xxxxxx with no station
+TWGO1_RE = re.compile(r"([^ ]+) +([0-3]\d[0-2]\d[0-5]\d)")
+
 #: Sometimes messages get stuck in the system. For over a year, these messages
 #: have been stuck and continue to exist. Hopefully, one day these will
 #: be gone, but until then we have to manually ignore them. This includes putting
@@ -97,17 +100,27 @@ def msg11_12_15(frame, productId, \
     m = TWGO_RE.match(text)
     workaround = False
     if m is None:
-        # Sigh... some test group data doesn't even resemble real data. Work around it
-        if 'LATENCY' not in text:
-            raise ex.TwgoHeaderParseException('TWGO Regex did not match: "{}"'.format(text))
+        # Try to see if station missing
+        m = TWGO1_RE.match(text)
+        if m is None:
+            # Sigh... some test group data doesn't even resemble real data. Work around it
+            if 'LATENCY' not in text:
+                raise ex.TwgoHeaderParseException('TWGO Regex did not match: "{}"'.format(text))
+            else:
+                workaround = True
         else:
-            workaround = True
+            twgo_type = m.group(1)
+            twgo_time = m.group(2)
+
+    else:
+        twgo_type = m.group(1)
+        twgo_time = m.group(3)
 
     hasGraphics = False
     if 'contents_graphics' in frame:
          hasGraphics = True
         
-    issueTimeIso = util.dayHourMinToIso8601(rYear, rMonth, rDay, m.group(3))
+    issueTimeIso = util.dayHourMinToIso8601(rYear, rMonth, rDay, twgo_time)
     
     if hasGraphics:
         gRecords = frame['contents_graphics']['records']
@@ -154,7 +167,7 @@ def msg11_12_15(frame, productId, \
         # Just make up some expiration time. It isn't tested in TG03.
         newMsg['station'] = station
     else:
-        reportType = m.group(1)
+        reportType = twgo_type
         newMsg['type'] = reportType
         newMsg['unique_name'] = reportId
         newMsg['station'] = station
