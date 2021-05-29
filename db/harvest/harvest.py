@@ -136,7 +136,7 @@ def dbConnect():
         try:
             client = MongoClient(cfg.MONGO_URI, tz_aware=True)
 
-            # uUse the 'fisb' database and possibly location database
+            # Use the 'fisb' database and possibly location database
             dbConn = client.fisb
             dbConnLocation = client.fisb_location
 

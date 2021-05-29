@@ -30,7 +30,6 @@ class MsgPIREP(MsgBase):
 
         # Remove redundant keys
         del msg['unique_name']
-        del msg['type']
         
         self.dbCollection().update( \
             { '_id': pkey}, \

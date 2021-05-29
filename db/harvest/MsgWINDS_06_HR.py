@@ -31,7 +31,6 @@ class MsgWINDS_06_HR(MsgBase):
         # Remove redundant keys
         del msg['unique_name']
         del msg['location']
-        del msg['type']
 
         self.dbCollection().update( \
             { '_id': pkey}, \

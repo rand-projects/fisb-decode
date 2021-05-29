@@ -1366,7 +1366,7 @@ For some test groups, the offset is varied either slightly ahead or behind the
 specified trigger time. This handles cases like 'check before this time', or
 'check after this time'. The trigger filename will then look like one of: ::
 
-  2020-09-18-200633_72393~72398-3
+  2020-09-18-200633_72393~72398-5
   2020-09-18-200633_72393~72390+3
 
 The value after the tilde is the time as noted in the documentation, followed

@@ -20,7 +20,6 @@ class MsgFIS_B_UNAVAILABLE(MsgBase):
 
         # Remove unneeded keys
         del msg['unique_name']
-        del msg['type']
         
         self.dbCollection().update( \
             { '_id': pkey}, \

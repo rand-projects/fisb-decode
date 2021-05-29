@@ -29,7 +29,6 @@ class MsgNOTAM(MsgBase):
         msg = self.geometryToGeojson(msg)
 
         del msg['unique_name']
-        del msg['type']
 
         self.dbCollection().update( \
             { '_id': pkey}, \

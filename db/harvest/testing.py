@@ -437,7 +437,21 @@ def augmentTwgoStatus(msg, dt):
         geoList[i]['properties']['status'] = 'Active'
 
     return msg
-            
+    
+def isoformatToZ(dt):
+    """Change datatime to iso format string ending in Z.
+
+    The standard conversion to an ISO string in UTC appends
+    ``+00:00``. We convert the data and then change that to ``Z``.
+    
+    Args:
+        dt (datetime): Datetime object to be converted.
+
+    Returns:
+        str: Datetime converted to ISO string.
+    """
+    return dt.isoformat().replace('+00:00', 'Z')
+
 def convertDatetimeToIsoString(msgDict):
     """Change any '<xxx>_time' entries to ISO string values.
                                                                                                  
@@ -458,16 +472,16 @@ def convertDatetimeToIsoString(msgDict):
 
     for k in keys:
         if k.endswith('_time'):
-            msgDict[k] = msgDict[k].isoformat()
+            msgDict[k] = isoformatToZ(msgDict[k])
     
     # Add start_time and stop_time if geometry is present
     if 'geojson' in msgDict:
         geoDict = msgDict['geojson']['features']
         for x in range(0, len(geoDict)):
             if 'start_time' in geoDict[x]['properties']:
-                geoDict[x]['properties']['start_time'] = geoDict[x]['properties']['start_time'].isoformat()
+                geoDict[x]['properties']['start_time'] = isoformatToZ(geoDict[x]['properties']['start_time'])
             if 'stop_time' in geoDict[x]['properties']:
-                geoDict[x]['properties']['stop_time'] = geoDict[x]['properties']['stop_time'].isoformat()
+                geoDict[x]['properties']['stop_time'] = isoformatToZ(geoDict[x]['properties']['stop_time'])
     
     return msgDict
 
