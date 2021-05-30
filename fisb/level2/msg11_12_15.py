@@ -98,20 +98,15 @@ def msg11_12_15(frame, productId, \
     
     # Get the report type and issue time.
     m = TWGO_RE.match(text)
-    workaround = False
+
     if m is None:
         # Try to see if station missing
         m = TWGO1_RE.match(text)
         if m is None:
-            # Sigh... some test group data doesn't even resemble real data. Work around it
-            if 'LATENCY' not in text:
-                raise ex.TwgoHeaderParseException('TWGO Regex did not match: "{}"'.format(text))
-            else:
-                workaround = True
+            raise ex.TwgoHeaderParseException('TWGO Regex did not match: "{}"'.format(text))
         else:
             twgo_type = m.group(1)
             twgo_time = m.group(2)
-
     else:
         twgo_type = m.group(1)
         twgo_time = m.group(3)
@@ -150,38 +145,21 @@ def msg11_12_15(frame, productId, \
 
     newMsg = {}
 
-    if workaround:
-        # Fix totally bogus data in TG03
-        testType = 'TEST'
-        if reportId in ['13-7999', '13-7998']:
-            testType = 'AIRMET'
-        elif reportId in ['13-8999', '13-8998']:
-            testType = 'SIGMET'
+    reportType = twgo_type
+    newMsg['type'] = reportType
+    newMsg['unique_name'] = reportId
+    newMsg['station'] = station
+    newMsg['issued_time'] = issueTimeIso
+    if hasGraphics:
+        if startIso is not None:
+            newMsg['for_use_from_time'] = startIso
+        if stopIso is not None:
+            newMsg['for_use_to_time'] = stopIso
 
-        newMsg['type'] = testType
-        newMsg['unique_name'] = reportId
-        newMsg['contents'] = text
-        if hasGraphics:
-            newMsg['geometry'] = util.processGeometry(gRecords, issueTimeIso, productId)
+    newMsg['contents'] = text
 
-        # Just make up some expiration time. It isn't tested in TG03.
-        newMsg['station'] = station
-    else:
-        reportType = twgo_type
-        newMsg['type'] = reportType
-        newMsg['unique_name'] = reportId
-        newMsg['station'] = station
-        newMsg['issued_time'] = issueTimeIso
-        if hasGraphics:
-            if startIso is not None:
-                newMsg['for_use_from_time'] = startIso
-            if stopIso is not None:
-                newMsg['for_use_to_time'] = stopIso
-
-        newMsg['contents'] = text
-
-        if hasGraphics:
-            newMsg['geometry'] = util.processGeometry(gRecords, issueTimeIso, productId)
+    if hasGraphics:
+        newMsg['geometry'] = util.processGeometry(gRecords, issueTimeIso, productId)
 
     newMsg['expiration_time'] = util.twgoExpirationTime(newMsg, rcvdTime)
     return newMsg

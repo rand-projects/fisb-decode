@@ -91,9 +91,7 @@ TWGO_DEFAULT_EXPIRATION_TIME = 61
 #: The standard also states that you can use the message
 #: stop time, but some test writers understand this and some
 #: don't. Some test messages are broken in this regard.
-#: Make sure this is ``True`` when testing (except TG20).
-#: TG20 will fail if you don't have this set to ``False``,
-#: because it doesn't retransmit the messages like would happen in actual use.
+#: Make sure this is ``True`` when testing.
 #:
 #: For general use, set this to ``False`` (i.e. use 'smart expiration').
 #: It allows actual best stop dates to be used including NOTAM parsed dates.
