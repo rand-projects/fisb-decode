@@ -586,6 +586,9 @@ Here are the collection names and what they contain:
 **G_AIRMET**
   G-AIRMET messages.
   
+**LEGEND**
+  Legend information for geotiff images.
+  
 **METAR**
   METAR reports.
   

@@ -551,19 +551,19 @@ def getLegendDict():
             if items[1] == 0:
                 continue
 
-            # If we have a no data value and a not included values, and they are
-            # both the same, we need to skip the not included value. So we save
-            # the no data value (which will occur first, and is always 'No Data'),
-            # then check against the not included value (always 255) if it
-            # occurs later.
+            # If we have a 'no data' value and a 'not included' value, and they are
+            # both the same, we need to skip the 'not included' value. So we save
+            # the 'no data' value (which will occur first, and is stored in
+            # NO_DATA_STR (usually 'No Data')), then check against the not
+            # included value (always 255) if it occurs later.
             if items[2] == imap.NO_DATA_STR:
                 noDataValue = items[0] 
             elif (i == 255) and (noDataValue == items[0]):
                 continue
 
             # So all the color maps in the standard have all of their entries
-            # in order except for ICING severity, where severe comes before heavy.
-            # Need to flip these values. We store the severe values and insert
+            # in order EXCEPT for icing severity, where 'severe' comes before 'heavy'.
+            # We will flip these values. We store the severe values and insert
             # them after we put the heavy values in.
             if isIcingSevMap:
                 if i == 4:
