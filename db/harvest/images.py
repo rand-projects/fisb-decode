@@ -485,3 +485,99 @@ def mapImg(filename, binDict, resolution, mapFcn):
         ds = None
         os.remove(filename)
     
+def getLegendDict():
+    """Create a dictionary showing the units and colors (with text values)
+    for each image map. Used in clients to create a legend for an image.
+
+    The keys for this dictionary are the name of the
+    image map. The value is also a dictionary who's ``units`` key is the name
+    of the units being used. The other entry to this dictioary is ``colors``.
+    ``colors`` is a list of two element lists. The first entry is the integer ``RGB``
+    color value, and the second entry is the text that goes with the color.
+
+    Items that are not displayed for a particular map are not placed in the list
+    of colors.
+
+    The color list will always have the colors in order of intensity. This includes
+    the icing severity table where 'heavy' and 'servere' are placed in the wrong
+    order by the standard.
+
+    This data will be placed in the LEGEND collection as its only entry.
+    A truncated sample will look like: ::
+
+      {"_id" : "LEGEND",
+       "RADAR" : {
+        "units" : "dBZ",
+        "colors" : [[60977,"20-30"],[762654,"30-40"],[16776762,"40-45"],
+                   [16750398,"45-50"],[16711697,"50-55"],[16711931,">55"],
+                   [15522454,"Not Incl"]]
+        },
+       "TURBULENCE" : {
+        "units" : "EDR*100",
+        "colors" : [[13434481,"14-21"],[15588917,"21-28"],[16757806,"28-35"],
+                   [16749864,"35-42"],[16741923,"42-49"],[16731165,"49-56"],
+                   [16711704,"56-63"],[14876693,"63-70"],[12124177,"70-77"],
+                   [9371661,"77-84"],[8060940,"84-91"],[5439496,"91-98"],
+                   [4259846,">98"],[15522454,"No Data"]]
+        }
+      }
+
+    Returns:
+        dict: Dictionary as described above.
+    """
+    legendDict = {}
+
+    # Make an entry in the dictionary for every image map.
+    for j, x in enumerate(imap.IMAGE_MAPS):
+        noDataValue = -1
+        newMap = True
+        colorValuesList = []
+        mapName = imap.IMAGE_MAP_NAMES[j]
+
+        # Sigh... special treatment for outlier ICING_SEV
+        isIcingSevMap = False
+        if mapName == 'ICING_SEV':
+            isIcingSevMap = True    
+
+        # Create entry for each map
+        # Entries are sorted in order of severity
+        for i in sorted(x.keys()):
+            items = x[i]
+            if newMap:
+                legendDict[mapName] = {'units': items[3]}
+                newMap = False
+
+            # Skip invisible items
+            if items[1] == 0:
+                continue
+
+            # If we have a no data value and a not included values, and they are
+            # both the same, we need to skip the not included value. So we save
+            # the no data value (which will occur first, and is always 'No Data'),
+            # then check against the not included value (always 255) if it
+            # occurs later.
+            if items[2] == imap.NO_DATA_STR:
+                noDataValue = items[0] 
+            elif (i == 255) and (noDataValue == items[0]):
+                continue
+
+            # So all the color maps in the standard have all of their entries
+            # in order except for ICING severity, where severe comes before heavy.
+            # Need to flip these values. We store the severe values and insert
+            # them after we put the heavy values in.
+            if isIcingSevMap:
+                if i == 4:
+                    icingSevereColor = items[0]
+                    icingSevereValue = items[2]
+                elif i == 5:
+                    colorValuesList.append([items[0], items[2]])
+                    colorValuesList.append([icingSevereColor, \
+                        icingSevereValue])                                        
+                else:
+                    colorValuesList.append([items[0], items[2]])
+            else:
+                colorValuesList.append([items[0], items[2]])
+
+        legendDict[mapName]['colors'] = colorValuesList
+
+    return legendDict

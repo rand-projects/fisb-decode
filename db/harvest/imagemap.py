@@ -15,6 +15,12 @@ GENERAL = 0
 TESTING = 1
 SHOW_NO_DATA = 2
 
+# String for no data value display.
+NO_DATA_STR = 'No Data'
+
+# String for 'not included' display.
+NOT_INCL_STR = 'Not Incl'
+
 IMAGE_MAP_CONFIGURATION = cfg.IMAGE_MAP_CONFIGURATION
 
 radar0alpha = 0
@@ -60,7 +66,7 @@ RADAR_MAP_0 = { \
                5: (0x990017, 255, '45-50', 'dBZ'), \
                6: (0xff00fb, 255, '50-55', 'dBZ'), \
                7: (0x9a0096, 255, '>55', 'dBZ'), \
-               255: (NOT_INCLUDED, NIalpha, 'Not Included', 'dBZ'), \
+               255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'dBZ'), \
 }
 
 #ffffff <5
@@ -82,7 +88,7 @@ RADAR_MAP_1 = { \
                5: (0xff973e, 255, '45-50', 'dBZ'), \
                6: (0xff0011, 255, '50-55', 'dBZ'), \
                7: (0xff00fb, 255, '>55', 'dBZ'), \
-               255: (NOT_INCLUDED, NIalpha, 'Not Included', 'dBZ'), \
+               255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'dBZ'), \
 }
 
 #---- Turbulence ------------------------------------
@@ -121,8 +127,8 @@ TURB_MAP_0 = { \
               12: (0xff00ff, 255, '84-91', 'EDR*100'), \
               13: (0xa500a5, 255, '91-98', 'EDR*100'), \
               14: (0x000000, 255, '>98', 'EDR*100'), \
-              15: (0xb6b6b6, 255, 'No Data', 'EDR*100'), \
-              255: (NOT_INCLUDED, 255, 'Not Included', 'EDR*100'), \
+              15: (0xb6b6b6, 255, NO_DATA_STR, 'EDR*100'), \
+              255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'EDR*100'), \
 }
 
 # Alternate map mimics Aviation Weather Center turbulence
@@ -160,8 +166,8 @@ TURB_MAP_1 = { \
               12: (0x7b000c, 255, '84-91', 'EDR*100'), \
               13: (0x530008, 255, '91-98', 'EDR*100'), \
               14: (0x410006, 255, '>98', 'EDR*100'), \
-              15: (NDcolor, NDalpha, 'No Data', 'EDR*100'), \
-              255: (NOT_INCLUDED, NIalpha, 'Not Included', 'EDR*100'), \
+              15: (NDcolor, NDalpha, NO_DATA_STR, 'EDR*100'), \
+              255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'EDR*100'), \
 }
 
 #---- Cloud Tops ------------------------------------
@@ -200,8 +206,8 @@ CLOUDTOP_MAP_0 = { \
                   12: (0xff00ff, 255, '18000-21000', 'ft MSL'), \
                   13: (0xa500a5, 255, '21000-24000', 'ft MSL'), \
                   14: (0xff0000, 255, '>24000', 'ft MSL'), \
-                  15: (0xb6b6b6, 255, 'No Data', 'ft MSL'), \
-                  255: (NOT_INCLUDED, 255, 'Not Included', 'ft MSL'), \
+                  15: (0xb6b6b6, 255, NO_DATA_STR, 'ft MSL'), \
+                  255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'ft MSL'), \
 }
 
 #ffffff No Clouds
@@ -238,8 +244,8 @@ CLOUDTOP_MAP_1 = { \
                   12: (0x333333, 255, '18000-21000', 'ft MSL'), \
                   13: (0x222222, 255, '21000-24000', 'ft MSL'), \
                   14: (0x111111, 255, '>24000', 'ft MSL'), \
-                  15: (NDcolor, NDalpha, 'No Data', 'ft MSL'), \
-                  255: (NOT_INCLUDED, NIalpha, 'Not Included', 'ft MSL'), \
+                  15: (NDcolor, NDalpha, NO_DATA_STR, 'ft MSL'), \
+                  255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'ft MSL'), \
 }
 
 #ffffff No Clouds
@@ -276,8 +282,8 @@ CLOUDTOP_MAP_2 = { \
                   12: (0x7c0015, 255, '18000-21000', 'ft MSL'), \
                   13: (0x8c0014, 255, '21000-24000', 'ft MSL'), \
                   14: (0xf9001c, 255, '>24000', 'ft MSL'), \
-                  15: (NDcolor, NDalpha, 'No Data', 'ft MSL'), \
-                  255: (NOT_INCLUDED, NIalpha, 'Not Included', 'ft MSL'), \
+                  15: (NDcolor, NDalpha, NO_DATA_STR, 'ft MSL'), \
+                  255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'ft MSL'), \
 }
 
 # https://hihayk.github.io/scale/#7/7/59/63/0/0/-77/47/ED0000/255/0/0/white
@@ -317,8 +323,8 @@ CLOUDTOP_MAP_3 = { \
                   12: (0x940000, 255, '18000-21000', 'ft MSL'), \
                   13: (0x7e0000, 255, '21000-24000', 'ft MSL'), \
                   14: (0x6b0003, 255, '>24000', 'ft MSL'), \
-                  15: (NDcolor, NDalpha, 'No Data', 'ft MSL'), \
-                  255: (NOT_INCLUDED, NIalpha, 'Not Included', 'ft MSL'), \
+                  15: (NDcolor, NDalpha, NO_DATA_STR, 'ft MSL'), \
+                  255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'ft MSL'), \
 }
 
 # https://hihayk.github.io/scale/#7/7/59/63/0/0/-77/47/FFA232/255/162/0/white
@@ -358,8 +364,8 @@ CLOUDTOP_MAP_4 = { \
                   12: (0x946009, 255, '18000-21000', 'ft MSL'), \
                   13: (0x7e5204, 255, '21000-24000', 'ft MSL'), \
                   14: (0x694401, 255, '>24000', 'ft MSL'), \
-                  15: (NDcolor, NDalpha, 'No Data', 'ft MSL'), \
-                  255: (NOT_INCLUDED, NIalpha, 'Not Included', 'ft MSL'), \
+                  15: (NDcolor, NDalpha, NO_DATA_STR, 'ft MSL'), \
+                  255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'ft MSL'), \
 }
 
 #---- Lightning ------------------------------------
@@ -382,8 +388,8 @@ LIGHTNING_MAP_0 = { \
                    4: (0xc9e2b8, 255, '6-10', 'Strike Density'), \
                    5: (0xffff00, 255, '11-15', 'Strike Density'), \
                    6: (0xc95f14, 255, '>15', 'Strike Density'), \
-                   7: (NDcolor, NDalpha, 'No Data', 'Strike Density'), \
-                   255: (NOT_INCLUDED, NIalpha, 'Not Included', 'Strike Density'), \
+                   7: (NDcolor, NDalpha, NO_DATA_STR, 'Strike Density'), \
+                   255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'Strike Density'), \
 }
 
 #---- Icing Super Large Droplets ------------------------------------
@@ -398,8 +404,8 @@ ICING_SLD_MAP_0 = { \
                    0: (0x0, icing0alpha, '<= 5', 'SLD %'), \
                    1: (0xffff00, 255, '5-50', 'SLD %'), \
                    2: (0xff0000, 255, '>50', 'SLD %'), \
-                   3: (NDcolor, NDalpha, 'No Data', 'SLD %'), \
-                   255: (NOT_INCLUDED, NIalpha, 'Not Included', 'SLD %'), \
+                   3: (NDcolor, NDalpha, NO_DATA_STR, 'SLD %'), \
+                   255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'SLD %'), \
 }
 
 #---- Icing Severity ------------------------------------
@@ -422,8 +428,8 @@ ICING_SEV_MAP_0 = { \
                    4: (0xff00ff, 255, 'Severe', 'Type'), \
                    5: (0xff0000, 255, 'Heavy', 'Type'), \
                    6: (0x0, 0, 'Reserved', 'Type'), \
-                   7: (NDcolor, NDalpha, 'No Data', 'Type'), \
-                   255: (NOT_INCLUDED, NIalpha, 'Not Included', 'Type'), \
+                   7: (NDcolor, NDalpha, NO_DATA_STR, 'Type'), \
+                   255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'Type'), \
 }
 
 #---- Icing Probability ------------------------------------
@@ -446,8 +452,8 @@ ICING_PRB_MAP_0 = { \
                    4: (0xf18635, 255, '40-60', '%'), \
                    5: (0xff0000, 255, '60-80', '%'), \
                    6: (0xff00ff, 255, '>80', '%'), \
-                   7: (NDcolor, NDalpha, 'No Data', '%'), \
-                   255: (NOT_INCLUDED, NIalpha, 'Not Included', '%'), \
+                   7: (NDcolor, NDalpha, NO_DATA_STR, '%'), \
+                   255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, '%'), \
 }
 
 #-----------------------------------------------------------
@@ -487,3 +493,12 @@ else:
     ICING_SLD_MAP = ICING_SLD_MAP_0
     ICING_SEV_MAP = ICING_SEV_MAP_0
     ICING_PRB_MAP = ICING_PRB_MAP_0
+
+# List of all the image maps. Used by getLegendDict().
+IMAGE_MAPS = [RADAR_MAP, TURB_MAP, CLOUDTOP_MAP, LIGHTNING_MAP, \
+    ICING_SLD_MAP, ICING_SEV_MAP, ICING_PRB_MAP]
+
+# Text names of all the image maps. Must have the same length and
+# be in the same order as IMAGE_MAPS. Used by getLegendDict().
+IMAGE_MAP_NAMES = ['RADAR', 'TURBULENCE', 'CLOUDTOP', 'LIGHTNING', \
+    'ICING_SLD', 'ICING_SEV', 'ICING_PRB']

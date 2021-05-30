@@ -14,6 +14,7 @@ from bson.objectid import ObjectId
 import db.harvest.testing as test
 import db.harvest.harvestConfig as cfg
 import db.harvest.harvestExceptions as ex
+import db.harvest.images as img
 from db.harvest.MsgMETAR import MsgMETAR
 from db.harvest.MsgTAF import MsgTAF
 from db.harvest.MsgCRL import MsgCRL
@@ -304,6 +305,13 @@ def doMaintTasks(maintCounter):
         dumpRecord(errStr)
         return maintCounter + 1
 
+def updateLegendCollection():
+    legendDict = img.getLegendDict()
+    
+    dbConn.LEGEND.replace_one( \
+            { '_id': 'LEGEND'}, \
+            legendDict)
+
 def harvest(tgTestNumber):
     """Main function for Harvest. Process messages.
 
@@ -338,6 +346,10 @@ def harvest(tgTestNumber):
 
     # Get database connection and insert in message handler objects.
     dbConnect()
+
+    # Update the LEGEND collection in the database (will
+    # change based-on configuration).
+    updateLegendCollection()
 
     # Setup for any testing.
     # Note: For actual testing, this will sit here until
