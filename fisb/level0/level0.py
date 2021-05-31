@@ -11,7 +11,10 @@ import os, io, sys, json, argparse, traceback
 import fisb.level0.level0Config as cfg
 import fisb.level0.level0Exceptions as ex
 import fisb.level0.utilities as util
-import db.harvest.testing as test
+
+# Only import if harvest requirements are installed.
+if cfg.ALLOW_DECODE_TEST:
+    import db.harvest.testing as test
 
 # Only import pymongo if using RSR
 if cfg.CALCULATE_RSR:
@@ -113,10 +116,13 @@ if __name__ == "__main__":
                                      """)
     parser.add_argument('--pp', help="Pretty Print output", action='store_true')
     parser.add_argument('--dump', help="Dump for testing use", action='store_true')
-    parser.add_argument('--test', \
-        choices=range(1,31), \
-        help="Dump specified test group.", \
-        type=int)
+
+    if cfg.ALLOW_DECODE_TEST:
+        parser.add_argument('--test', \
+            choices=range(1,31), \
+            help="Dump specified test group.", \
+            type=int)
+    
     args = parser.parse_args()
 
     ppIndent = None
@@ -131,7 +137,7 @@ if __name__ == "__main__":
     testMode = False
     buffer = sys.stdin.buffer
 
-    if args.test:
+    if cfg.ALLOW_DECODE_TEST and args.test:
         testNumber = args.test
         testMode = True
 

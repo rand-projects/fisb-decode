@@ -199,8 +199,19 @@ lines match: ::
   SHOW_MESSAGE_SOURCE = False
   CALCULATE_RSR = False
   DLAC_4BIT_HACK = False
+  ALLOW_DECODE_TEST = False
   
+Next you will install some python dependencies.
+Install ``pip3`` if not already installed. On a ubuntu 20.04
+system use: ::
+
+  sudo apt install python3-pip
+
 From the ``bin`` directory type: ::
+
+  pip3 install -r ../misc/requirements-fisb.txt
+
+Then type: ::
 
   cat ../tg/tg-source/generated/tg30.978 | ./decode0
 
@@ -303,7 +314,8 @@ Make ``../fisb/level0/level0Config.py`` match: ::
   SHOW_MESSAGE_SOURCE = False
   CALCULATE_RSR = False
   DLAC_4BIT_HACK = False
-
+  ALLOW_DECODE_TEST = False
+  
 For level 2 decode type: ::
 
   cat ../tg/tg-source/generated/tg30.978 | ./decode2
@@ -416,14 +428,9 @@ Install the following packages (if you will not be installing QGIS): ::
   sudo apt install gdal-bin libgdal-dev
 
 Next you will install various python dependencies.
-Install ``pip3`` if not already installed. On a ubuntu 20.04
-system use: ::
+From the ``bin`` directory type: ::
 
-  sudo apt install python3-pip
-
-Now ``cd`` to the ``fisb-decode/misc`` directory and type: ::
-
-  pip3 install -r requirements.txt
+  pip3 install -r ../misc/requirements-harvest.txt
 
 This will load all the python dependencies.
 
@@ -636,11 +643,19 @@ If you want to build the documentation, install
 On Ubuntu 20.04 you can do this with: ::
   
   sudo apt install python3-sphinx
+
+Next, install the Python requirements from the ``bin`` directory as: ::
+
+  pip3 install -r ../misc/requirements-sphinx.txt
+
+Then: ::
+
   cd <your path>/fisb-decode/docs
   ./makedocs
   
 The html documentation will be found in ``fisb-decode/docs/build/html``.
-Load ``index.html`` in your browser to view.
+Load ``index.html`` in your browser to view. Sphinx is configured to
+link directly to the source, so this is an easy way to explore the code.
   
 Getting RSR Running
 ========================
@@ -1729,7 +1744,15 @@ Sometimes debugging test groups can be difficult.
 There is a set of programs which will take the messages
 from a test group and add comments to the messages, showing
 the timestamp when they were received and when any dump was
-done. The general format is: ::
+done. Before using these commands you need to make a
+change in ``fisb-decode/fisb/level0/level0Config.py``.
+Make sure you have already installed all the harvest
+dependencies previously and set the ``ALLOW_DECODE_TEST``
+parameter as follows: ::
+
+  ALLOW_DECODE_TEST = True
+
+The general format is: ::
 
   ./decode-test <test number>
 

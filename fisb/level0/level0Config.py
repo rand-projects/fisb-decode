@@ -102,3 +102,10 @@ DLAC_4BIT_HACK = False
 #: Path to where the test group generated files are
 #: located. Used only when using the --test option.
 GENERATED_TEST_DIR = '../tg/tg-source/generated'
+
+#: If ``True```, allow the ``decode-test`` family of commands to work. 
+#: If this is set, it implies all the harvest prerequisite packages have
+#: been install. If you want to use 'fisb' without installing all of
+#: ``requirements-harvest.txt`` packages (and just the
+#: ``requirements-fisb.txt`` ones), set this to ``False``.
+ALLOW_DECODE_TEST = True

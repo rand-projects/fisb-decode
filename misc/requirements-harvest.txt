@@ -2,8 +2,6 @@ pymongo
 shapely
 tzlocal
 geographiclib
-sphinxcontrib-napoleon
-python-docs-theme
 python-dateutil
 numpy
 GDAL
