@@ -494,6 +494,8 @@ Change ``../db/harvest/harvestConfig.py``: ::
   NOT_INCLUDED_GREEN = 0xDA
   NOT_INCLUDED_BLUE = 0x96
   IMAGE_MAP_CONFIGURATION = 0
+  CLOUDTOP_MAP = 0
+  RADAR_MAP = 0
   
 There are basically two programs to be executed at the same time (eventually
 I will create ``systemd`` scripts for this, but at the beginning it's easier
@@ -1647,7 +1649,7 @@ don't need to be changed.
   EXPUNGE_CHECK_MINUTES = 30
   READ_MESSAGES_FROM_FILE = False
 
-``../fisb/level0/level2Config.py`` ::
+``../fisb/level2/level2Config.py`` ::
 
   METAR_EXPIRATION_MINUTES = 120
   FISB_EXPIRATION_MINUTES = 20
@@ -1656,7 +1658,7 @@ don't need to be changed.
   TWGO_DEFAULT_EXPIRATION_TIME = 61
   BYPASS_TWGO_SMART_EXPIRATION = True
   
-``../fisb/level0/level3Config.py`` ::
+``../fisb/level3/level3Config.py`` ::
 
   PIREP_STORE_LEVEL3 = False
   PRINT_TO_STDOUT = False
