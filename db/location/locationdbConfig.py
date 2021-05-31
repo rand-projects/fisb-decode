@@ -10,4 +10,5 @@ MONGO_URI = 'mongodb://localhost:27017/'
 DECLINATION_DIR = '/tmp'
 
 #: Where the program ``wmm_file`` is located.
-WMM_FILE_HOME = '/home/mbarnes/WMM2020_Linux/bin'
+#: The empty string means it is on your path somewhere.
+WMM_FILE_HOME = ''

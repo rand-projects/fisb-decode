@@ -417,14 +417,12 @@ or other places you don't trust without adding security.
 
 Images in harvest require GDAL and its python bindings to be installed.
 **HOWEVER**, If you will be using QGIS, just install QGIS: **DO NOT** install
-the ``ubuntugis/ppa`` or its associated packages. QGIS will install GDAL as
+the ``gdal-bin`` or ``libgdal-dev``. QGIS will install GDAL as
 part of its installation. If you install both QGIS and the below packages, they
-will conflict. The below packages are needed if you are installing on a headless
+might conflict. The below packages are needed if you are installing on a headless
 server without a window system (i.e. no QGIS), or if you don't want to install QGIS.
 Install the following packages (if you will not be installing QGIS): ::
 
-  sudo add-apt-repository ppa:ubuntugis/ppa
-  sudo apt update
   sudo apt install gdal-bin libgdal-dev
 
 Next you will install various python dependencies.
@@ -460,7 +458,8 @@ already set): ::
   SHOW_MESSAGE_SOURCE = False
   CALCULATE_RSR = False
   DLAC_4BIT_HACK = False
-
+  ALLOW_DECODE_TEST = False
+  
 Level 0 can interact with Mongo to create the ``RSR``
 (Radio Station Reception) message, but we are not
 going to turn it on for now.
@@ -483,7 +482,7 @@ Change ``../db/harvest/harvestConfig.py``: ::
 
   HARVEST_DIRECTORY = '../runtime/harvest'
   MAINT_TASKS_INTERVAL_SECS = 10
-  MONGO_URI = 'mongodb://localhost:27017/' (*change this for your connection*)
+  MONGO_URI = 'mongodb://localhost:27017/' ( *change this for your connection* )
   RETRY_DB_CONN_SECS = 60
   EXPIRE_MESSAGES = True
   ANNOTATE_CRL_REPORTS = True
@@ -501,8 +500,8 @@ Change ``../db/harvest/harvestConfig.py``: ::
   NOT_INCLUDED_GREEN = 0xDA
   NOT_INCLUDED_BLUE = 0x96
   IMAGE_MAP_CONFIGURATION = 0
-  CLOUDTOP_MAP = 0
-  RADAR_MAP = 0
+  CLOUDTOP_MAP = 0          ( *0-4 will work* )
+  RADAR_MAP = 0             ( *0-1 will work* )
   
 There are basically two programs to be executed at the same time (eventually
 I will create ``systemd`` scripts for this, but at the beginning it's easier
@@ -1653,10 +1652,11 @@ don't need to be changed.
   RSR_CALCULATE_EVERY_X_SECS = 1
   RSR_CALCULATE_OVER_X_SECS = 10
   RSR_USE_EXPECTED_PACKET_COUNT = False
-  MONGO_URI = 'mongodb://localhost:27017/' (set for your system)
+  MONGO_URI = 'mongodb://localhost:27017/' ( *set for your system* )
   DLAC_4BIT_HACK = True
   GENERATED_TEST_DIR = '../tg/tg-source/generated'
-
+  ALLOW_DECODE_TEST = True
+  
 ``../fisb/level1/level1Config.py`` ::
 
   SEGMENT_EXPIRE_TIME = 60
@@ -1689,7 +1689,7 @@ don't need to be changed.
 
   HARVEST_DIRECTORY = '../runtime/harvest'
   MAINT_TASKS_INTERVAL_SECS = 10
-  MONGO_URI = 'mongodb://localhost:27017/' (set for your system)
+  MONGO_URI = 'mongodb://localhost:27017/' ( *set for your system* )
   EXPIRE_MESSAGES = True
   ANNOTATE_CRL_REPORTS = True
   PROCESS_IMAGES = True
@@ -1709,6 +1709,8 @@ don't need to be changed.
   NOT_INCLUDED_GREEN = 0xDA
   NOT_INCLUDED_BLUE = 0x96
   IMAGE_MAP_CONFIGURATION = 1
+  CLOUDTOP_MAP = 0
+  RADAR_MAP = 0
 
 You are now ready to run the tests. Running all the tests will take a little
 under 26 hours. Most of the process is like watching paint dry. The tests have to
@@ -1747,7 +1749,7 @@ the timestamp when they were received and when any dump was
 done. Before using these commands you need to make a
 change in ``fisb-decode/fisb/level0/level0Config.py``.
 Make sure you have already installed all the harvest
-dependencies previously and set the ``ALLOW_DECODE_TEST``
+dependencies previously, and set the ``ALLOW_DECODE_TEST``
 parameter as follows: ::
 
   ALLOW_DECODE_TEST = True
@@ -1954,3 +1956,27 @@ directory for processing by harvest. There are a few things to consider:
   ``decodeStratux`` receives. The data then gets converted back to dump978 format
   for processing. The FIS-B data will have no associated time. 'fisb' level 0
   will use the local clock UTC time as the message received time.
+
+Using a Raspberry Pi
+--------------------
+
+A Raspberry Pi in pretty much any configuration will run the 'fisb' code
+without any problems. 'Harvest'-- not so much. Harvest requires MongoDB, and
+MongoDB requires a 64-bit machine. Standard Pi distributions are 32-bit.
+You can install *Ubuntu 20.04 64-bit Server* on the Pi. Just follow the standard
+instructions for the regular Ubuntu 20.04 distributions. Everything will install
+fine.
+
+My experiences running Ubuntu 20.04 Server (no window system) on a 4GB Pi 4
+have not been good. I have gotten kernel panics that are not reproducible.
+Whether this is due to running out of memory, bad power, or a flaky SSD card
+(a.k.a. the usual suspects), is unknown.
+
+At this time my recommendations are:
+
+* No problem for running 'fisb' code on any distribution.
+* Don't use for 'harvest'. Unstable. You need a 64-bit distribution to even try.
+  A Pi 4 with as much memory you can get it with (8GB at present),
+  would be a minimum configuration. Using an external disk might help.
+  The evaluation is incomplete at this point-- more experience and testing is
+  needed.
