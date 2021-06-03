@@ -15,8 +15,8 @@ This implementation roughly follows the DO-358B standard.
   purpose. 'fisb' is a multi-level system that turns binary FIS-B messages
   into fully independent weather messages.
 * The database part of the system ('harvest') creates .tif images,
-  turns vector data into geojson, and manages the FIS-B message-base using
-  mongoDB.
+  turns vector data into geojson, and manages the FIS-B message base using
+  MongoDB.
 
 'fisb-decode' is strictly a back-end 'meat and potatoes' system.
 It does not provide a web-based
@@ -41,16 +41,18 @@ All the comments that follow assume you are using Ubuntu Linux version
 20.04. You can, of course, use other systems, but you will need to
 adapt these instructions to fit them.
 
-After putting the repository where you want it, the next thing is to
+After putting the repository where you want it, the first thing is to
 add a path to the Python code by using ``PYTHONPATH``.
 Create ``PYTHONPATH`` or add to it if it already
 exists. The best way to do this is at shell startup time by adding
 the lines: ::
 
-  PYTHONPATH=/home/<your home>/fisb-decode
+  PYTHONPATH=~/fisb-decode
   export PYTHONPATH
 
-to your ``.bashrc`` in your home directory.
+to your ``.bashrc`` in your home directory. This is assuming you cloned
+'``fisb-decode``' into your home directory. Change the path as needed to
+match your installation.
 
 
 dump978-fa Setup
@@ -92,7 +94,7 @@ These are FIS-B packets. Depending on the type of station you are monitoring,
 you will see one to four of these per second. FIS-B packets are preceded
 with a '``+``'.
 
-If instead, you see sporadic packets starting with '``-``': ::
+If instead, you see smaller, sporadic packets starting with '``-``': ::
 
   -0b28c90b386ab185446c0706013426407105c4e6c4e6c40a3a820300000000000000
   ;rs=43;rssi=-10.8;t=1595572682.219;
@@ -111,8 +113,8 @@ use to capture data.
 Once you are getting solid FIS-B packet reception, try to save some in
 a file for later processing. If you record an hours worth, you will have
 at least one of everything they are sending. A little over an hour will
-get you at least two sets of METARs. All products are transmitted, so
-you should get at least one of everything in a 15 minute interval. More
+get you at least two sets of METARs. Most products are retransmitted, so
+you should get most items in a 15 minute interval. More
 data is always better, so collect as much as you can. Going during bad
 weather times will get you a better regional radar display.
 
@@ -147,32 +149,32 @@ Level 0 takes its data from ``dump978-fa``. The other
 layers take the output from the preceding layer.
 The various levels do the following:
 
-  0. Performs basic decoding. Turns the message into a JSON file which
+  0. Performs basic decoding. Turns the message into a JSON file, which
      for the most part is just a translation of the FIS-B message into
      JSON. No special translations are performed (for the most part).
      *If all you want to do is to see the basic message, you can stop
      here*. There are also configuration settings for seeing all the
      reserved bits of the message (i.e. the parts you're supposed to
      ignore).
-  1. FIS-B contains segmented messages-- where a single FIS-B message
+  1. a) Processes level 0 segmented messages-- where a single FIS-B message
      can't hold an entire payload and the total
-     message is sent as a number of single messages.
-     Also, many messages are really two
+     message is sent as a number of single messages. Those messages are
+     recombined back to a single large message.
+     b) Also, many messages are really two
      part messages: one containing a text portion, and the other containing
      a graphics portion. These are called 'Text With Graphic Overlay (TWGO)'
-     messages.
-     Level 1 combines multi-segmented messages into a single message
-     and processes TWGO message parts together.
+     messages. Level 1 will process these messages according to the
+     standard (more details later).
   2. Breaks apart the FIS-B message and makes a separate set of
      messages. So instead of a FIS-B 413 message type which groups all
      text-based weather reports as one, level 2 provides a message type
      for METARs, PIREPs, TAF, WINDs, etc. Another big part of level two
      is making sense of FAA times and dates. Most FAA products don't have
      complete timestamps. A lot of processing is performed to make sure
-     that all dates are turned into complete ISO-8601 dates.
+     that all dates are turned into complete ISO-8601 timestamps.
      Basically, level 2 gives you the message you *wish* FIS-B sent.
   3. Removes duplicate messages. FIS-B, by design, frequently sends out
-     re-transmitted messages. This level will block repeats and only send out
+     retransmitted messages. This level will block repeats and only send out
      unique messages in some cases. Level 3 doesn't change any message.
      It just helps to decrease the load on harvest. Because of the standard,
      the logic is somewhat complicated. See the level 3 source for more
@@ -215,7 +217,7 @@ Then type: ::
 
   cat ../tg/tg-source/generated/tg30.978 | ./decode0
 
-``tg30.978`` is a local capture from my system that I use a test group
+``tg30.978`` is a local capture from my system that I use as a test group
 (more on test groups later). It represents around 8 minutes of live data.
 What you should see is a whole bunch of messages fly by. Each one looking
 something like: ::
@@ -296,17 +298,20 @@ For level 1 decode type: ::
 The only difference level 1 makes is that any segmented messages are
 grouped together and decoded. Also, TWGO (text with graphic overlay)
 messages that have text and graphic sections will have them matched
-up.
+up and sent. The standard dictates that the text part of TWGO messages
+are immediately sent and the graphics portion is stored until it has
+a matching text portion. When both parts are available, the graphics
+part can be sent out with the text part.
 
-Level 2 messages are totally a different animal.
+Level 2 messages are a totally different animal.
 We don't
 need all the extra detail level 0 can give us for these, so we will turn
-those features off
+those features off.
 
 Make ``../fisb/level0/level0Config.py`` match: ::
 
-  SKIP_EMPTY_FRAMES = True  (*changed*)
-  DETAILED_MESSAGES = False (*changed*)
+  SKIP_EMPTY_FRAMES = True  (changed)
+  DETAILED_MESSAGES = False (changed)
   BLOCK_SUA_MESSAGES = False
   ALLOW_SERVICE_STATUS = True
   ARCHIVE_MESSAGES = False  
@@ -358,7 +363,9 @@ You should see output that looks something like: ::
   }
 
 There is one final level: level 3. It won't change the contents of any
-message-- just suppress re-transmitted duplicates.
+message-- just suppress retransmitted duplicates. However, it is the
+final in the chain of 'levels', so it dictates whether the output goes
+to a file (like for harvest) or to standard output.
 To make sure it is working, change
 its configuration file ``../fisb/level3/level3Config.py`` to: ::
 
@@ -402,7 +409,7 @@ has more dependencies. Harvest (optionally) can use external location
 data from the FAA and World Magnetic Model to add location information
 to PIREPs,  METARs, TAFs, and wind forecasts.
 
-The first step in getting harvest running is to install MongoDb. Download
+The first step in getting harvest running is to install MongoDB. Download
 and install the
 `community version <https://www.mongodb.com/try/download/community>`_
 for your platform. Follow the
@@ -412,12 +419,15 @@ it starts up whenever you reboot.
 Please take note that I use **no security** with Mongo. If you want,
 security you can add it (add security using Mongo commands, then change
 ``MONGO_URI`` in the configuration parameters to add username and password).
-You should not expose the mongo database to the internet
+You should not expose the Mongo database to the internet
 or other places you don't trust without adding security.
 
 Images in harvest require GDAL and its python bindings to be installed.
-**HOWEVER**, If you will be using QGIS, just install QGIS: **DO NOT** install
-the ``gdal-bin`` or ``libgdal-dev``. QGIS will install GDAL as
+**HOWEVER**, If you will be using QGIS
+(QGIS is an open-source
+Geographical Information System viewing program described
+later), just install QGIS: **DO NOT** install
+``gdal-bin`` or ``libgdal-dev``. QGIS will install GDAL as
 part of its installation. If you install both QGIS and the below packages, they
 might conflict. The below packages are needed if you are installing on a headless
 server without a window system (i.e. no QGIS), or if you don't want to install QGIS.
@@ -430,9 +440,7 @@ From the ``bin`` directory type: ::
 
   pip3 install -r ../misc/requirements-harvest.txt
 
-This will load all the python dependencies.
-
-Next we create the databases. There are two: ``fisb`` and ``fisb_location``.
+Now we create the databases. There are two: ``fisb`` and ``fisb_location``.
 ``fisb`` is the main database. ``fisb_location`` is optional and will
 contain location information from FAA sources. We will wait to discuss
 how to fill ``fisb_location`` with data later, but it doesn't hurt to create it. To
@@ -482,7 +490,7 @@ Change ``../db/harvest/harvestConfig.py``: ::
 
   HARVEST_DIRECTORY = '../runtime/harvest'
   MAINT_TASKS_INTERVAL_SECS = 10
-  MONGO_URI = 'mongodb://localhost:27017/' ( *change this for your connection* )
+  MONGO_URI = 'mongodb://localhost:27017/' (change this for your connection)
   RETRY_DB_CONN_SECS = 60
   EXPIRE_MESSAGES = True
   ANNOTATE_CRL_REPORTS = True
@@ -500,8 +508,8 @@ Change ``../db/harvest/harvestConfig.py``: ::
   NOT_INCLUDED_GREEN = 0xDA
   NOT_INCLUDED_BLUE = 0x96
   IMAGE_MAP_CONFIGURATION = 0
-  CLOUDTOP_MAP = 0          ( *0-4 will work* )
-  RADAR_MAP = 0             ( *0-1 will work* )
+  CLOUDTOP_MAP = 0                         (0-4 will work, see source comments)
+  RADAR_MAP = 0                            (0-1 will work, see source comments)
   
 There are basically two programs to be executed at the same time (eventually
 I will create ``systemd`` scripts for this, but at the beginning it's easier
@@ -511,7 +519,7 @@ in server mode.
 
 The first program is ``decodeNetToDir``. This is the same as piping the
 output from ``dump978-fa`` to ``decode``. In this case, ``decode`` is
-now configured to write its output to the directory ``../runtime/harvest``
+now configured to write its output to the directory ``../runtime/harvest``,
 where it will store each level 2 message in its own file. The filename
 has a format such that reading the files in alphabetical order format will read
 the messages in arrival time order.
@@ -532,11 +540,12 @@ In the next type: ::
 
 The third window is for monitoring. Doing a directory in the ``bin`` directory
 will show you if there are any error files. ``decodeNetToDir`` is running
-the standard level 0-3 programs, so any errors will show up in
+the standard level 0-3 programs, so any errors will show up as
 ``LEVEL0.ERR``, ``LEVEL1.ERR``, ``LEVEL2.ERR``, or ``LEVEL3.ERR``.
 Harvest errors will be in ``HARVEST.ERR``. From the monitoring directory
 you can check in the ``../runtime`` directories to look for images and
-files being processed (note: the files are processed very quickly, so
+files being processed (note: the files in
+``../runtime/harvest`` are processed very quickly, so
 this directory will mostly look empty).
 
 Note: When running both ``decodeNetToDir`` and ``harvest``, and you want
@@ -546,23 +555,26 @@ stopping ``decodeNetToDir`` first, ``harvest`` will gobble up any
 unprocessed files and delete them, leaving the intake area clean.
 
 If things seem to be quiet (i.e. the programs are running and no errors
-are being created), the next step is to run mongo and make sure the
+are being created), the next step is to run Mongo and make sure the
 database is filling up appropriately. Type: ::
 
   mongo
 
-  (mongo will babble)
+  (Mongo will babble)
 
   > use fisb
 
-``use fisb`` tells mongo the database to use. You should read up on
-how mongo works, but to check the contents of a database table
-type into mongo ``db.<collection-name>.find().pretty()``.
-``collection-name`` is the name of the mongo collection (i.e. table).
-So to look at the METAR table type ``db.METAR.find().pretty()``.
-You will find that the mongo entries look mostly like the level 2
+``use fisb`` tells Mongo the database to use. You should read up on
+how Mongo works, but to check the contents of a database table
+type into Mongo ``db.<collection-name>.find().pretty()``.
+``collection-name`` is the name of the Mongo collection (i.e. table).
+So to look at the METAR table, type: ::
+
+  db.METAR.find().pretty()
+  
+You will find that the Mongo entries look mostly like the level 2
 messages except the ``unique_name`` in level 2 is now ``_id`` in
-mongo (its primary key), and level 2 ``geometry`` fields are now
+Mongo (its primary key), and level 2 ``geometry`` fields are now
 ``geojson``. There are other changes, but those are the main ones.
 
 Here are the collection names and what they contain:
@@ -647,9 +659,9 @@ Next, install the Python requirements from the ``bin`` directory as: ::
 
   pip3 install -r ../misc/requirements-sphinx.txt
 
-Then: ::
+Then (assuming 'fisb-decode' was cloned in your home directory): ::
 
-  cd <your path>/fisb-decode/docs
+  cd ~/fisb-decode/docs
   ./makedocs
   
 The html documentation will be found in ``fisb-decode/docs/build/html``.
@@ -689,11 +701,7 @@ start ``mongo`` and have the following dialog: ::
   {
 	"_id" : "RSR",
 	"stations" : {
-		"40.0383~-86.255593" : [
-			90,
-			3,
-			100
-		]
+		"40.0383~-86.255593" : [90, 3, 100]
 	}
   } 
   >
@@ -869,11 +877,24 @@ your home directory. It will be placed in the ``WMM2020_Linux`` sub-folder.
 are interested in. ``wmm_file`` and ``WMM.COF``.
 ``wmm_file`` isn't set up as an executable, so ``chmod ugo+x wmm_file`` to
 make it one.
-Either add the WMM bin directory
+Either add the ``WMM2020_Linux/bin`` directory
 to your path, or place ``wmm_file``  in ``/usr/local/bin`` or someplace where
 the system
-will find it. It runs fine on Ubuntu 20.04 as is. If you run into issues, you
-can compile the ``.c`` source easily.
+will find it. It runs fine on Ubuntu 20.04 as is. If you run into issues
+(like you are using a Raspberry Pi), you
+can change the the source directory and type ``make`` to build from
+sources.
+
+Assuming your 'fisb-decode' clone is in your home directory, and
+``WMM2020_Linux.tar.gz`` is in the ``~/Downloads`` folder,
+the commands will look like this: ::
+
+  cd ~
+  tar -xvzf ~/Downloads/WMM2020_Linux.tar.gz 
+  cd WMM2020_Linux/bin
+  chmod ugo+x wmm_file 
+  sudo cp wmm_file /usr/local/bin
+  cp WMM.COF ~/fisb-decode/bin
 
 The ``WMM.COF`` **HAS TO** be copied
 to the ``fisb-decode/bin`` directory. Once we are done filling the location
@@ -938,7 +959,7 @@ My output with the ``.csv`` files in my home directory looks like: ::
 
    Processed 1355 lines
 
-You can use mongo to check out the new collections. Be sure to
+You can use Mongo to check out the new collections. Be sure to
 ``use fisb_location`` as your database. The new collections are
 ``AIRPORTS``, ``DESIGNATED_POINTS`` and ``NAVAIDS``.
 
@@ -955,7 +976,7 @@ To see the changes more easily, wipe the ``fisb`` database
 
   mongo ../db/scripts/createFisb.js
 
-Then start ``harvest`` and ``decodeNetToDir``. You can run mongo
+Then start ``harvest`` and ``decodeNetToDir``. You can run Mongo
 to look at the tables ``METAR``, ``TAF``, ``WINDS_06_HR``,
 ``WINDS_12_HR``, and ``WINDS_24_HR``. Pretty much all the them
 will have ``geojson`` tags with locations. Also look at the ``PIREP`` table.
@@ -997,7 +1018,9 @@ removed. Other images, like radar, can combine old images with new images, but
 the older image can't be more than 10 minutes older than the newest image.
 
 One interesting fact about FIS-B images is that most are not rectangles.
-Some are almost rectangles. NEXRAD-CONUS might be a rectangle. NEXRAD-REGIONAL
+NEXRAD-CONUS is a rectangle.
+Some are almost rectangles.
+NEXRAD-REGIONAL
 and LIGHTNING are poly-sided shapes approximating a circle. I bring this up, because
 to harvest, all images are rectangles. When harvest is making an image, it looks
 to see what the smallest bounding box would be (i.e. biggest and smallest
@@ -1074,26 +1097,26 @@ When you start QGIS you should get a screen that looks like (after a splash scre
 
 .. image:: images/aa1.png
 
-On the far left hand side, you see an item called ``XYZ Tiles``.
-Click on the down-arrow to the left of ``XYZ Tiles``
-and the ``OpenStreetMap`` label will appear. Double-click on ``OpenStreetMap``.
+On the far left hand side, you see an item called '``XYZ Tiles``'.
+Click on the down-arrow to the left of '``XYZ Tiles``'
+and the '``OpenStreetMap``' label will appear. Double-click on '``OpenStreetMap``'.
 Your screen should now look like this:
 
 .. image:: images/ab1.png
 
-At the very top of the screen select ``Layer``, then ``Add Layer``, and then
-``Add Raster Layer...``. You will then get a pop-up window that looks like:
+At the very top of the screen select '``Layer``', then '``Add Layer``', and then
+'``Add Raster Layer...``'. You will then get a pop-up window that looks like:
 
 .. image:: images/ac1.png
 
-Under ``Source`` and to the
-right of ``Raster dataset(s)`` click the 3 dots '``...``' to bring
+Under '``Source``' and to the
+right of '``Raster dataset(s)``' click the 3 dots '``...``' to bring
 up a file dialog. Find an image file in the ``fisb-decode/runtime/images``
 directory. In this example I chose ``NEXRAD_CONUS.tif``. Click the ``Open`` button
 on the top right of the file dialog and you will be returned back to the raster
-dialog box. Click ``Add`` in the bottom right corner (your selected filename should
-be in the box to the right of the ``Raster dataset(s)`` line)
-and then click ``Close``. Your screen will
+dialog box. Click '``Add``' in the bottom right corner (your selected filename should
+be in the box to the right of the '``Raster dataset(s)``' line)
+and then click '``Close``'. Your screen will
 now look something like:
 
 .. image:: images/ad.png
@@ -1140,7 +1163,7 @@ If you have any vector data, your ``bin`` directory will suddenly have lots of
 
 Ugly huh? Doing a vector dump is something that doesn't happen very often in real
 life, so I just put the files in the current directory
-(``bin`` in this case) and you should ``rm *.csv`` when you are
+(``bin`` in this case) and you should '``rm *.csv``' when you are
 done.
 
 The vector files all start with ``V-`` then the item the vector is for.
@@ -1155,33 +1178,33 @@ both polygons and linestrings, but each type needs to be in a different file.
 The files produced are ``.csv`` files and each line is its own object in
 something called WKT (Well Known Text) format.
 
-Vectors in QGIS are trickier than raster (``.tif``) images.
-To load a vector file, start up QGIS, double click on ``OpenStreetMap`` just
-like you did for raster files. Now select ``Layer`` at the top of the
-screen. Select ``Add Layer`` and then ``Add delimited text layer...``.
+Vectors in QGIS are trickier to display than raster (``.tif``) images.
+To load a vector file, start up QGIS, double click on '``OpenStreetMap``' just
+like you did for raster files. Now select '``Layer``' at the top of the
+screen. Select '``Add Layer``' and then '``Add delimited text layer...``'.
 You should now have a screen that looks like:
 
 .. image:: images/ba1.png
 
-The screen you will initially see has the ``Record and Fields Options`` and
-``Geometry Definition`` sections collapsed. Click of the
+The screen you will initially see has the '``Record and Fields Options``' and
+'``Geometry Definition``' sections collapsed. Click of the
 arrows to the left of them to expand them. Don't worry about
-``Layer Settings``.
+'``Layer Settings``'.
 
 Unlike the raster screen where we didn't care about anything other than the file
 name, on this screen you need to make sure **EVERYTHING** on the screen
 below matches. Change the screen as needed.
 In particular make sure that:
 
-* In ``File Format``, select ``Custom delimiters``. Make sure ``Tab`` is
+* In '``File Format``', select '``Custom delimiters``'. Make sure '``Tab``' is
   selected.
-* For ``Record and Fields Options``, **unselect** ``First record has field names``.
-* Number of header lines to disgard is ``0``.
-* Geometry Definition has ``Well known text`` selected and
-  ``Geometry CRS`` is ``Default CRS: EPSG:4326 - WGS 84`` (you will need
+* For '``Record and Fields Options``', **unselect** '``First record has field names``'.
+* Number of header lines to disgard is '``0``'.
+* Geometry Definition has '``Well known text``' selected and
+  '``Geometry CRS``' is '``Default CRS: EPSG:4326 - WGS 84``' (you will need
   to click the drop down arrow to find this option).
-* Geometry type has ``Detect`` selected.
-* Don't worry about ``Layer Settings``.
+* Geometry type has '``Detect``' selected.
+* Don't worry about '``Layer Settings``'.
 
 You only have to do make these changes once.
 From here on every time you open up a vector file, the settings will be the last
@@ -1191,55 +1214,55 @@ Your screen should look like:
 .. image:: images/bb1.png
 
 Once you changed the settings, select the filename just like you did with
-a raster file. Click the ``...`` for the ``File name`` field. Select the
-file, then click on ``Open`` at the top right of the dialog.
-Now click on ``Add``, then click on ``Close``. Now your screen should
+a raster file. Click the '``...``' for the '``File name``' field. Select the
+file, then click on '``Open``' at the top right of the dialog.
+Now click on '``Add``', then click on '``Close``'. Now your screen should
 resemble:
 
 .. image:: images/bc.png
 
 The data is there, but it's just a mass of solid color. Let's change it to an
-outline form. First, bring up the ``Layer Styling`` panel.
-In the top menu bar select ``View`` then ``Panels`` then click the
-check-mark next to ``Layer Styling``. The panel will appear on the right
+outline form. First, bring up the '``Layer Styling``' panel.
+In the top menu bar select '``View``' then '``Panels``' then click the
+check-mark next to '``Layer Styling``'. The panel will appear on the right
 side of the screen, but is not wide enough. Grab the left hand margin of the
 panel and extend it a bunch. It should look like:
 
 .. image:: images/bd1.png
 
-Your attention from here on out is on the ``Layer Styling`` panel.
+Your attention from here on out is on the '``Layer Styling``' panel.
 You should see a bunch of rectangles. Click on the one with the
-red border called ``outline red``
-(``outline green`` or ``outline blue`` works
+red border called '``outline red``'
+('``outline green``' or '``outline blue``' works
 just as well). Now your screen should approximate:
 
 .. image:: images/be1.png
 
 Well, we have outlines, but that didn't make things any clearer.
 Next let's make each outline a different color.
-Near the top right side is a drop-down box that has ``Single Symbol`` as its default.
-Click the arrow on the right side of the box and select ``Categorized``. Once
+Near the top right side is a drop-down box that has '``Single Symbol``' as its default.
+Click the arrow on the right side of the box and select '``Categorized``'. Once
 you do that, your vectors will disappear. Don't fret. Right underneath
-the ``Categorized`` drop-down is another one labeled ``Value``. Click on its
-arrow and select ``abc field_1``. Then, a little bit further down the right
-side of the screen is a button labeled ``Classify``. Click on it. Voila!
+the '``Categorized``' drop-down is another one labeled '``Value``'. Click on its
+arrow and select '``abc field_1``'. Then, a little bit further down the right
+side of the screen is a button labeled '``Classify``'. Click on it. Voila!
 Your vectors are back, each in a different color. It should resemble:
 
 .. image:: images/bf1.png
 
 Last step is to add some labels. On the left side of the
-``Layer Styling`` panel,
+'``Layer Styling``' panel,
 you will see some icons. There
-are two that say ``abc``. You want the yellow top one, not the white one.
-Click on it. There should now be a drop-down label that says ``No Labels``.
-Click its drop-down arrow and select ``Single Labels``. Now you have labels.
+are two that say '``abc``'. You want the yellow top one, not the white one.
+Click on it. There should now be a drop-down label that says '``No Labels``'.
+Click its drop-down arrow and select '``Single Labels``'. Now you have labels.
 But they are not in the best place. You should see menu of icons underneath
 where
-it says ``Value`` with the contents ``abc field_1``.
+it says '``Value``' with the contents '``abc field_1``'.
 Select the 8th icon over that is 4 green arrows pointing N, S, E, W.
-You should see the ``Placement`` screen. Underneath that is a drop down box
-labeled ``Mode`` with its value ``Around Centroid``. Select its drop-down arrow
-and select ``Using Perimeter``. There are no great label
+You should see the '``Placement``' screen. Underneath that is a drop down box
+labeled '``Mode``', with its value '``Around Centroid``'. Select its drop-down arrow
+and select '``Using Perimeter``'. There are no great label
 placement settings, but that's usually the best. Zooming in will usually help.
 
 Don't worry too much about what the label says, it's meant for debugging, not
@@ -1253,10 +1276,10 @@ Okay, you can now load vectors into QGIS. Congrats!
 Try other files, such as files with linestrings (G-AIRMET) or points (NOTAM,
 METAR, etc).
 
-If you ever want to save an image of a map, you can select ``Project``
-from the menu at the top of the screen. Then ``Import/Export`` followed by
-``Export Map to Image...``. You can make some image adjustments, but usually
-I just click on ``Save``. Then you can select the file format and where to save
+If you ever want to save an image of a map, you can select '``Project``'
+from the menu at the top of the screen. Then '``Import/Export``' followed by
+'``Export Map to Image...``'. You can make some image adjustments, but usually
+I just click on '``Save``'. Then you can select the file format and where to save
 it. I added the linestring G-AIRMET that accompanied the polygon G-AIRMET
 and did all the steps we did above to get
 the following image:
@@ -1321,7 +1344,7 @@ here. This means to add 30 or subtract 30 seconds from the trigger time of
 72393 before actually doing the trigger. We do this because instructions
 for many of the test groups say things like 'check for this before 72393
 seconds and then check for that after 72393 seconds'. This lets us keep
-using the time in the instructions, but modify time times slightly to
+using the time in the instructions, but modify times slightly to
 accomplish the tasks. The ``1`` is just a sequence number. This is used
 to create the correct dump sub-directory. We will get to that in a moment.
 The string field at the end is just a message that is printed when the
@@ -1392,7 +1415,7 @@ The value after the tilde is the time as noted in the documentation, followed
 by a positive or negative offset. This is helpful, since when you are following
 along with a test, it's most useful to reference the number in the documentation.
 
-``NOTAM_TFR.db`` is an augmented dump of the mongo ``NOTAM_TFR`` table. Some tables
+``NOTAM_TFR.db`` is an augmented dump of the Mongo ``NOTAM_TFR`` table. Some tables
 that have ``start_time`` and ``stop_time`` fields have an added ``status``
 field to tell you if the the message is ``active``, ``pending activation``,
 or ``expired``. This is based on the current time of the dump. Since this
@@ -1517,14 +1540,14 @@ quickly (40 seconds).
 If there are no planes being followed, no service station packets will be
 created. When there are a lot of planes being followed, FIS-B will send out
 messages that do not list all planes, but rather a subset. Harvest keeps
-a list of all planes and this message will report all current planes.
+a list of all planes, and this message will report all current planes.
 
 Backing Up and Restoring Config Files
 -------------------------------------
 
 Running the test groups from the standard body requires many configuration
 file changes. Provided are a couple of simple scripts for backing up and
-restoring all your config files. These are simple tar scripts and will work
+restoring all your config files. These are simple ``tar`` scripts and will work
 fine on most Linux systems. They provide a simple method for switching
 between various configurations.
 
@@ -1573,32 +1596,7 @@ Linux downloads can be `found here <https://www.7-zip.org/download.html>`_.
 **7zz will be happier if you rename (or make a copy of) the file you downloaded
 to a new filename without any spaces in the name.**. Do this before running the following
 procedure.
-The basic procedure goes something like this (paraphrased): ::
-
-  cd <your path>/fisb-decode/tg/tg-source/imported
-  7zz x <no-spaces-file-you-got> (should not be in the tg-source/imported directory)
-
-  # You will now have 27 zip files with names like TG21.zip
-
-  # Make all the directories
-  mkdir TG01 TG02 ... TG27
-
-  cd TG01
-  7zz x ../TG01.zip
-  cd ..
-
-  # Repeat the above for TG02 ... TG27
-
-  # At the end clean up
-  rm *.zip
-
-  # Should give you these files when done.
-  ls
-  README.txt TG02  TG04  TG06  TG08  TG10  TG12  TG14  TG16  TG18  TG20  TG22  TG24
-  TG26       TG01  TG03  TG05  TG07  TG09  TG11  TG13  TG15  TG17  TG19  TG21  TG23
-  TG25       TG27
-
-Alternatively, from the ``bin`` directory (and assuming a Linux system that has ``7zz``
+From the ``bin`` directory (and assuming a Linux system that has ``7zz``
 installed (and you removed spaces from the filename)), you can run: ::
 
   ./install-imported-tg <your tg-file without spaces>
@@ -1632,7 +1630,7 @@ Up to this point, we have been gradually adding features to 'fisb' and
 I highly suggest you look at the previous section and do a backup of the
 config files. The configuration for testing is only really used for testing,
 so once you make all the changes, you probably want to make a backup of the
-testing configuration. You will be switching back and forth occasionally between a
+testing configuration. You might be switching back and forth occasionally between a
 normal config and a test config, so having backups of both sets is a good idea.
 
 What follows are changes to the config files for testing (referenced
@@ -1740,10 +1738,10 @@ this command the error files will be placed in the ``../tg/results/tg<nn>``
 folder, where ``<nn>`` is the number of the test. ``tg15`` is the only test
 where an error is expected and normal.
 
-Debugging Test Groups with ``./decode-test`` (and friends)
-----------------------------------------------------------
+Debugging Test Groups with ``./decode-test``
+--------------------------------------------
 Sometimes debugging test groups can be difficult.
-There is a set of programs which will take the messages
+There is a set of scripts which will take the messages
 from a test group and add comments to the messages, showing
 the timestamp when they were received and when any dump was
 done. Before using these commands you need to make a
@@ -1967,16 +1965,26 @@ You can install *Ubuntu 20.04 64-bit Server* on the Pi. Just follow the standard
 instructions for the regular Ubuntu 20.04 distributions. Everything will install
 fine.
 
-My experiences running Ubuntu 20.04 Server (no window system) on a 4GB Pi 4
-have not been good. I have gotten kernel panics that are not reproducible.
+My experiences with 'harvest' on a 4GB Pi 4 running
+Ubuntu 20.04 Server (no window system)
+have not been good. The system runs fine for 24 hours, but before
+3 days the system either throws a kernel panic, or just becomes
+unresponsive.
 Whether this is due to running out of memory, bad power, or a flaky SSD card
-(a.k.a. the usual suspects), is unknown.
+(a.k.a. the usual suspects), is unknown. As of this writing, MongoDB is
+suppored on ARM64 platforms for Ubuntu only, not the in-development 64-bit
+Rasperry Pi kernel.
+
+Running 'fisb' and 'harvest' (with MongoDB) does not use very many resources.
+On a 4GB Pi, available memory is more than 3GB at all times and system
+run times are always under 5%. This is with a Transcend 32GB SDHC UHS
+Speed Class 1 SD card (i.e. not the greatest).
 
 At this time my recommendations are:
 
-* No problem for running 'fisb' code on any distribution.
-* Don't use for 'harvest'. Unstable. You need a 64-bit distribution to even try.
-  A Pi 4 with as much memory you can get it with (8GB at present),
-  would be a minimum configuration. Using an external disk might help.
-  The evaluation is incomplete at this point-- more experience and testing is
-  needed.
+* No problem when running 'fisb' code on any distribution.
+* Don't use for 'harvest'. Unstable. You need a 64-bit Ubuntu
+  distribution to even try.
+
+The evaluation is incomplete at this point-- more experience and testing is
+needed.

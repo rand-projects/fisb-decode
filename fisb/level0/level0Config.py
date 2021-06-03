@@ -108,4 +108,6 @@ GENERATED_TEST_DIR = '../tg/tg-source/generated'
 #: been install. If you want to use 'fisb' without installing all of
 #: ``requirements-harvest.txt`` packages (and just the
 #: ``requirements-fisb.txt`` ones), set this to ``False``.
+#: The only reason for having this setting is that if you are NOT
+#: using harvest, you will get dependency exceptions.
 ALLOW_DECODE_TEST = True
