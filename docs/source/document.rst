@@ -1316,6 +1316,12 @@ that they arrived originally.
 If, at the time the packets were captured, one packet was received 3 seconds after
 the first, trickle will also wait 3 seconds before sending the next packet.
 
+If you are a really astute system watcher, you will note that after trickle has
+finished reading packets, but before harvest does its last dump, the trickle process
+will become a 'zombie' process. Don't worry about this. When harvest finishes, or
+is terminated, the zombie process will go away. For many tests that wait around before
+making a final check, this might be an hour or more.
+
 The ``.978`` files with the FIS-B packets are stored in the
 ``fisb-decode/tg/tg-source/generated/`` directory. The filename with packets is just
 the name of the test group with a ``.978`` extension. So test group 28's
