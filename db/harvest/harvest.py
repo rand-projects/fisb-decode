@@ -310,7 +310,8 @@ def updateLegendCollection():
     
     dbConn.LEGEND.replace_one( \
             { '_id': 'LEGEND'}, \
-            legendDict)
+            legendDict, \
+            upsert=True)
 
 def harvest(tgTestNumber):
     """Main function for Harvest. Process messages.
