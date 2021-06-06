@@ -12,7 +12,7 @@ class MsgMETAR(MsgBase):
         # 'type' handled
         super().__init__(['METAR'], 'METAR')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store METAR message.
 
         If ``cfg.TEXT_WX_LOCATION_SUPPORT`` is ``True`` will attempt to add
@@ -23,6 +23,9 @@ class MsgMETAR(MsgBase):
               to the ``METAR`` collection.
         """
         pkey = msg['unique_name']
+
+        if self.processChanges('METAR', pkey, digest):
+            return
 
         # Augment with location if desired.
         if cfg.TEXT_WX_LOCATION_SUPPORT:

@@ -15,7 +15,7 @@ class MsgG_AIRMET(MsgBase):
         super().__init__(['G_AIRMET_00_HR', 'G_AIRMET_03_HR', 'G_AIRMET_06_HR'], \
                          'G_AIRMET')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store G-AIRMET message to database.
 
         If ``cfg.IMMEDIATE_CRL_UPDATE`` is ``True``, will also
@@ -27,6 +27,9 @@ class MsgG_AIRMET(MsgBase):
               to the ``G_AIRMET`` collection.
         """
         pkey = msg['unique_name']
+
+        if self.processChanges('G_AIRMET', pkey, digest):
+            return
 
         # Convert to geojson
         msg = self.geometryToGeojson(msg)

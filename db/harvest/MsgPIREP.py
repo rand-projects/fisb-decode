@@ -12,7 +12,7 @@ class MsgPIREP(MsgBase):
         # 'type' handled
         super().__init__(['PIREP'], 'PIREP')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store PIREP message.
 
         If ``cfg.PIREP_LOCATION_SUPPORT`` is ``True`` will attempt to add
@@ -23,6 +23,9 @@ class MsgPIREP(MsgBase):
               to the ``PIREP`` collection.
         """        
         pkey = msg['unique_name']
+
+        if self.processChanges('PIREP', pkey, digest):
+            return
 
         # Augment with location if desired.
         if cfg.PIREP_LOCATION_SUPPORT:

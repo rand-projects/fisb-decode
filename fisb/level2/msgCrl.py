@@ -111,6 +111,7 @@ def msgCrl(rcvdTime, frame, station):
         reportList.append(uniqueName + reportType)
 
     newMsg['reports'] = reportList
+    newMsg['no_msg_digest'] = 't'
     newMsg['expiration_time'] = expirationTime
     
     return newMsg

@@ -12,7 +12,7 @@ class MsgWINDS_06_HR(MsgBase):
         # 'type' handled
         super().__init__(['WINDS_06_HR'], 'WINDS_06_HR')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store WINDS_06_HR message.
 
         If ``cfg.TEXT_WX_LOCATION_SUPPORT`` is ``True`` will attempt to add
@@ -23,6 +23,9 @@ class MsgWINDS_06_HR(MsgBase):
               to the ``WINDS_06_HR`` collection.
         """        
         pkey = msg['unique_name']
+
+        if self.processChanges('WINDS_06_HR', pkey, digest):
+            return
 
         # Augment with location if desired.
         if cfg.TEXT_WX_LOCATION_SUPPORT:

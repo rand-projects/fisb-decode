@@ -10,7 +10,7 @@ class MsgCANCEL_G_AIRMET(MsgBase):
         # 'type' handled
         super().__init__(['CANCEL_G_AIRMET'], None)
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Cancel G_AIRMET message.
 
         The ``unique_name`` field of the level2 message is the same as
@@ -20,5 +20,10 @@ class MsgCANCEL_G_AIRMET(MsgBase):
         Args:
             msg (dict): Level2 message with G_AIRMET cancellation.
         """        
+
+        pkey = msg['unique_name']
+
+        self.processChanges('G_AIRMET', pkey, digest, True)
+
         # Remove from G_AIRMET collection
-        self.dbConn['G_AIRMET'].delete_one({ '_id': msg['unique_name']})
+        self.dbConn['G_AIRMET'].delete_one({ '_id': pkey})

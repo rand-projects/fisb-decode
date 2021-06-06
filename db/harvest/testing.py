@@ -293,6 +293,17 @@ def datetimeNow():
     else:
         return datetime.now(timezone.utc)
 
+def timestampNow():
+    """Return 'current' timestamp. Timestamp is the number of seconds and
+    fractions of a second. If running a test, this is in 'message time'.
+
+    Returns:
+        float: Result of ``datetime.now(timezone.utc).timestamp()``
+        Will be the current time if not running a test, or 'message time'
+        if running a test.
+    """
+    return datetimeNow().timestamp()
+
 def checkForTrigger():
     """Called periodically to see if it's time to do a trigger.
 

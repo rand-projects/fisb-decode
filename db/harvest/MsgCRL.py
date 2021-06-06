@@ -155,7 +155,7 @@ class MsgCRL(MsgBase):
 
         return newReportList
 
-    def processMessage(self, msg):
+    def processMessage(self, msg, _):
         """Place CRL messages in the database.
 
         Place CRL message in the database. If configured, will annotate the

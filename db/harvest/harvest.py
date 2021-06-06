@@ -5,7 +5,7 @@
 """
 
 import sys, os, json, time, argparse, traceback, glob
-import dateutil.parser, subprocess, pprint
+import dateutil.parser, subprocess, pprint, hashlib
 from datetime import datetime, timezone
 from pymongo import MongoClient
 from pymongo import errors
@@ -60,6 +60,11 @@ msgHandlerList = [MsgMETAR(), MsgTAF(), MsgCRL(), MsgPIREP(), \
                   MsgSIGWX(), MsgCANCEL_G_AIRMET(), MsgCANCEL_CWA(), \
                   MsgFIS_B_UNAVAILABLE(), msgBLOCK]
 
+# List of tables that are used in CHANGES (excluding BLOCK images)
+CHANGES_COLLECTIONS = ['METAR', 'TAF', 'PIREP', 'SUA', 'WINDS_06_HR', \
+    'WINDS_12_HR', 'WINDS_24_HR', 'NOTAM', 'NOTAM_TFR', 'SIGWX', \
+    'G_AIRMET', 'FIS_B_UNAVAILABLE']
+    
 # ------- End of globals
 
 def createMsgHandlerDict():
@@ -213,6 +218,7 @@ def processMessage(msg, currentUtc):
         # Rarely, we get '' for msg. Skip these.
         if msg == '':
             return
+
         msgDict = json.loads(msg)
 
         # Change any _time fields from ISO strings to datetime
@@ -230,11 +236,20 @@ def processMessage(msg, currentUtc):
                     print()
                     return
 
+        # See if we need to make a message digest of this message.
+        # We don't make message digests for block messages, service_status,
+        # and CRL messages. Message digests are only stored in CHANGES and
+        # used to see if we are being sent a new message, or just a 
+        # retransmission.
+        digest = None
+        if not 'no_msg_digest' in msgDict:
+            digest = hashlib.sha224(str.encode(msg)).hexdigest()
+            
         # Dispatch and process the message
         msgType = msgDict['type']
 
         if msgType in msgHandlerDict:
-            msgHandlerDict[msgType].processMessage(msgDict)
+            msgHandlerDict[msgType].processMessage(msgDict, digest)
             
     except errors.ConnectionFailure as _:
         dbConnect()
@@ -244,6 +259,13 @@ def processMessage(msg, currentUtc):
         errList = traceback.format_exc(limit=10)
         errStr = errList.replace("\n", "\n# ")
         dumpRecord(errStr, msg)
+
+def cleanChanges():
+    """Remove all entries from CHANGES collection older than 30 minutes.
+    """
+    # Delete all entries from CHANGES > 30 minutes old
+    oldestTime = test.timestampNow() - (30 * 60)
+    dbConn.CHANGES.delete_many({'ts': {'$lt': oldestTime}})
 
 def doMaintTasks(maintCounter):
     """Performs periodic maintenance tasks.
@@ -278,17 +300,49 @@ def doMaintTasks(maintCounter):
 
         #-------------------------------------
         # ** TASKS TO RUN EVERY 2 INTERVALS **
+        # ** Normally 20 seconds            **
         if (maintCounter % 2) == 0:
             pass
 
         #-------------------------------------
         # ** TASKS TO RUN EVERY 3 INTERVALS **
+        # ** Normally 30 seconds            **
         if (maintCounter % 3) == 0:
             pass
 
         #-------------------------------------
-        # ** TASKS TO RUN EVERY 4 INTERVALS **
-        if (maintCounter % 4) == 0:
+        # ** TASKS TO RUN EVERY 6 INTERVALS **
+        # ** Normally 60 seconds            **
+
+        if (maintCounter % 6) == 0:
+            pass
+
+        #-------------------------------------
+        # ** TASKS TO RUN EVERY 6 INTERVALS **
+        # ** Normally 5 minutes             **
+
+        if (maintCounter % 30) == 0:
+            pass
+
+        #-------------------------------------
+        # ** TASKS TO RUN EVERY 6 INTERVALS **
+        # ** Normally 10 minutes            **
+
+        if (maintCounter % 60) == 0:
+            pass
+
+        #--------------------------------------
+        # ** TASKS TO RUN EVERY 180 INTVLS   **
+        # ** Normally 30 minutes             **
+
+        if (maintCounter % 180) == 0:
+            cleanChanges()
+
+        #--------------------------------------
+        # ** TASKS TO RUN EVERY 360 INTVLS   **
+        # ** Normally 1 hour                 **
+
+        if (maintCounter % 360) == 0:
             pass
 
         return maintCounter + 1
@@ -312,6 +366,10 @@ def updateLegendCollection():
             { '_id': 'LEGEND'}, \
             legendDict, \
             upsert=True)
+
+def initiateChangesCollection():
+    # Empty collection
+    dbConn.CHANGES.delete_many({})
 
 def harvest(tgTestNumber):
     """Main function for Harvest. Process messages.
@@ -361,6 +419,9 @@ def harvest(tgTestNumber):
                     msgHandlerDict['NEXRAD_CONUS'])
         isTesting = True
 
+    # Delete and recreate the CHANGES collection
+    initiateChangesCollection()
+    
     try:
         # Any exceptions in this part will just fail and exit.
         # If anything fails here, there is little to do to recover.

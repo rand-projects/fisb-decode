@@ -10,7 +10,7 @@ class MsgSUA(MsgBase):
         # 'type' handled
         super().__init__(['SUA'], 'SUA')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store SUA message.
 
         Args:
@@ -18,6 +18,9 @@ class MsgSUA(MsgBase):
               to the ``SUA`` collection.
         """       
         pkey = msg['unique_name']
+
+        if self.processChanges('SUA', pkey, digest):
+            return
 
         # Remove redundant keys
         del msg['unique_name']

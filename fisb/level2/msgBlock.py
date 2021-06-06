@@ -234,6 +234,7 @@ def emptyBlockMessages(blockNumber, scale_factor, \
             isAbove60Deg, _ = normalizeBins(altBlockNumber, scale_factor, '0')
             newMsg['bins'] = emptyBins
             newMsg[dateLabel] = eventDate
+            newMsg['no_msg_digest'] = 't'
             newMsg['expiration_time'] = expirationDate
             msgList.append(newMsg)        
 
@@ -395,6 +396,7 @@ def msgBlock(contents, productId, \
         isAbove60Deg, bins = normalizeBins(altBlockNumber, scale_factor, \
                         contents['bins'])
         newMsg['bins'] = bins[0]
+        newMsg['no_msg_digest'] = 't'
 
         newMsg[dateLabel] = eventDate
         newMsg['expiration_time'] = expirationDate

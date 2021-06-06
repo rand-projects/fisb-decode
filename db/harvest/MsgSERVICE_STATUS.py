@@ -21,7 +21,7 @@ class MsgSERVICE_STATUS(MsgBase):
         
         self.planes = {}
 
-    def processMessage(self, msg):
+    def processMessage(self, msg, _):
         """Store ``SERVICE_STATUS`` message information to database
         combined with other current information.
 

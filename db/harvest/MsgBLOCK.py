@@ -325,7 +325,7 @@ class MsgBLOCK(MsgBase):
         
         return imgDict
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, _):
         """Called by Harvest to process a message containing image data.
 
         Places image data in the appropriate ``imageDict`` entry and

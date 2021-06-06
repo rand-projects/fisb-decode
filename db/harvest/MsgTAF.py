@@ -12,7 +12,7 @@ class MsgTAF(MsgBase):
         # 'type' handled
         super().__init__(['TAF'], 'TAF')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store TAF message.
 
         If ``cfg.TEXT_WX_LOCATION_SUPPORT`` is ``True`` will attempt to add
@@ -23,6 +23,9 @@ class MsgTAF(MsgBase):
               to the ``TAF`` collection.
         """        
         pkey = msg['unique_name']
+
+        if self.processChanges('TAF', pkey, digest):
+            return
 
         # Augment with location if desired.
         if cfg.TEXT_WX_LOCATION_SUPPORT:

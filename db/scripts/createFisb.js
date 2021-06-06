@@ -32,3 +32,5 @@ db.createCollection('G_AIRMET')
 db.createCollection('FIS_B_UNAVAILABLE')
 db.createCollection('RSR')
 db.createCollection('LEGEND')
+db.createCollection('CHANGES')
+db.CHANGES.createIndex( { time: 1}, { unique:false} );

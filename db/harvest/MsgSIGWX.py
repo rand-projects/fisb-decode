@@ -14,7 +14,7 @@ class MsgSIGWX(MsgBase):
         super().__init__(['AIRMET', 'SIGMET', 'WST', 'CWA'], \
                          'SIGWX')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store ``AIRMET``, ``SIGMET``, ``WST``, and ``CWA``
         messages to database.
 
@@ -27,6 +27,9 @@ class MsgSIGWX(MsgBase):
               to the ``SIGWX`` collection.
         """        
         pkey = msg['unique_name']
+
+        if self.processChanges('SIGWX', pkey, digest):
+            return
 
         # Convert to geojson
         msg = self.geometryToGeojson(msg)

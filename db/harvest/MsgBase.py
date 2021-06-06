@@ -122,6 +122,32 @@ class MsgBase(ABC):
         """
         return self.typesList
 
+    def processChanges(self, collection, id, digest, cancel = False):
+      # Create id for message
+      changesId = collection + '-' + id
+
+      changesEntry = self.dbConn.CHANGES.find_one({'_id': changesId})
+
+      if changesEntry is not None:
+        # See if the digests match
+        if changesEntry['digest'] == digest:
+          # Yes, duplicate. Just return True
+          return True
+
+      # We have either a new entry or a changed entry.
+      changesNewEntry = {'_id': changesId, \
+        'digest': digest, \
+        'time': test.datetimeNow() }
+      
+      if cancel:
+        changesNewEntry['cancel'] = True
+      
+      self.dbConn.CHANGES.replace_one({'_id': changesId}, \
+        changesNewEntry, \
+        upsert=True)
+
+      return False
+          
     def createFeatureDict(self, geoEntry, msg):
       """Convert entry in a fisb-decode ``geometry`` slot into a ``geojson`` 
       ``features`` list item. Called internally by

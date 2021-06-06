@@ -11,7 +11,7 @@ class MsgCANCEL_CWA(MsgBase):
         # 'type' handled
         super().__init__(['CANCEL_CWA'], None)
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Cancel CWA message.
 
         The ``unique_name`` field of the level2 message is the same as
@@ -21,5 +21,10 @@ class MsgCANCEL_CWA(MsgBase):
         Args:
             msg (dict): Level2 message with CWA cancellation.
         """
+
+        pkey = msg['unique_name']
+
+        self.processChanges('SIGWX', pkey, digest, True)
+
         # Remove from SIGWX collection
-        self.dbConn['SIGWX'].delete_one({ '_id': msg['unique_name']})
+        self.dbConn['SIGWX'].delete_one({ '_id': pkey})

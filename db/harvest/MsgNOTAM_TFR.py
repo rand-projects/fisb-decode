@@ -11,7 +11,7 @@ class MsgNOTAM_TFR(MsgBase):
         # 'type' handled
         super().__init__(['NOTAM_TFR'], 'NOTAM_TFR')
         
-    def processMessage(self, msg):
+    def processMessage(self, msg, digest):
         """Store NOTAM_TFR message to database.
 
         If ``cfg.IMMEDIATE_CRL_UPDATE`` is ``True``, this
@@ -24,6 +24,9 @@ class MsgNOTAM_TFR(MsgBase):
               to the ``NOTAM_TFR`` collection.
         """        
         pkey = msg['unique_name']
+
+        if self.processChanges('NOTAM_TFR', pkey, digest):
+            return
 
         # Convert to geojson
         msg = self.geometryToGeojson(msg)
