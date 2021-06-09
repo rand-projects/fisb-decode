@@ -12,13 +12,8 @@ from geographiclib import geodesic
 import db.harvest.harvestConfig as cfg
 import db.harvest.harvestExceptions as ex
 
-DB_TABLES = ['METAR', 'TAF', 'CRL_8', 'CRL_11', 'CRL_12', \
-    'CRL_14', 'CRL_15', 'CRL_16', 'CRL_17', 'PIREP', \
-    'SUA', 'WINDS_06_HR', 'WINDS_12_HR', 'WINDS_24_HR', \
-    'NOTAM', 'NOTAM_TFR', 'SIGWX', 'SERVICE_STATUS', \
-    'G_AIRMET', 'FIS_B_UNAVAILABLE']
-
-DB_VECTOR_TABLES = ['NOTAM', 'NOTAM_TFR', 'SIGWX', \
+DB_VECTOR_TYPES = ['NOTAM', 'NOTAM_TFR', 'AIRMET', \
+    'SIGMET', 'WST', 'CWA', \
     'G_AIRMET', 'PIREP', 'METAR', 'TAF', 'WINDS_06_HR', \
         'WINDS_12_HR', 'WINDS_24_HR']
 
@@ -101,6 +96,7 @@ def pirepFcn(table, doc):
     return 'PIREP~' + doc['report_type'] + '-' + doc['station'] + '-' + doc['tm']
 
 DB_VECTOR_FUNCTIONS = [notamFcn, notamTfrFcn, sigWxFcn, \
+    sigWxFcn, sigWxFcn, sigWxFcn, \
     gAirmetFcn, pirepFcn, genericFcn, genericFcn, \
     genericFcn, genericFcn, genericFcn]
 
@@ -113,7 +109,7 @@ dbConn = None
 # Dictionary that maps a table to a function that
 # creates a key for the dictionary of all vector
 # entries.
-VECTOR_TABLE_FCN_DICT = dict(zip(DB_VECTOR_TABLES, \
+VECTOR_TABLE_FCN_DICT = dict(zip(DB_VECTOR_TYPES, \
     DB_VECTOR_FUNCTIONS))
 
 # --------------------------------------------
@@ -267,8 +263,8 @@ def dumpVectors(dumpPath, dbConn):
     """
     vectorDict = {}
 
-    for t in DB_VECTOR_TABLES:
-        cursor = dbConn[t].find({})
+    for t in DB_VECTOR_TYPES:
+        cursor = dbConn.MSG.find({'type': t})
         for doc in cursor:
             if 'geojson' in doc:
                 beginKey = VECTOR_TABLE_FCN_DICT[t]

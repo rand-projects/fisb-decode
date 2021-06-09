@@ -14,10 +14,6 @@ class MsgCANCEL_CWA(MsgBase):
     def processMessage(self, msg, digest):
         """Cancel CWA message.
 
-        The ``unique_name`` field of the level2 message is the same as
-        the ``_id`` field in the ``SIGWX`` table. We just delete this
-        entry.
-
         Args:
             msg (dict): Level2 message with CWA cancellation.
         """

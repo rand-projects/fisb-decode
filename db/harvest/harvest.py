@@ -238,7 +238,7 @@ def processMessage(msg, currentUtc):
         # digest here since it is based on the JSON text and not the
         # message contents.
         digest = None
-        if not msgType.startswith('IMG_'):
+        if msgType != 'IMG':
             digest = hashlib.sha224(str.encode(msg)).hexdigest()
             
         if msgType in msgHandlerDict:
@@ -406,7 +406,7 @@ def harvest(tgTestNumber):
     # read.
     if (tgTestNumber != 0):
         trickleProc = test.setup(tgTestNumber, dbConn, \
-                    msgHandlerDict['NEXRAD_CONUS'])
+                    msgHandlerDict['IMG'])
         isTesting = True
 
     # Delete and recreate the CHANGES collection

@@ -60,11 +60,12 @@ OPT_DUMP = 1
 OPT_CREATE = 2
 OPT_TEST = 3
 
-DB_TABLES = ['METAR', 'TAF', 'CRL_8', 'CRL_11', 'CRL_12', \
+DB_TYPES = ['METAR', 'TAF', 'CRL_8', 'CRL_11', 'CRL_12', \
     'CRL_14', 'CRL_15', 'CRL_16', 'CRL_17', 'PIREP', \
     'SUA', 'WINDS_06_HR', 'WINDS_12_HR', 'WINDS_24_HR', \
-    'NOTAM', 'NOTAM_TFR', 'SIGWX', 'SERVICE_STATUS', \
-             'G_AIRMET', 'FIS_B_UNAVAILABLE', 'RSR']
+    'NOTAM', 'NOTAM_TFR', 'AIRMET', 'SIGMET', \
+    'WST', 'CWA', 'SERVICE_STATUS', \
+    'G_AIRMET', 'FIS_B_UNAVAILABLE', 'RSR']
 
 # Global variables set once at program startup
 # --------------------------------------------
@@ -274,12 +275,11 @@ def prepareDirectories(testNumber):
         os.mkdir(newPath)
             
 def emptyDatabaseTables():
-    """Delete all data from the mongo collections before running a test.
+    """Delete all data from the MSG collection before running a test.
 
-    Empties out all the database tables to start with a clean slate.
+    Empties out all the database table to start with a clean slate.
     """
-    for x in DB_TABLES:
-        dbConn[x].delete_many({})
+    dbConn.MSG.delete_many({})
 
 def datetimeNow():
     """Return 'current' datetime time. If running a test this is in 'message time'.
@@ -508,22 +508,28 @@ def dumpDatabase(dumpPath, dt):
           name with an added ``.db`` extension will be the file name.
         dt (datetime): Current 'message time'. Used for TWGO augmentation.
     """
-    for t in DB_TABLES:
-        numDocs = dbConn[t].count()
+    for t in DB_TYPES:
+        numDocs = dbConn.MSG.find({'type': t}).count()
         if numDocs > 0:
 
-            cursor = dbConn[t].find({})
+            cursor = dbConn.MSG.find({'type': t})
             collectionPath = os.path.join(dumpPath,t + '.db')
             with open(collectionPath, "w") as oFile:
                 for doc in cursor:
                     # For TWGO files, augment them if possible to
                     # show status based on current time. Some TG's benefit from this.
-                    if t in ['NOTAM', 'NOTAM_TFR', 'SIGWX', 'G_AIRMET']:
+                    if t in ['NOTAM', 'NOTAM_TFR', 'AIRMET', 'SIGMET', 'CWA', 'WST', 'G_AIRMET']:
                         if 'geojson' in doc:
                             doc = augmentTwgoStatus(doc, dt)
 
                     if t.startswith('CRL'):
                         doc = augmentCrlStatus(doc)
+
+                    # Remove non-important fields
+                    if 'digest' in doc:
+                        del doc['digest']
+                    if 'insert_time' in doc:
+                        del doc['insert_time']
 
                     doc = convertDatetimeToIsoString(doc)
 

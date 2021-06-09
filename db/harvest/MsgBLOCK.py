@@ -58,7 +58,7 @@ class MsgBLOCK(MsgBase):
 
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(IMAGE_LIST)
+        super().__init__(['IMG'])
 
         self.imageDict = {}
 
@@ -339,7 +339,7 @@ class MsgBLOCK(MsgBase):
             return
 
         # Get current image dictionary for this type
-        imgDict = self.imageDict[msg['type']]
+        imgDict = self.imageDict[msg['unique_name']]
 
         # Also get the dictionary of bins in the image
         imgBinsDict = imgDict['bins_dict']

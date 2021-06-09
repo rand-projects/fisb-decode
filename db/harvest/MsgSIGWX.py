@@ -23,7 +23,7 @@ class MsgSIGWX(MsgBase):
         Args:
             msg (dict): Level 2 ``SIGMET``, ``AIRMET``, ``WST``,
               or ``CWA`` message to store. All messages get stored
-              to the ``SIGWX`` collection.
+              to the ``MSG`` collection.
         """
         if not self.checkThenAddIdDigest(msg, digest):
             return      
@@ -46,7 +46,7 @@ class MsgSIGWX(MsgBase):
             elif msgType == 'CWA':
                 crlTable = 'CRL_15'
             else: 
-                raise ex.UnknownCrlException('No SIGWX CRL type for "{}"'.format(msgType))
+                raise ex.UnknownCrlException('No CRL type for "{}"'.format(msgType))
 
             hasTextAndGraphics = False
             if ('contents' in msg) and ('geojson' in msg):

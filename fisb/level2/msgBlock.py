@@ -222,8 +222,8 @@ def emptyBlockMessages(blockNumber, scale_factor, \
         if x == '1':
         # Generate message and add to list
             newMsg = {}
-            newMsg['type'] = productName
-            newMsg['unique_name'] = productAbbr + '-' + eventDate
+            newMsg['type'] = 'IMG'
+            newMsg['unique_name'] = productName
             altBlockNumber = alternateBlockNumber(currentBlockNumber, \
                 scale_factor)
             newMsg['alt_bn'] = altBlockNumber
@@ -284,42 +284,42 @@ def getProductSpecificInfo(productId, contents, isoDate):
         isEmpty = True
 
     if productId == 63:
-        productName = 'IMG_NEXRAD_REGIONAL'
+        productName = 'NEXRAD_REGIONAL'
         productAbbr = 'NR'        
         expirationDate = util.addMinutesToIso8601(\
             isoDate, cfg.REGIONAL_NEXRAD_EXPIRATION_MINUTES)
         dateLabel = 'observation_time'
 
     elif productId == 64:
-        productName = 'IMG_NEXRAD_CONUS'
+        productName = 'NEXRAD_CONUS'
         productAbbr = 'NC'        
         expirationDate = util.addMinutesToIso8601(\
             isoDate, cfg.CONUS_NEXRAD_EXPIRATION_MINUTES)
         dateLabel = 'observation_time'
 
     elif productId in [90, 91]:
-        productName = 'IMG_TURBULENCE_{:05}'.format(contents['altitude_level'])
+        productName = 'TURBULENCE_{:05}'.format(contents['altitude_level'])
         productAbbr = 'T' + str(contents['altitude_level'])
         expirationDate = util.addMinutesToIso8601(\
             isoDate, cfg.TURBULENCE_EXPIRATION_MINUTES)
         dateLabel = 'valid_time'
 
     elif productId in [70, 71]:
-        productName = 'IMG_ICING_{:05}'.format(contents['altitude_level'])
+        productName = 'ICING_{:05}'.format(contents['altitude_level'])
         productAbbr = 'I' + str(contents['altitude_level'])
         expirationDate = util.addMinutesToIso8601(\
             isoDate, cfg.ICING_EXPIRATION_MINUTES)
         dateLabel = 'valid_time'
 
     elif productId == 84:
-        productName = 'IMG_CLOUD_TOPS'
+        productName = 'CLOUD_TOPS'
         productAbbr = 'CT'        
         expirationDate = util.addMinutesToIso8601(\
             isoDate, cfg.CLOUD_TOPS_EXPIRATION_MINUTES)
         dateLabel = 'valid_time'
 
     elif productId == 103:
-        productName = 'IMG_LIGHTNING'
+        productName = 'LIGHTNING'
         productAbbr = 'LGT'        
         expirationDate = util.addMinutesToIso8601(\
             isoDate, cfg.LIGHTNING_EXPIRATION_MINUTES)
@@ -386,8 +386,8 @@ def msgBlock(contents, productId, \
     else:
         # Normal message with bins
         newMsg = {}
-        newMsg['type'] = productName
-        newMsg['unique_name'] = productAbbr + '-' + eventDate
+        newMsg['type'] = 'IMG'
+        newMsg['unique_name'] = productName
         altBlockNumber = alternateBlockNumber(contents['block_number'], \
                                                 scale_factor)            
         newMsg['alt_bn'] = altBlockNumber

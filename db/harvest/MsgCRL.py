@@ -53,7 +53,7 @@ class MsgCRL(MsgBase):
             else:
                 val = '/GO'
 
-            d[r['_id']] = val
+            d[r['unique_name']] = val
         
         return d
 
@@ -133,22 +133,19 @@ class MsgCRL(MsgBase):
             elif productId == 15: # CWA
                 idDict = self.dictFromQuery({'type': 'CWA'}, \
                                             {'unique_name': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 14: #G-AIRMET
-                idDict = self.dictFromQuery({'$or': \
-                    [ {'type': 'G_AIRMET_00_HR'}, \
-                      {'type': 'G_AIRMET_03_HR'}, \
-                      {'type': 'G_AIRMET_06)HR'} ]}, \
+            elif productId == 14: # G-AIRMET
+                idDict = self.dictFromQuery({'type': 'G_AIRMET'}, \
                                             {'unique_name': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 16:
+            elif productId == 16: # NOTAM-TRA
                 idDict = self.dictFromQuery({'type': 'NOTAM', 'subtype': 'TRA'}, \
                                             {'unique_name': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 17:
+            elif productId == 17: # NOTAM-TMOA
                 idDict = self.dictFromQuery({'type': 'NOTAM', 'subtype': 'TMOA'}, \
                                             {'unique_name': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
 
             # Replace reports with an annotated one
             msg['reports'] = self.updateReports(msg['reports'], idDict)
-
+            
         self.dbConn.MSG.replace_one( \
             { '_id': msg['_id']}, \
             msg, \

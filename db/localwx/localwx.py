@@ -97,7 +97,7 @@ SHOW_TAF = True
 SHOW_UNAVAILABLE = True
 USE_CURSES = False
 
-CRL_TABLES = ['CRL_11', 'CRL_12', 'CRL_14', 'CRL_15', \
+CRL_TYPES = ['CRL_11', 'CRL_12', 'CRL_14', 'CRL_15', \
     'CRL_16', 'CRL_17', 'CRL_8']
 
 # Get items to display from configuration
@@ -214,11 +214,11 @@ def gAirmet(db):
         return ''
 
     forecastStr = ''
-    for r in db.G_AIRMET.find({'geojson.features.geometry.type': 'Polygon'}).sort('type', 1):
+    for r in db.MSG.find({'type': 'G_AIRMET', 'geojson.features.geometry.type': 'Polygon'}).sort('subtype', 1):
         poly, altitudeType, altitudeLow, altitudeHigh = pullPolygonFromFisB(r)
 
         if poly.contains(MY_LOC):
-            hrStr = r['type'][9:11]  # 00, 03, 06
+            hrStr = '{:02d}'.format(r['subtype'])  # 00, 03, 06
             timeStr = forecastTimes(hrStr, r)
             element = r['geojson']['features'][0]['properties']['element']
             conditionsStr = ''
@@ -250,7 +250,7 @@ def fisbUnavailable(db):
 
     fisbStr = ''
 
-    for r in db.FIS_B_UNAVAILABLE.find({},{'contents': 1, 'centers': 1}):
+    for r in db.MSG.find({'type': 'FIS_B_UNAVAILABLE'},{'contents': 1, 'centers': 1}):
         centerList = ','.join(r['centers'])
         centerStr = ' [' + centerList + ']'
         
@@ -280,7 +280,10 @@ def findSigWx(db):
 
     wxStr = ''
 
-    for r in db.SIGWX.find({},{'contents': 1, 'type': 1, 'issued_time': 1, 'geojson':1}).sort('issued_time', -1):
+    for r in db.MSG.find({'$or': [ {'type': 'AIRMET'}, {'type': 'SIGMET'}, \
+        {'type': 'WST'}, {'type': 'CWA'} ]}, \
+        {'contents': 1, 'type': 1, 'issued_time': 1, 'geojson':1}).sort('issued_time', -1):
+
         if (SHOW_AIRMET == False) and (r['type'] == 'AIRMET'):
             continue
 
@@ -327,15 +330,15 @@ def winds(db):
             '   FT   3000    6000    9000   12000   18000   24000  30000  34000  39000\n'
         windStr = ''
 
-        x = db.WINDS_06_HR.find_one({'_id': windsLoc})
+        x = db.MSG.find_one({'_id': 'WINDS_06_HR-' + windsLoc})
         if x is not None:
             windStr = windStr + showWinds('06', x)
 
-        x = db.WINDS_12_HR.find_one({'_id': windsLoc})
+        x = db.MSG.find_one({'_id': 'WINDS_12_HR-' + windsLoc})
         if x is not None:
             windStr = windStr + showWinds('12', x)
 
-        x = db.WINDS_24_HR.find_one({'_id': windsLoc})
+        x = db.MSG.find_one({'_id': 'WINDS_24_HR-' + windsLoc})
         if x is not None:
             windStr = windStr + showWinds('24', x)
     
@@ -359,7 +362,7 @@ def metars(db):
     metarStr = ''
 
     for x in METAR_LIST:
-        r = db.METAR.find_one({'_id': x},{'contents': 1, '_id': 0})
+        r = db.MSG.find_one({'_id': 'METAR-' + x},{'contents': 1, '_id': 0})
         
         if r is not None:
             metarStr = metarStr + r['contents'] + '\n'
@@ -378,8 +381,8 @@ def isCrlStatusComplete(db):
     Returns:
         bool: ``True if all CRLs are complete, else ``False``.
     """
-    for x in CRL_TABLES:
-        r = db[x].find_one({},{'reports': 1})
+    for x in CRL_TYPES:
+        r = db.MSG.find_one({'type': x},{'reports': 1})
 
         if r is None:
             return False  # no entry
@@ -420,11 +423,11 @@ def serviceStatus(db):
     rsr = -1
 
     # Get the number of TIS-B targets
-    for r in db.SERVICE_STATUS.find({},{'traffic': 1}):
+    for r in db.MSG.find({'type': 'SERVICE_STATUS'},{'traffic': 1}):
         tisbTargets = len(r['traffic'])
 
     # Get the current RSR
-    r = db.RSR.find_one({'_id': 'RSR'},{'stations': 1})
+    r = db.MSG.find_one({'_id': 'RSR-RSR'},{'stations': 1})
     # only worry about one entry (we are assuming ground use here).
     if r is not None:
         for x in r['stations']:
@@ -467,7 +470,7 @@ def tafs(db):
     tafStr = ''
 
     for x in TAF_LIST:
-        r = db.TAF.find_one({'_id': x},{'contents': 1, '_id': 0})
+        r = db.MSG.find_one({'_id': 'TAF-' + x},{'contents': 1, '_id': 0})
         
         if r is not None:
             tafStr = tafStr + r['contents'] + '\n'
@@ -489,7 +492,7 @@ def notams(db):
     notamStr = ''
     if SHOW_NOTAMS:
         for x in NOTAM_LIST:
-            for r in db.NOTAM.find({'location': x}, \
+            for r in db.MSG.find({'type': 'NOTAM', 'location': x}, \
                 {'contents': 1, 'keyword': 1, 'subtype': 1, \
                     'number': 1, '_id': 1}).sort('number', -1):
 
