@@ -8,7 +8,7 @@ class MsgSUA(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['SUA'], 'SUA')
+        super().__init__(['SUA'])
         
     def processMessage(self, msg, digest):
         """Store SUA message.
@@ -16,16 +16,11 @@ class MsgSUA(MsgBase):
         Args:
             msg (dict): Level 2 ``SUA`` message to store. All messages get stored
               to the ``SUA`` collection.
-        """       
-        pkey = msg['unique_name']
-
-        if self.processChanges('SUA', pkey, digest):
+        """
+        if not self.checkThenAddIdDigest(msg, digest):
             return
-
-        # Remove redundant keys
-        del msg['unique_name']
-
-        self.dbCollection().update( \
-            { '_id': pkey}, \
+  
+        self.dbConn.MSG.replace_one( \
+            {'_id': msg['_id']}, \
             msg, \
             upsert=True)

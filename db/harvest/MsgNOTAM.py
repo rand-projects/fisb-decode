@@ -9,7 +9,7 @@ class MsgNOTAM(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['NOTAM'], 'NOTAM')
+        super().__init__(['NOTAM'])
         
     def processMessage(self, msg, digest):
         """Store NOTAM message to database.
@@ -23,18 +23,14 @@ class MsgNOTAM(MsgBase):
               message to store. All messages get stored
               to the ``NOTAM`` collection.
         """
-        pkey = msg['unique_name']
-
-        if self.processChanges('NOTAM', pkey, digest):
+        if not self.checkThenAddIdDigest(msg, digest):
             return
 
         # Convert to geojson
         msg = self.geometryToGeojson(msg)
 
-        del msg['unique_name']
-
-        self.dbCollection().update( \
-            { '_id': pkey}, \
+        self.dbConn.MSG.replace_one( \
+            { '_id': msg['_id']}, \
             msg, \
             upsert=True)
 
@@ -47,6 +43,6 @@ class MsgNOTAM(MsgBase):
                 hasTextAndGraphics = True
 
             if msgSubtype == 'TMOA':
-                self.updateCRL('CRL_17', pkey, msg['station'], hasTextAndGraphics)
+                self.updateCRL('CRL_17', msg['unique_name'], msg['station'], hasTextAndGraphics)
             else:
-                self.updateCRL('CRL_16', pkey, msg['station'], hasTextAndGraphics)
+                self.updateCRL('CRL_16', msg['unique_name'], msg['station'], hasTextAndGraphics)

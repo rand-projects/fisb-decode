@@ -13,43 +13,9 @@ class MsgCRL(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['CRL'], 'CRL')
+        super().__init__(['CRL'])
 
-    def expireMessages(self):
-        """Expire CRL messages.
-
-        There are 7 mongo collections that contain CRL messages. All of them
-        will be expired by this function.
-
-        Expire messages from:
-
-        - ``CRL_8``
-        - ``CRL_11``
-        - ``CRL_12``
-        - ``CRL_14``
-        - ``CRL_15``
-        - ``CRL_16``
-        - ``CRL_17``
-        """
-        for x in ['CRL_8', 'CRL_11', 'CRL_12', 'CRL_14', 'CRL_15', 'CRL_16', 'CRL_17']:
-            ptr = self.dbConn[x]
-            ptr.delete_many({'expiration_time': {'$lte': test.datetimeNow()}})
-            
-    def collectionNameFromProductId(self, productId):
-        """Return mongo collection name from product ID.
-
-        Nothing more difficult than concatinating ``CRL_`` with
-        ``productId``. Example: Product id 8 returns ``CRL_8``.
-
-        Args:
-            productId (int): FIS-B product id associated with a CRL.
-
-        Returns:
-            str: Collection name for CRL associated with this CRL.
-        """
-        return 'CRL_' + str(productId)
-
-    def dictFromQuery(self, collection, find1, find2):
+    def dictFromQuery(self, find1, find2):
         """Create a dictionary of all ``_id``'s returned from a query.
 
         Given a collection pointer and the 2 parts of a find query, 
@@ -59,36 +25,8 @@ class MsgCRL(MsgBase):
         This is important because we can't count a report as
         complete until all the components that make up the report are
         present.
-        
-        This is sort of hard to explain but easy to see what is happening. Here is
-        code that calls this function:
-
-        .. code-block:: python
-
-            if productId == 8: 
-                idDict = self.dictFromQuery(self.dbConn.NOTAM_TFR, 
-                        {}, 
-                        {'id': 1, 'contents': 1, 'geojson': 1})
-            elif productId in [11, 12, 15]:  # AIRMET, SIGMET, WST, CWA
-                idDict = self.dictFromQuery(self.dbConn.SIGWX, 
-                        {}, 
-                        {'id': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 14:
-                idDict = self.dictFromQuery(self.dbConn.G_AIRMET, 
-                        {}, 
-                        {'id': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 16:
-                idDict = self.dictFromQuery(self.dbConn.NOTAM, 
-                        {'subtype': 'TRA'}, 
-                        {'id': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 17:
-                idDict = self.dictFromQuery(self.dbConn.NOTAM, 
-                        {'subtype': 'TMOA'}, 
-                        {'id': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
-
 
         Args:
-            collection (object): Pointer to MongoDB collection to use.
             find1 (dict): First part of the find query.
             find2 (dict): Second part of the find query.
 
@@ -96,7 +34,7 @@ class MsgCRL(MsgBase):
             dict: Dictionary with one entry for each ``_id``.
         """
         d = {}
-        for r in collection.find(find1, find2):
+        for r in self.dbConn.MSG.find(find1, find2):
             # Need to figure out if a message as a graphics section, text section, or both.
             # This has to match up for CRL completeness.
             hasText = False
@@ -155,7 +93,7 @@ class MsgCRL(MsgBase):
 
         return newReportList
 
-    def processMessage(self, msg, _):
+    def processMessage(self, msg, digest):
         """Place CRL messages in the database.
 
         Place CRL message in the database. If configured, will annotate the
@@ -165,8 +103,10 @@ class MsgCRL(MsgBase):
         Args:
             msg (dict): FIS-B level 2 ``CRL`` message to store in database.
         """
+        if not self.checkThenAddIdDigest(msg, digest):
+            return
+
         productId = msg['product_id']
-        collectionName = self.collectionNameFromProductId(productId)
 
         # Since this is database heavy, only annotate CRL reports
         # if desired.
@@ -177,42 +117,38 @@ class MsgCRL(MsgBase):
             idDict = {}
 
             # Run a query that creates a dictionary of all the _id's for
-            # given type. All of 11,12,15 types are in SIGWX, and the
-            # contents of the 'reports' field in the message will filter
-            # out the type.
-            if productId == 8: 
-                idDict = self.dictFromQuery(self.dbConn.NOTAM_TFR, \
-                                            {}, \
-                                            {'id': 1, 'contents': 1, 'geojson': 1})
-            elif productId in [11, 12, 15]:  # AIRMET, SIGMET, WST, CWA
-                idDict = self.dictFromQuery(self.dbConn.SIGWX, \
-                                            {}, \
-                                            {'id': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 14:
-                idDict = self.dictFromQuery(self.dbConn.G_AIRMET, \
-                                            {}, \
-                                            {'id': 1, 'contents': 1, 'geojson': 1})
+            # given type.
+            if productId == 8: # NOTAM_TFR
+                idDict = self.dictFromQuery({'type': 'NOTAM_TFR'}, \
+                                            {'unique_name': 1, 'contents': 1, 'geojson': 1})
+            elif productId == 11: # AIRMET
+                idDict = self.dictFromQuery({'type': 'AIRMET'}, \
+                                            {'unique_name': 1, 'contents': 1, 'geojson': 1})
+            elif productId == 12: # SIGMET, WST
+                idDict = self.dictFromQuery({'$or': \
+                    [ {'type': 'WST'}, \
+                      {'type': 'SIGMET'} ]}, \
+                                            {'unique_name': 1, 'contents': 1, 'geojson': 1})
+            elif productId == 15: # CWA
+                idDict = self.dictFromQuery({'type': 'CWA'}, \
+                                            {'unique_name': 1, 'contents': 1, 'geojson': 1})
+            elif productId == 14: #G-AIRMET
+                idDict = self.dictFromQuery({'$or': \
+                    [ {'type': 'G_AIRMET_00_HR'}, \
+                      {'type': 'G_AIRMET_03_HR'}, \
+                      {'type': 'G_AIRMET_06)HR'} ]}, \
+                                            {'unique_name': 1, 'contents': 1, 'geojson': 1})
             elif productId == 16:
-                idDict = self.dictFromQuery(self.dbConn.NOTAM, \
-                                            {'subtype': 'TRA'}, \
-                                            {'id': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
+                idDict = self.dictFromQuery({'type': 'NOTAM', 'subtype': 'TRA'}, \
+                                            {'unique_name': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
             elif productId == 17:
-                idDict = self.dictFromQuery(self.dbConn.NOTAM, \
-                                            {'subtype': 'TMOA'}, \
-                                            {'id': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
+                idDict = self.dictFromQuery({'type': 'NOTAM', 'subtype': 'TMOA'}, \
+                                            {'unique_name': 1, 'subtype': 1, 'contents': 1, 'geojson': 1})
 
             # Replace reports with an annotated one
             msg['reports'] = self.updateReports(msg['reports'], idDict)
 
-        pkey = msg['station']
-
-        del msg['station']
-        del msg['product_id']
-        del msg['unique_name']
-        del msg['type']
-
-        ptr = self.dbConn[collectionName]
-        ptr.update( \
-            { '_id': pkey}, \
+        self.dbConn.MSG.replace_one( \
+            { '_id': msg['_id']}, \
             msg, \
             upsert=True)

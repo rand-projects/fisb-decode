@@ -85,6 +85,14 @@ PIREP_USE_REPORT_TIME_TO_EXPIRE = True
 #: Keep this value at least 61.
 TWGO_DEFAULT_EXPIRATION_TIME = 61
 
+#: Number of minutes after which a cancellation message should
+#: be expired. These are for things like NOTAMs, CWAs, and
+#: G-AIRMETs. The only reason they are kept is so they
+#: can be distributed on the rest server. The time here should 
+#: be longer than the time you will accept as an upper bound
+#: for updates from the rest server.
+CANCEL_EXPIRATION_TIME = 40
+
 #: Bypass any smart expiration times for TWGO messages and
 #: set expiration times at least 60 minutes in the future.
 #: This is the classic 'retain until not sent for at least 60 minutes.'

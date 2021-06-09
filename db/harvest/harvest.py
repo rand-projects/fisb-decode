@@ -59,11 +59,6 @@ msgHandlerList = [MsgMETAR(), MsgTAF(), MsgCRL(), MsgPIREP(), \
                   MsgCANCEL_NOTAM(),MsgG_AIRMET(), MsgSERVICE_STATUS(), \
                   MsgSIGWX(), MsgCANCEL_G_AIRMET(), MsgCANCEL_CWA(), \
                   MsgFIS_B_UNAVAILABLE(), msgBLOCK]
-
-# List of tables that are used in CHANGES (excluding BLOCK images)
-CHANGES_COLLECTIONS = ['METAR', 'TAF', 'PIREP', 'SUA', 'WINDS_06_HR', \
-    'WINDS_12_HR', 'WINDS_24_HR', 'NOTAM', 'NOTAM_TFR', 'SIGWX', \
-    'G_AIRMET', 'FIS_B_UNAVAILABLE']
     
 # ------- End of globals
 
@@ -236,18 +231,16 @@ def processMessage(msg, currentUtc):
                     print()
                     return
 
-        # See if we need to make a message digest of this message.
-        # We don't make message digests for block messages, service_status,
-        # and CRL messages. Message digests are only stored in CHANGES and
-        # used to see if we are being sent a new message, or just a 
-        # retransmission.
-        digest = None
-        if not 'no_msg_digest' in msgDict:
-            digest = hashlib.sha224(str.encode(msg)).hexdigest()
-            
         # Dispatch and process the message
         msgType = msgDict['type']
 
+        # If not an image file, make a message digest. We make the message
+        # digest here since it is based on the JSON text and not the
+        # message contents.
+        digest = None
+        if not msgType.startswith('IMG_'):
+            digest = hashlib.sha224(str.encode(msg)).hexdigest()
+            
         if msgType in msgHandlerDict:
             msgHandlerDict[msgType].processMessage(msgDict, digest)
             
@@ -260,12 +253,10 @@ def processMessage(msg, currentUtc):
         errStr = errList.replace("\n", "\n# ")
         dumpRecord(errStr, msg)
 
-def cleanChanges():
-    """Remove all entries from CHANGES collection older than 30 minutes.
-    """
-    # Delete all entries from CHANGES > 30 minutes old
-    oldestTime = test.timestampNow() - (30 * 60)
-    dbConn.CHANGES.delete_many({'ts': {'$lt': oldestTime}})
+def expireMessages():
+    presentTime = test.datetimeNow()
+
+    dbConn.MSG.delete_many({'expiration_time': {'$lte': presentTime}})
 
 def doMaintTasks(maintCounter):
     """Performs periodic maintenance tasks.
@@ -289,12 +280,11 @@ def doMaintTasks(maintCounter):
     # Catch and log errors
     try:
         # ** TASKS TO RUN EVERY INTERVAL **
-
+    
         # Expire messages
         if cfg.EXPIRE_MESSAGES:
-            for x in msgHandlerList:
-                x.expireMessages()
-
+            expireMessages()
+            
         # Maintain the current state of images.
         msgBLOCK.periodicUpdate()
 
@@ -336,7 +326,7 @@ def doMaintTasks(maintCounter):
         # ** Normally 30 minutes             **
 
         if (maintCounter % 180) == 0:
-            cleanChanges()
+            pass
 
         #--------------------------------------
         # ** TASKS TO RUN EVERY 360 INTVLS   **

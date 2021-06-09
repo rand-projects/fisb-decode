@@ -579,6 +579,9 @@ Mongo (its primary key), and level 2 ``geometry`` fields are now
 
 Here are the collection names and what they contain:
 
+**CHANGES**
+  Keeps track of new message arrivals. Used by restful web server.
+
 **CRL_8**
   NOTAM-TFR CRL messages.
   

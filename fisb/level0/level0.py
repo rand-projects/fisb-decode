@@ -199,7 +199,6 @@ if __name__ == "__main__":
                     jsonMsg = json.dumps(msg, indent = ppIndent)
 
                     if cfg.WRITE_MESSAGE_TO_FILE:
-                        #util3.writeToFile(jsonMsg, cfg.MESSAGE_DIRECTORY)
                         writeToFile(jsonMsg, cfg.MESSAGE_DIRECTORY)
                     else:
                         if cfg.SHOW_MESSAGE_SOURCE:

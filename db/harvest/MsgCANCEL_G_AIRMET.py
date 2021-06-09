@@ -8,7 +8,7 @@ class MsgCANCEL_G_AIRMET(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['CANCEL_G_AIRMET'], None)
+        super().__init__(['CANCEL_G_AIRMET'])
         
     def processMessage(self, msg, digest):
         """Cancel G_AIRMET message.
@@ -19,11 +19,14 @@ class MsgCANCEL_G_AIRMET(MsgBase):
 
         Args:
             msg (dict): Level2 message with G_AIRMET cancellation.
-        """        
+        """
+        if not self.checkThenAddIdDigest(msg, digest):
+            return      
 
-        pkey = msg['unique_name']
+        self.dbConn.MSG.replace_one( \
+            {'_id': msg['_id']}, \
+            msg, \
+            upsert=True)
 
-        self.processChanges('G_AIRMET', pkey, digest, True)
-
-        # Remove from G_AIRMET collection
-        self.dbConn['G_AIRMET'].delete_one({ '_id': pkey})
+        # Remove G_AIRMET
+        self.dbConn.MSG.delete_one({ '_id': 'G_AIRMET-' + msg['unique_name']})

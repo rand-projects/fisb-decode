@@ -58,7 +58,7 @@ class MsgBLOCK(MsgBase):
 
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(IMAGE_LIST, None)
+        super().__init__(IMAGE_LIST)
 
         self.imageDict = {}
 

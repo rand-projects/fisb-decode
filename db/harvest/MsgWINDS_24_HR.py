@@ -10,7 +10,7 @@ class MsgWINDS_24_HR(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['WINDS_24_HR'], 'WINDS_24_HR')
+        super().__init__(['WINDS_24_HR'])
         
     def processMessage(self, msg, digest):
         """Store WINDS_24_HR message.
@@ -21,11 +21,8 @@ class MsgWINDS_24_HR(MsgBase):
         Args:
             msg (dict): Level 2 ``WINDS_24_HR`` message to store. All messages get stored
               to the ``WINDS_24_HR`` collection.
-        """        
-
-        pkey = msg['unique_name']
-
-        if self.processChanges('WINDS_24_HR', pkey, digest):
+        """
+        if not self.checkThenAddIdDigest(msg, digest):
             return
 
         # Augment with location if desired.
@@ -33,10 +30,9 @@ class MsgWINDS_24_HR(MsgBase):
             msg = loc.addTextWxLoc(self.dbConnLocation, msg)
 
         # Remove redundant keys
-        del msg['unique_name']
         del msg['location']
 
-        self.dbCollection().update( \
-            { '_id': pkey}, \
+        self.dbConn.MSG.replace_one( \
+            {'_id': msg['_id']}, \
             msg, \
             upsert=True)

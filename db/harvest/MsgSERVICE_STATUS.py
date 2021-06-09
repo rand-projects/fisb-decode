@@ -17,11 +17,11 @@ class MsgSERVICE_STATUS(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['SERVICE_STATUS'], 'SERVICE_STATUS')
+        super().__init__(['SERVICE_STATUS'])
         
         self.planes = {}
 
-    def processMessage(self, msg, _):
+    def processMessage(self, msg, digest):
         """Store ``SERVICE_STATUS`` message information to database
         combined with other current information.
 
@@ -36,7 +36,10 @@ class MsgSERVICE_STATUS(MsgBase):
         Args:
             msg (dict): Level 2 ``SERVICE_STATUS``
               message.
-        """       
+        """ 
+        if not self.checkThenAddIdDigest(msg, digest):
+            return
+
         # Update the planes dictionary by adding all planes in the
         # current message
         traffic = msg['traffic']
@@ -65,12 +68,11 @@ class MsgSERVICE_STATUS(MsgBase):
                 
         self.planes = newPlanes
 
-        serviceStatus = {}
-        serviceStatus['traffic'] = trafficList
-        serviceStatus['expiration_time'] = expireTime
+        msg['traffic'] = trafficList
+        msg['expiration_time'] = expireTime
 
         # Make new SERVICE_STATUS entry for database
-        self.dbCollection().update( \
-            { '_id': msg['unique_name']}, \
-            serviceStatus, \
+        self.dbConn.MSG.replace_one( \
+            {'_id': msg['_id']}, \
+            msg, \
             upsert=True)

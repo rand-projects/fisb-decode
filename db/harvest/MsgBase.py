@@ -62,28 +62,36 @@ class MsgBase(ABC):
 
       - ``WINDS_24_HR``
     """
-    def __init__(self, typesList, collectionName):
+    def __init__(self, typesList):
         """Initialize class
 
         Args:
             typesList (list): List of all message types (from fisb level2 message ``type`` slots)
                 that this class will handle.
-            collectionName: MongoDB collection (table) name used to store messages.
-                Not all messages refer to a collection, so ``collectionName`` of ``None``
-                implies no collection.
         """
         self.dbConn = None
         self.dbConnLocation = None
         self.typesList = typesList
-        self.collectionName = collectionName
-        self.dbCollectionPtr = None
 
-    def expireMessages(self):
-        """Expire any messages that are past their ``expiration_time``.
+    def checkThenAddIdDigest(self, msg, digest):
         """
-        if self.dbCollectionPtr != None:
-            self.dbCollectionPtr.delete_many({'expiration_time': {'$lte': test.datetimeNow()}})
+        """
+        # See if message already exisits
+        # If so, and the digests are equal, return False
+        pkey = msg['type'] + '-' + msg['unique_name']
+        oldMsg = self.dbConn.MSG.find_one({'_id': pkey})
 
+        if (oldMsg != None) and ('digest' in oldMsg):
+          if digest == oldMsg['digest']:
+            # Duplicate
+            return False
+
+        # We have a changed or original message
+        msg['_id'] = pkey
+        msg['digest'] = digest
+        msg['insert_time'] = test.datetimeNow()
+        return True
+        
     def getDbConn(self):
         """Get the MongoDB database handle.
 
@@ -101,18 +109,7 @@ class MsgBase(ABC):
               If you are not using the location DB, this can be ``None``.
         """
         self.dbConn = dbConn
-        if self.collectionName != None:
-            self.dbCollectionPtr = self.dbConn[self.collectionName]
-
         self.dbConnLocation = dbConnLocation
-
-    def dbCollection(self):
-        """Return MongoDB handle to the collection served by this class.
-
-        Returns:
-            object: MongoDB handle for the collection handled by this class.
-        """
-        return self.dbCollectionPtr
 
     def getTypesList(self):
         """Return list of all fisb level2 message ``types`` handled by this class.
@@ -122,32 +119,6 @@ class MsgBase(ABC):
         """
         return self.typesList
 
-    def processChanges(self, collection, id, digest, cancel = False):
-      # Create id for message
-      changesId = collection + '-' + id
-
-      changesEntry = self.dbConn.CHANGES.find_one({'_id': changesId})
-
-      if changesEntry is not None:
-        # See if the digests match
-        if changesEntry['digest'] == digest:
-          # Yes, duplicate. Just return True
-          return True
-
-      # We have either a new entry or a changed entry.
-      changesNewEntry = {'_id': changesId, \
-        'digest': digest, \
-        'time': test.datetimeNow() }
-      
-      if cancel:
-        changesNewEntry['cancel'] = True
-      
-      self.dbConn.CHANGES.replace_one({'_id': changesId}, \
-        changesNewEntry, \
-        upsert=True)
-
-      return False
-          
     def createFeatureDict(self, geoEntry, msg):
       """Convert entry in a fisb-decode ``geometry`` slot into a ``geojson`` 
       ``features`` list item. Called internally by
@@ -260,7 +231,7 @@ class MsgBase(ABC):
                 and graphic portion. CRL messages requiring text and graphics
                 need both to be complete.
         """
-        crl = self.dbConn[crlTable].find_one({'_id': station})
+        crl = self.dbConn.MSG.find_one({'_id': crlTable + '-' + station})
         if crl == None:
             return
 
@@ -280,7 +251,8 @@ class MsgBase(ABC):
                     reports[x] = reports[x] + '*'
 
                 # Update report list
-                self.dbConn[crlTable].update_one({ '_id': station}, {'$set':{'reports': reports}})
+                self.dbConn.MSG.update_one({'_id': crlTable + '-' + station}, \
+                  {'$set':{'reports': reports}})
                 break
         
     @abstractmethod

@@ -8,10 +8,10 @@ class MsgCANCEL_NOTAM(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['CANCEL_NOTAM'], None)
+        super().__init__(['CANCEL_NOTAM'])
         
     def processMessage(self, msg, digest):
-        """Cancel G_AIRMET message.
+        """Cancel NOTAM message.
 
         The ``unique_name`` field of the level2 message is the same as
         the ``_id`` field in the various tables associated with
@@ -27,6 +27,13 @@ class MsgCANCEL_NOTAM(MsgBase):
         Args:
             msg (dict): Level2 message with G_AIRMET cancellation.
         """        
+        if not self.checkThenAddIdDigest(msg, digest):
+            return      
+
+        self.dbConn.MSG.replace_one( \
+            {'_id': msg['_id']}, \
+            msg, \
+            upsert=True)
 
         pkey = msg['unique_name']
 
@@ -37,11 +44,9 @@ class MsgCANCEL_NOTAM(MsgBase):
         notamNum = int(pkey.split('-')[1])
 
         if notamNum < 10000:
-            doc = self.dbConn.NOTAM_TFR.find_one({'_id': pkey})
+            doc = self.dbConn.NOTAM_TFR.find_one({'_id': 'NOTAM_TFR-' + pkey})
             if doc is not None:
-                self.processChanges('NOTAM_TFR', pkey, digest, True)
-                self.dbConn['NOTAM_TFR'].delete_one({ '_id': pkey})
+                self.dbConn.MSG.delete_one({'_id': 'NOTAM_TFR-' + pkey})
                 return                
 
-        self.processChanges('NOTAM', pkey, digest, True)
-        self.dbConn['NOTAM'].delete_one({ '_id': pkey})
+        self.dbConn.MSG.delete_one({'_id': 'NOTAM-' + pkey})

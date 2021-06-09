@@ -68,6 +68,8 @@ def msg14(records, recordCount, productId, \
         newMsg = {}
         newMsg['type'] = 'CANCEL_G_AIRMET'
         newMsg['unique_name'] = reportId
+        newMsg['expiration_time'] = util.addMinutesToIso8601(rcvdTime, \
+            cfg.CANCEL_EXPIRATION_TIME)
 
         return newMsg
 
@@ -124,12 +126,11 @@ def msg14(records, recordCount, productId, \
     if fcHour == -1:
         raise ex.G_AirmetMessageException('Could not find forecast type: {}'.format(stopIso))
 
-    productName = 'G_AIRMET_{:02d}_HR'.format(fcHour)
-    
     newMsg = {}
     
-    newMsg['type'] = productName
+    newMsg['type'] = 'G_AIRMET'
     newMsg['unique_name'] = reportId
+    newMsg['subtype'] = fcHour
     newMsg['station'] = station
     newMsg['issued_time'] = issuedTimeIso
     newMsg['for_use_from_time'] = startIso

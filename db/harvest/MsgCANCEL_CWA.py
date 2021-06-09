@@ -9,7 +9,7 @@ class MsgCANCEL_CWA(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['CANCEL_CWA'], None)
+        super().__init__(['CANCEL_CWA'])
         
     def processMessage(self, msg, digest):
         """Cancel CWA message.
@@ -21,10 +21,13 @@ class MsgCANCEL_CWA(MsgBase):
         Args:
             msg (dict): Level2 message with CWA cancellation.
         """
+        if not self.checkThenAddIdDigest(msg, digest):
+            return      
 
-        pkey = msg['unique_name']
+        self.dbConn.MSG.replace_one( \
+            {'_id': msg['_id']}, \
+            msg, \
+            upsert=True)
 
-        self.processChanges('SIGWX', pkey, digest, True)
-
-        # Remove from SIGWX collection
-        self.dbConn['SIGWX'].delete_one({ '_id': pkey})
+        # Remove CWA
+        self.dbConn.MSG.delete_one({ '_id': 'CWA-' + msg['unique_name']})

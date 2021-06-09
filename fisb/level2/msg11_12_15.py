@@ -79,6 +79,8 @@ def msg11_12_15(frame, productId, \
         newMsg = {}
         newMsg['type'] = 'CANCEL_CWA'
         newMsg['unique_name'] = reportId
+        newMsg['expiration_time'] = util.addMinutesToIso8601(rcvdTime, \
+            cfg.CANCEL_EXPIRATION_TIME)
 
         return newMsg
 

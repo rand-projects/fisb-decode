@@ -9,7 +9,7 @@ class MsgNOTAM_TFR(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['NOTAM_TFR'], 'NOTAM_TFR')
+        super().__init__(['NOTAM_TFR'])
         
     def processMessage(self, msg, digest):
         """Store NOTAM_TFR message to database.
@@ -22,19 +22,15 @@ class MsgNOTAM_TFR(MsgBase):
             msg (dict): Level 2 ``NOTAM_TFR``
               message to store. All messages get stored
               to the ``NOTAM_TFR`` collection.
-        """        
-        pkey = msg['unique_name']
-
-        if self.processChanges('NOTAM_TFR', pkey, digest):
+        """
+        if not self.checkThenAddIdDigest(msg, digest):
             return
 
         # Convert to geojson
         msg = self.geometryToGeojson(msg)
 
-        del msg['unique_name']
-
-        self.dbCollection().update( \
-            { '_id': pkey}, \
+        self.dbConn.MSG.replace_one( \
+            { '_id': msg['_id']}, \
             msg, \
             upsert=True)
 
@@ -43,4 +39,4 @@ class MsgNOTAM_TFR(MsgBase):
             if ('contents' in msg) and ('geojson' in msg):
                 hasTextAndGraphics = True
 
-            self.updateCRL('CRL_8', pkey, msg['station'], hasTextAndGraphics)
+            self.updateCRL('CRL_8', msg['unique_name'], msg['station'], hasTextAndGraphics)

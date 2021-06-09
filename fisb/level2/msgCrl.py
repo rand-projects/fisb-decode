@@ -62,8 +62,8 @@ def msgCrl(rcvdTime, frame, station):
     newMsg = {}
 
     productId = frame['product_id']
-    newMsg['type'] = 'CRL'
-    newMsg['unique_name'] = 'CRL-' + str(productId) + '-' + station
+    newMsg['type'] = 'CRL_' + str(productId)
+    newMsg['unique_name'] = station
     newMsg['station'] = station
     newMsg['product_id'] = productId
     newMsg['range_nm'] = frame['product_range_nm']
@@ -111,7 +111,6 @@ def msgCrl(rcvdTime, frame, station):
         reportList.append(uniqueName + reportType)
 
     newMsg['reports'] = reportList
-    newMsg['no_msg_digest'] = 't'
     newMsg['expiration_time'] = expirationTime
     
     return newMsg

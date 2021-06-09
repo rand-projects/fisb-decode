@@ -22,11 +22,15 @@ import sys
 import fisb.level0.level0Config as cfg
 import fisb.level0.level0Exceptions as ex
 import fisb.level0.utilities as util
-from datetime import timezone, datetime
+from datetime import timezone, datetime, timedelta
 from fisb.level0.service_status_frame import decodeServiceStatusFrame
 from fisb.level0.reserved_frame import decodeReservedFrame
 from fisb.level0.apdu_frame import decodeApduFrame
 from fisb.level0.crl_frame import decodeCrlFrame
+
+# Only import if harvest requirements are installed.
+if cfg.ALLOW_DECODE_TEST:
+    import db.harvest.testing as test
 
 DIGIT_TO_HEX = '0123456789ABCDEF'
 
@@ -124,11 +128,26 @@ def calculateRSR(rsrDict, timeInSecs, ba7, station):
                 stationList[2] = round((stationList[0] / \
                     (stationList[1] * float(cfg.RSR_CALCULATE_OVER_X_SECS))) * 100.0)
 
+            # Calculate expiration time which is the the time now plus
+            # cfg.RSR_CALCULATE_EVERY_X_SECS + 10 seconds.
+            # NOTE: For testing, we can't possibly know the test offset
+            # so the expiration time will be way in the future (or for one
+            # test where it doesn't matter-- possibly in the past). For real time
+            # having an expiration time is nice since if the signal goes
+            # away, the RSR will be removed.
+            utcNow = datetime.utcnow()
+            utcExpire = utcNow + timedelta(0, cfg.RSR_CALCULATE_EVERY_X_SECS + 10)
+
+            msg = {'_id': 'RSR-RSR', \
+                'type': 'RSR', \
+                'unique_name': 'RSR', \
+                'stations': resultDict, \
+                'expiration_time': utcExpire}
+
             # Store in database
-            rsrDict['db'].RSR.update( \
-                                      {'_id': 'RSR'}, \
-                                      {'stations': resultDict}, \
-                                      upsert=True)
+            rsrDict['db'].MSG.replace_one({'_id': 'RSR-RSR'}, \
+                msg, \
+                upsert=True)
 
         rsrDict['last_sec'] = cursec
 

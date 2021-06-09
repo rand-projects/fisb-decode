@@ -10,7 +10,7 @@ class MsgPIREP(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['PIREP'], 'PIREP')
+        super().__init__(['PIREP'])
         
     def processMessage(self, msg, digest):
         """Store PIREP message.
@@ -21,22 +21,15 @@ class MsgPIREP(MsgBase):
         Args:
             msg (dict): Level 2 ``PIREP`` message to store. All messages get stored
               to the ``PIREP`` collection.
-        """        
-        pkey = msg['unique_name']
-
-        if self.processChanges('PIREP', pkey, digest):
-            return
+        """
+        if not self.checkThenAddIdDigest(msg, digest):
+            return        
 
         # Augment with location if desired.
         if cfg.PIREP_LOCATION_SUPPORT:
             msg = loc.pirepLocation(self.dbConnLocation, msg)
 
-        # Remove redundant keys
-        del msg['unique_name']
-        
-        self.dbCollection().update( \
-            { '_id': pkey}, \
+        self.dbConn.MSG.replace_one( \
+            { '_id': msg['_id']}, \
             msg, \
             upsert=True)
-
-

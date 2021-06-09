@@ -11,8 +11,7 @@ class MsgSIGWX(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['AIRMET', 'SIGMET', 'WST', 'CWA'], \
-                         'SIGWX')
+        super().__init__(['AIRMET', 'SIGMET', 'WST', 'CWA'])
         
     def processMessage(self, msg, digest):
         """Store ``AIRMET``, ``SIGMET``, ``WST``, and ``CWA``
@@ -25,19 +24,15 @@ class MsgSIGWX(MsgBase):
             msg (dict): Level 2 ``SIGMET``, ``AIRMET``, ``WST``,
               or ``CWA`` message to store. All messages get stored
               to the ``SIGWX`` collection.
-        """        
-        pkey = msg['unique_name']
-
-        if self.processChanges('SIGWX', pkey, digest):
-            return
+        """
+        if not self.checkThenAddIdDigest(msg, digest):
+            return      
 
         # Convert to geojson
         msg = self.geometryToGeojson(msg)
 
-        del msg['unique_name']
-        
-        self.dbCollection().update( \
-            { '_id': pkey}, \
+        self.dbConn.MSG.replace_one( \
+            {'_id': msg['_id']}, \
             msg, \
             upsert=True)
 
@@ -57,5 +52,5 @@ class MsgSIGWX(MsgBase):
             if ('contents' in msg) and ('geojson' in msg):
                 hasTextAndGraphics = True
 
-            self.updateCRL(crlTable, pkey, msg['station'], hasTextAndGraphics)
+            self.updateCRL(crlTable, msg['unique_name'], msg['station'], hasTextAndGraphics)
 

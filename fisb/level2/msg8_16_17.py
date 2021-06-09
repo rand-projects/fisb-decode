@@ -99,6 +99,8 @@ def msg8_16_17(contentsText, contentsGraphics, productId, \
         newMsg = {}
         newMsg['type'] = 'CANCEL_NOTAM'
         newMsg['unique_name'] = reportId
+        newMsg['expiration_time'] = util.addSecondsToIso8601(rcvdTime, \
+            cfg.CANCEL_EXPIRATION_TIME)
 
         return newMsg
 

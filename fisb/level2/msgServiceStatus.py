@@ -66,7 +66,6 @@ def msgServiceStatus(rcvdTime, frame, station):
         trafficList.append(icao)
 
     newMsg['traffic'] = trafficList
-    newMsg['no_msg_digest'] = 't'
     newMsg['expiration_time'] = util.addSecondsToIso8601(rcvdTime, \
             cfg.SERVICE_STATUS_EXPIRATION_SECONDS)
     
