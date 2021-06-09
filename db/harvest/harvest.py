@@ -357,10 +357,6 @@ def updateLegendCollection():
             legendDict, \
             upsert=True)
 
-def initiateChangesCollection():
-    # Empty collection
-    dbConn.CHANGES.delete_many({})
-
 def harvest(tgTestNumber):
     """Main function for Harvest. Process messages.
 
@@ -396,6 +392,9 @@ def harvest(tgTestNumber):
     # Get database connection and insert in message handler objects.
     dbConnect()
 
+    # Initiate Images (remove files, wipe from mongo)
+    msgHandlerDict['IMG'].initiateImages()
+
     # Update the LEGEND collection in the database (will
     # change based-on configuration).
     updateLegendCollection()
@@ -409,9 +408,6 @@ def harvest(tgTestNumber):
                     msgHandlerDict['IMG'])
         isTesting = True
 
-    # Delete and recreate the CHANGES collection
-    initiateChangesCollection()
-    
     try:
         # Any exceptions in this part will just fail and exit.
         # If anything fails here, there is little to do to recover.

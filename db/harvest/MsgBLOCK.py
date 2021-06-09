@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from osgeo import gdal
 import numpy, os, pprint
 
@@ -30,30 +30,33 @@ class MsgBLOCK(MsgBase):
 
         * Remove all images (all the .tif files residing in the
           image storage area).
-        * Creates the ``imageDict``. The ``imageDict`` is a dictionary where the
-          key is the name of the image as defined in ``IMAGE_LIST``.  The value is
-          another dictionary containing information about the image. See the comments
-          in the :func:`createNoDataDict` function about the values stored there.
+        * Creates the ``imageDict``. The ``imageDict`` is a dictionary where
+          the key is the name of the image as defined in ``IMAGE_LIST``.
+          The value is another dictionary containing information about the
+          image. See the comments in the :func:`createNoDataDict` function
+          about the values stored there.
           Part of the ``imageDict`` is storage for any image data we receive.
 
-        Images are essentially self contained and managed. The life cycle is as
-        follows:
+        Images are essentially self contained and managed. The life cycle is
+        as follows:
 
-        * When Harvest is started, all ``.tif`` images are removed. Each image type
-          will get its own (empty) entry in ``imageDict``.
-        * Fisb-decode level2 messages with data get sent to :func:`processMessage`.
+        * When Harvest is started, all ``.tif`` images are removed. Each image
+          type will get its own (empty) entry in ``imageDict``.
+        * Fisb-decode level2 messages with data get sent to
+          :func:`processMessage`.
           The image data will get stored. Updates to ``imageDict`` will be made.
-        * The function :func:`periodicUpdate` will be called periodically and will
-          see if any data has arrived after the image was created. If it was (after
-          possibly a ``quiet time`` where no data has arrived for some period of seconds)
-          a new message will be generated. It will also remove the image and its 
-          ``imageDict`` entry (making a new empty one) if the image has reached its 
-          expiration time. Also, for lightning and radar images which allow latency
-          (where two or more images can be combined), the system will enforce the
-          standard where the difference between the newest data and the oldest data
-          cannot be more than 10 minutes. For other messages, image data with a later
-          timestamp than the current data will force the old data to be removed and
-          replaced with new data.
+        * The function :func:`periodicUpdate` will be called periodically and
+          will see if any data has arrived after the image was created. If it
+          was (after possibly a ``quiet time`` where no data has arrived for
+          some period of seconds) a new message will be generated. It will also
+          remove the image and its ``imageDict`` entry (making a new empty one)
+          if the image has reached its expiration time. Also, for lightning
+          and radar images which allow latency (where two or more images can
+          be combined), the system will enforce the standard where the
+          difference between the newest data and the oldest data
+          cannot be more than 10 minutes. For other messages, image data with a
+          later timestamp than the current data will force the old data to be
+          removed and replaced with new data.
         """
 
         # All message types must indicate the actual dictionary
@@ -62,6 +65,7 @@ class MsgBLOCK(MsgBase):
 
         self.imageDict = {}
 
+    def initiateImages(self):
         # Create initial 'no data states' for all images.
         for x in IMAGE_LIST:
             self.imageDict[x] = self.createNoDataDict(x)
@@ -173,6 +177,8 @@ class MsgBLOCK(MsgBase):
             if os.path.isfile(x):
                 os.remove(x)
 
+        self.dbConn.MSG.delete_one({'_id': 'IMG-' + imgType})
+
     def getMapFcn(self, imgType):
         """Return function that is used to choose correct image map and byte function.
 
@@ -248,8 +254,23 @@ class MsgBLOCK(MsgBase):
             img.mapImg(filename, imgDict['bins_dict'], \
                 imgDict['scale_factor'], imgDict['image_map_fcn'])
 
+        # Get the insert/creation timestamp
+        insertTime = test.datetimeNow()
+        oldestTime = datetime.utcfromtimestamp(imgDict['oldest_official_ts'])
+        expirationTime = oldestTime + timedelta(0, imgDict['revert_to_no_data_time'])
+
+        msgId = 'IMG-' + imgType
+
+        msg = {'_id': msgId, 'type': 'IMG', 'unique_name': imgType, \
+            imgDict['obs_or_valid']: oldestTime, \
+            'insert_time': insertTime, 'expiration_time': expirationTime}
+
+        self.dbConn.MSG.replace_one({'_id': msgId}, \
+            msg, \
+            upsert = True)
+            
         # Set the creation time.
-        imgDict['file_creation_ts'] = test.datetimeNow().timestamp()
+        imgDict['file_creation_ts'] = insertTime.timestamp()
 
     def createNoDataDict(self, imgType):
         """Create a 'no data' ``imageDict`` dictionary.
