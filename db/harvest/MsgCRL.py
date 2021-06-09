@@ -13,7 +13,8 @@ class MsgCRL(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['CRL'])
+        super().__init__(['CRL_8', 'CRL_11', 'CRL_12', 'CRL_14', \
+            'CRL_15', 'CRL_16', 'CRL_17'])
 
     def dictFromQuery(self, find1, find2):
         """Create a dictionary of all ``_id``'s returned from a query.

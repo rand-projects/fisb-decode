@@ -135,6 +135,8 @@ def calculateRSR(rsrDict, timeInSecs, ba7, station):
             # test where it doesn't matter-- possibly in the past). For real time
             # having an expiration time is nice since if the signal goes
             # away, the RSR will be removed.
+            # insert_time is also only in the present (not reflected back in past for
+            # tests). This doesn't affect anything.
             utcNow = datetime.utcnow()
             utcExpire = utcNow + timedelta(0, cfg.RSR_CALCULATE_EVERY_X_SECS + 10)
 
@@ -142,6 +144,7 @@ def calculateRSR(rsrDict, timeInSecs, ba7, station):
                 'type': 'RSR', \
                 'unique_name': 'RSR', \
                 'stations': resultDict, \
+                'insert_time': utcNow, \
                 'expiration_time': utcExpire}
 
             # Store in database
