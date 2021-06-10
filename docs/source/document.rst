@@ -570,84 +570,20 @@ type into Mongo ``db.<collection-name>.find().pretty()``.
 ``collection-name`` is the name of the Mongo collection (i.e. table).
 So to look at the METAR table, type: ::
 
-  db.METAR.find().pretty()
+  db.MSG.find().pretty()
   
 You will find that the Mongo entries look mostly like the level 2
-messages except the ``unique_name`` in level 2 is now ``_id`` in
-Mongo (its primary key), and level 2 ``geometry`` fields are now
+messages except the 
+level 2 ``geometry`` fields are now
 ``geojson``. There are other changes, but those are the main ones.
 
 Here are the collection names and what they contain:
 
-**CHANGES**
-  Keeps track of new message arrivals. Used by restful web server.
-
-**CRL_8**
-  NOTAM-TFR CRL messages.
-  
-**CRL_11**
-  AIRMET CRL messages.
-  
-**CRL_12**
-  SIGMET, WST CRL messages.
-  
-**CRL_14**
-  G-AIRMET CRL messages.
-  
-**CRL_15**
-  CWA CRL messages.
-  
-**CRL_16**
-  NOTAM-TRA CRL messages.
-  
-**CRL_17**
-  NOTAM-TMOA CRL messages.
-  
-**FIS_B_UNAVAILABLE**
-  FIS-B service outage messages.
-  
-**G_AIRMET**
-  G-AIRMET messages.
+**MSG**
+  Holds all messages.
   
 **LEGEND**
   Legend information for geotiff images.
-  
-**METAR**
-  METAR reports.
-  
-**NOTAM**
-  NOTAM (except NOTAM-TFR) reports.
-  
-**NOTAM_TFR**
-  NOTAM-TFR reports.
-  
-**PIREP**
-  PIREP reports.
-  
-**RSR**
-  RSR (Radio Station Reception) reports. If turned on, will be a single
-  report per ground station.
-  
-**SERVICE_STATUS**
-  SERVICE STATUS (number of TIS-B target) report. Single entry.
-  
-**SIGWX**
-  AIRMET, SIGMET, WST, CWA reports.
-  
-**SUA**
-  SUA (Special Use Airspace) reports.
-  
-**TAF**
-  TAF reports.
-  
-**WINDS_06_HR**
-  6 hour wind forecasts.
-  
-**WINDS_12_HR**
-  12 hour wind forecasts.
-  
-**WINDS_24_HR**
-  24 hour wind forecasts.
 
 Building Documentation
 ======================
@@ -700,14 +636,17 @@ start ``mongo`` and have the following dialog: ::
 
   > use fisb
   switched to db fisb
-  > db.RSR.find().pretty()
+  > db.MSG.find({type: 'RSR'}).pretty()
   {
-	"_id" : "RSR",
+	"_id" : "RSR-RSR",
+	"type" : "RSR",
+	"unique_name" : "RSR",
 	"stations" : {
 		"40.0383~-86.255593" : [90, 3, 100]
-	}
-  } 
-  >
+	},
+	"insert_time" : ISODate("2021-06-09T21:42:18.134Z"),
+	"expiration_time" : ISODate("2021-06-09T21:42:58.134Z")
+  }
 
 If you see something like this, it's working. ``40.0393~-86.255593``
 is the ground station id (basically its latitude and longitude) and
@@ -1968,32 +1907,14 @@ Using a Raspberry Pi
 --------------------
 
 A Raspberry Pi in pretty much any configuration will run the 'fisb' code
-without any problems. 'Harvest'-- not so much. Harvest requires MongoDB, and
-MongoDB requires a 64-bit machine. Standard Pi distributions are 32-bit.
-You can install *Ubuntu 20.04 64-bit Server* on the Pi. Just follow the standard
-instructions for the regular Ubuntu 20.04 distributions. Everything will install
-fine.
-
-My experiences with 'harvest' on a 4GB Pi 4 running
-Ubuntu 20.04 Server (no window system)
-have not been good. The system runs fine for 24 hours, but before
-3 days the system either throws a kernel panic, or just becomes
-unresponsive.
-Whether this is due to running out of memory, bad power, or a flaky SSD card
-(a.k.a. the usual suspects), is unknown. As of this writing, MongoDB is
-suppored on ARM64 platforms for Ubuntu only, not the in-development 64-bit
-Rasperry Pi kernel.
+without any problems. 'Harvest' is database bound, and therefore filesystem dependent.
+Using lots of different Pi models, nothing beats a Pi 4 with an external SSD. 4GB
+memory is fine for 'harvest' and 'fisb'. I run Ubuntu 20.04 64-bit (needed by
+Mongo) with full GNOME window system, including QGIS, and have had no problems.
+With a Kingston 240GB A400 SATA drive in an Inateck 2.5 USB 3.0 (UASP support)
+enclosure, the system has been rock solid. Such was not the case when running with
+SD cards. Speed is not the same as your desktop, but not annoyingly slow either.
 
 Running 'fisb' and 'harvest' (with MongoDB) does not use very many resources.
 On a 4GB Pi, available memory is more than 3GB at all times and system
-run times are always under 5%. This is with a Transcend 32GB SDHC UHS
-Speed Class 1 SD card (i.e. not the greatest).
-
-At this time my recommendations are:
-
-* No problem when running 'fisb' code on any distribution.
-* Don't use for 'harvest'. Unstable. You need a 64-bit Ubuntu
-  distribution to even try.
-
-The evaluation is incomplete at this point-- more experience and testing is
-needed.
+run times are always under 5%.
