@@ -238,7 +238,7 @@ def processMessage(msg, currentUtc):
         # digest here since it is based on the JSON text and not the
         # message contents.
         digest = None
-        if msgType != 'IMG':
+        if msgType != 'IMAGE':
             digest = hashlib.sha224(str.encode(msg)).hexdigest()
             
         if msgType in msgHandlerDict:
@@ -393,7 +393,7 @@ def harvest(tgTestNumber):
     dbConnect()
 
     # Initiate Images (remove files, wipe from mongo)
-    msgHandlerDict['IMG'].initiateImages()
+    msgHandlerDict['IMAGE'].initiateImages()
 
     # Update the LEGEND collection in the database (will
     # change based-on configuration).
@@ -405,7 +405,7 @@ def harvest(tgTestNumber):
     # read.
     if (tgTestNumber != 0):
         trickleProc = test.setup(tgTestNumber, dbConn, \
-                    msgHandlerDict['IMG'])
+                    msgHandlerDict['IMAGE'])
         isTesting = True
 
     try:

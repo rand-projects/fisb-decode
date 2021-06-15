@@ -426,6 +426,10 @@ def mapImg(filename, binDict, resolution, mapFcn):
             * 2 - low (never used)
         mapFcn (function): Function that will produce an image map to use and byte function
             for the specific image type.
+
+    Returns:
+        list: Bounding box in leaflet format [ [ <SW corner> ], [<NE corner>] ]
+        The latitude is the 0 index and longitude is the 1 index.
     """
     maxLatBin, minLongBin, \
     imageSize, bb = createGeoData(binDict, resolution)
@@ -452,12 +456,21 @@ def mapImg(filename, binDict, resolution, mapFcn):
     yMax = bb[UR][0]
     yMin = bb[LL][0]
 
+    # Complute leaflet bounding box. Note: This is in
+    # SW corner, NE corner format, with lat as the [0]
+    # component.
+    bbox = [ [float('%.6f'%(yMin)), float('%.6f'%(xMin))], \
+             [float('%.6f'%(yMax)), float('%.6f'%(xMax))] ]
+
     # Calculate the resolution for geoTiff
     xRes = (xMax - xMin) / float(imageSize[1])
     yRes = (yMax - yMin) / float(imageSize[0])
 
     # Transformation for geoTiff
     xform = (xMin, xRes, 0, yMax, 0, -yRes)
+
+    # Create PNG filename
+    filenamePng = os.path.splitext(filename)[0] + '.png'
 
     if cfg.SMOOTH_IMAGES:
         filename = filename + '.org'
@@ -484,7 +497,16 @@ def mapImg(filename, binDict, resolution, mapFcn):
             height = 0, resampleAlg = 'bilinear')
         ds = None
         os.remove(filename)
-    
+
+    # Make png
+    ds = gdal.Open(filename)
+    pngDriver = gdal.GetDriverByName("PNG")
+    png_ds = pngDriver.CreateCopy(filenamePng, ds, 0)
+    ds = None
+    png_ds = None
+
+    return bbox
+
 def getLegendDict():
     """Create a dictionary showing the units and colors (with text values)
     for each image map. Used in clients to create a legend for an image.

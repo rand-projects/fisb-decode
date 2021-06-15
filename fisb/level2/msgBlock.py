@@ -222,7 +222,7 @@ def emptyBlockMessages(blockNumber, scale_factor, \
         if x == '1':
         # Generate message and add to list
             newMsg = {}
-            newMsg['type'] = 'IMG'
+            newMsg['type'] = 'IMAGE'
             newMsg['unique_name'] = productName
             altBlockNumber = alternateBlockNumber(currentBlockNumber, \
                 scale_factor)
@@ -386,7 +386,7 @@ def msgBlock(contents, productId, \
     else:
         # Normal message with bins
         newMsg = {}
-        newMsg['type'] = 'IMG'
+        newMsg['type'] = 'IMAGE'
         newMsg['unique_name'] = productName
         altBlockNumber = alternateBlockNumber(contents['block_number'], \
                                                 scale_factor)            

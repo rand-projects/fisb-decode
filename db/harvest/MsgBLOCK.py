@@ -61,7 +61,7 @@ class MsgBLOCK(MsgBase):
 
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['IMG'])
+        super().__init__(['IMAGE'])
 
         self.imageDict = {}
 
@@ -177,7 +177,7 @@ class MsgBLOCK(MsgBase):
             if os.path.isfile(x):
                 os.remove(x)
 
-        self.dbConn.MSG.delete_one({'_id': 'IMG-' + imgType})
+        self.dbConn.MSG.delete_one({'_id': 'IMAGE-' + imgType})
 
     def getMapFcn(self, imgType):
         """Return function that is used to choose correct image map and byte function.
@@ -251,19 +251,19 @@ class MsgBLOCK(MsgBase):
 
         # Make one or more (for lightning and icing) .tif files.
         for filename in imageList:
-            img.mapImg(filename, imgDict['bins_dict'], \
-                imgDict['scale_factor'], imgDict['image_map_fcn'])
+            bbox = img.mapImg(filename, imgDict['bins_dict'], \
+                   imgDict['scale_factor'], imgDict['image_map_fcn'])
 
         # Get the insert/creation timestamp
         insertTime = test.datetimeNow()
         oldestTime = datetime.utcfromtimestamp(imgDict['oldest_official_ts'])
         expirationTime = oldestTime + timedelta(0, imgDict['revert_to_no_data_time'])
 
-        msgId = 'IMG-' + imgType
+        msgId = 'IMAGE-' + imgType
 
-        msg = {'_id': msgId, 'type': 'IMG', 'unique_name': imgType, \
+        msg = {'_id': msgId, 'type': 'IMAGE', 'unique_name': imgType, \
             imgDict['obs_or_valid']: oldestTime, \
-            'insert_time': insertTime, 'expiration_time': expirationTime}
+            'bbox': bbox, 'insert_time': insertTime, 'expiration_time': expirationTime}
 
         self.dbConn.MSG.replace_one({'_id': msgId}, \
             msg, \

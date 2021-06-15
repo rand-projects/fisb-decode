@@ -76,7 +76,7 @@ class MsgBase(ABC):
     def checkThenAddIdDigest(self, msg, digest):
         """
         """
-        # See if message already exisits
+        # See if message already exists
         # If so, and the digests are equal, return False
         pkey = msg['type'] + '-' + msg['unique_name']
         oldMsg = self.dbConn.MSG.find_one({'_id': pkey})

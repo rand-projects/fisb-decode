@@ -217,6 +217,9 @@ def gAirmet(db):
     for r in db.MSG.find({'type': 'G_AIRMET', 'geojson.features.geometry.type': 'Polygon'}).sort('subtype', 1):
         poly, altitudeType, altitudeLow, altitudeHigh = pullPolygonFromFisB(r)
 
+        if poly is None:
+            continue
+
         if poly.contains(MY_LOC):
             hrStr = '{:02d}'.format(r['subtype'])  # 00, 03, 06
             timeStr = forecastTimes(hrStr, r)
