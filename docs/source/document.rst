@@ -14,7 +14,7 @@ This implementation roughly follows the DO-358B standard.
   structures of FIS-B and can be used as a stand-alone system for this
   purpose. 'fisb' is a multi-level system that turns binary FIS-B messages
   into fully independent weather messages.
-* The database part of the system ('harvest') creates .tif images,
+* The database part of the system ('harvest') creates .png images,
   turns vector data into geojson, and manages the FIS-B message base using
   MongoDB.
 
@@ -401,7 +401,7 @@ Getting Harvest Running
 
 Harvest takes the output from 'fisb' level 3 and stores it in a
 database, then maintains that database per the standard. Actually,
-that's not 100% true. Images sent by FIS-B get made into geotiff files
+that's not 100% true. Images sent by FIS-B get made into PNG files
 and stored in a directory. Everything else goes in the database.
 
 Harvest has a more complicated setup because it requires a database and
@@ -496,7 +496,6 @@ Change ``../db/harvest/harvestConfig.py``: ::
   ANNOTATE_CRL_REPORTS = True
   PROCESS_IMAGES = True
   IMAGE_DIRECTORY = '../runtime/images'
-  SMOOTH_IMAGES = False
   SYNC_FILE = '../runtime/misc/sync.fisb'
   IMMEDIATE_CRL_UPDATE = True
   IMAGE_QUIET_SECONDS = 10
@@ -583,7 +582,7 @@ Here are the collection names and what they contain:
   Holds all messages.
   
 **LEGEND**
-  Legend information for geotiff images.
+  Legend information for PNG images.
 
 Building Documentation
 ======================
@@ -948,10 +947,10 @@ Images
 
      cd ../tg/results/tg30/01
 
-   You will find plenty of ``.tif`` images and vector data to use
+   You will find plenty of ``.png`` images and vector data to use
    in the instructions that follow.
      
-Images are always geotiff files and are normally stored in
+Images are always PNG files and are normally stored in
 ``fisb-decode/runtime/images``. The image system is pretty much
 self-managed by harvest. They are created when they arrive and removed after
 whatever interval the standard says they should be removed. Most images
@@ -1011,13 +1010,6 @@ unless there has not been any new value information for an image for the
 stated number of seconds. That way, you usually will always get complete images
 and not partial images.
 
-If you don't like pixilated images, you can set: ::
-
-  SMOOTH_IMAGES = False
-
-to ``True``. If you do this, the images are smoothed using a bi-linear
-interpolation. The downside is that images are 4 times bigger.
-
 Viewing Images
 --------------
 
@@ -1054,7 +1046,7 @@ At the very top of the screen select '``Layer``', then '``Add Layer``', and then
 Under '``Source``' and to the
 right of '``Raster dataset(s)``' click the 3 dots '``...``' to bring
 up a file dialog. Find an image file in the ``fisb-decode/runtime/images``
-directory. In this example I chose ``NEXRAD_CONUS.tif``. Click the ``Open`` button
+directory. In this example I chose ``NEXRAD_CONUS.png``. Click the ``Open`` button
 on the top right of the file dialog and you will be returned back to the raster
 dialog box. Click '``Add``' in the bottom right corner (your selected filename should
 be in the box to the right of the '``Raster dataset(s)``' line)
@@ -1068,7 +1060,7 @@ pan. You should be able to make your screen similar to:
 
 .. image:: images/ae.png
 
-That's pretty much it for loading ``.tif`` files. Your most important box at this
+That's pretty much it for loading ``.png`` files. Your most important box at this
 point is the ``Layers`` area at the bottom left. Right clicking on a layer will
 give you a number of useful options. Click the check mark next to the layer name
 to make the layer visible or invisible.
@@ -1120,7 +1112,7 @@ both polygons and linestrings, but each type needs to be in a different file.
 The files produced are ``.csv`` files and each line is its own object in
 something called WKT (Well Known Text) format.
 
-Vectors in QGIS are trickier to display than raster (``.tif``) images.
+Vectors in QGIS are trickier to display than raster (``.png``) images.
 To load a vector file, start up QGIS, double click on '``OpenStreetMap``' just
 like you did for raster files. Now select '``Layer``' at the top of the
 screen. Select '``Add Layer``' and then '``Add delimited text layer...``'.
@@ -1389,29 +1381,29 @@ more unreported reports.
 
 The directory ``fisb-decode/tg/results/tg30/01`` contains: ::
 
-  2020-10-30-0900277  ICING_10000_SEV.tif image-report.txt     TURBULENCE_22000.tif
-  CLOUD_TOPS.tif      ICING_10000_SLD.tif LIGHTNING_ALL.tif    TURBULENCE_24000.tif
-  CRL_11.db           ICING_12000_PRB.tif LIGHTNING_POS.tif    V-AIRMET-PG.csv
-  CRL_12.db           ICING_12000_SEV.tif METAR.db             V-G_AIRMET_00_HR-LS.csv
-  CRL_14.db           ICING_12000_SLD.tif NEXRAD_CONUS.tif     V-G_AIRMET_00_HR-PG.csv
-  CRL_15.db           ICING_14000_PRB.tif NEXRAD_REGIONAL.tif  V-G_AIRMET_03_HR-LS.csv
-  CRL_16.db           ICING_14000_SEV.tif NOTAM.db             V-G_AIRMET_03_HR-PG.csv
-  CRL_17.db           ICING_14000_SLD.tif NOTAM_TFR.db         V-G_AIRMET_06_HR-LS.csv
-  CRL_8.db            ICING_16000_PRB.tif PIREP.db             V-G_AIRMET_06_HR-PG.csv
-  G_AIRMET.db         ICING_16000_SEV.tif RSR.db               V-METAR-PT.csv
-  ICING_02000_PRB.tif ICING_16000_SLD.tif SERVICE_STATUS.db    V-NOTAM-D-PT.csv
-  ICING_02000_SEV.tif ICING_18000_PRB.tif SIGWX.db             V-NOTAM-FDC-PT.csv
-  ICING_02000_SLD.tif ICING_18000_SEV.tif TAF.db               V-PIREP-PT.csv
-  ICING_04000_PRB.tif ICING_18000_SLD.tif TURBULENCE_02000.tif V-TAF-PT.csv
-  ICING_04000_SEV.tif ICING_20000_PRB.tif TURBULENCE_04000.tif V-WINDS_06_HR-PT.csv
-  ICING_04000_SLD.tif ICING_20000_SEV.tif TURBULENCE_06000.tif V-WINDS_12_HR-PT.csv
-  ICING_06000_PRB.tif ICING_20000_SLD.tif TURBULENCE_08000.tif V-WINDS_24_HR-PT.csv
-  ICING_06000_SEV.tif ICING_22000_PRB.tif TURBULENCE_10000.tif V-WST-PG.csv
-  ICING_06000_SLD.tif ICING_22000_SEV.tif TURBULENCE_12000.tif WINDS_06_HR.db
-  ICING_08000_PRB.tif ICING_22000_SLD.tif TURBULENCE_14000.tif WINDS_12_HR.db
-  ICING_08000_SEV.tif ICING_24000_PRB.tif TURBULENCE_16000.tif WINDS_24_HR.db
-  ICING_08000_SLD.tif ICING_24000_SEV.tif TURBULENCE_18000.tif
-  ICING_10000_PRB.tif ICING_24000_SLD.tif TURBULENCE_20000.tif
+  2020-10-30-0900277  ICING_10000_SEV.png image-report.txt     TURBULENCE_22000.png
+  CLOUD_TOPS.png      ICING_10000_SLD.png LIGHTNING_ALL.png    TURBULENCE_24000.png
+  CRL_11.db           ICING_12000_PRB.png LIGHTNING_POS.png    V-AIRMET-PG.csv
+  CRL_12.db           ICING_12000_SEV.png METAR.db             V-G_AIRMET_00_HR-LS.csv
+  CRL_14.db           ICING_12000_SLD.png NEXRAD_CONUS.png     V-G_AIRMET_00_HR-PG.csv
+  CRL_15.db           ICING_14000_PRB.png NEXRAD_REGIONAL.png  V-G_AIRMET_03_HR-LS.csv
+  CRL_16.db           ICING_14000_SEV.png NOTAM.db             V-G_AIRMET_03_HR-PG.csv
+  CRL_17.db           ICING_14000_SLD.png NOTAM_TFR.db         V-G_AIRMET_06_HR-LS.csv
+  CRL_8.db            ICING_16000_PRB.png PIREP.db             V-G_AIRMET_06_HR-PG.csv
+  G_AIRMET.db         ICING_16000_SEV.png RSR.db               V-METAR-PT.csv
+  ICING_02000_PRB.png ICING_16000_SLD.png SERVICE_STATUS.db    V-NOTAM-D-PT.csv
+  ICING_02000_SEV.png ICING_18000_PRB.png SIGWX.db             V-NOTAM-FDC-PT.csv
+  ICING_02000_SLD.png ICING_18000_SEV.png TAF.db               V-PIREP-PT.csv
+  ICING_04000_PRB.png ICING_18000_SLD.png TURBULENCE_02000.png V-TAF-PT.csv
+  ICING_04000_SEV.png ICING_20000_PRB.png TURBULENCE_04000.png V-WINDS_06_HR-PT.csv
+  ICING_04000_SLD.png ICING_20000_SEV.png TURBULENCE_06000.png V-WINDS_12_HR-PT.csv
+  ICING_06000_PRB.png ICING_20000_SLD.png TURBULENCE_08000.png V-WINDS_24_HR-PT.csv
+  ICING_06000_SEV.png ICING_22000_PRB.png TURBULENCE_10000.png V-WST-PG.csv
+  ICING_06000_SLD.png ICING_22000_SEV.png TURBULENCE_12000.png WINDS_06_HR.db
+  ICING_08000_PRB.png ICING_22000_SLD.png TURBULENCE_14000.png WINDS_12_HR.db
+  ICING_08000_SEV.png ICING_24000_PRB.png TURBULENCE_16000.png WINDS_24_HR.db
+  ICING_08000_SLD.png ICING_24000_SEV.png TURBULENCE_18000.png
+  ICING_10000_PRB.png ICING_24000_SLD.png TURBULENCE_20000.png
 
 This is pretty representative of what you find in a test group dump. In our case,
 we would need to look at ``CRL_14.db`` and verify that the overflow is set.
@@ -1465,7 +1457,7 @@ to: ::
 
     (removed more TURBULENCE products)
 
-Because ``.tif`` files don't have obvious metadata, this file contains
+Because ``.png`` files don't have obvious metadata, this file contains
 various image statistics at the time of the dump. Radar and lightning
 data can have multiple sources for an image, but the age from the oldest
 to the newest data can't be more than 10 minutes.
@@ -1640,7 +1632,6 @@ don't need to be changed.
   ANNOTATE_CRL_REPORTS = True
   PROCESS_IMAGES = True
   IMAGE_DIRECTORY = '../runtime/images'
-  SMOOTH_IMAGES = False
   SYNC_FILE = '../runtime/misc/sync.fisb'
   TG_START_DATES = '../tg/triggers/start-dates.csv'
   TG_TRIGGER_DIR = '../tg/triggers'

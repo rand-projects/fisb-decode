@@ -10,9 +10,9 @@ tg/tg-source/imported/TG??
 db/location/ov.txt
 docs/source/_build/
 docs/build/
-runtime/images/*.tif
+runtime/images/*.png
 runtime/images/.nfs*
-runtime/images/*.tif.aux.xml
+runtime/images/*.png.aux.xml
 runtime/harvest/*.msg
 runtime/misc/PIREPS-UNMATCHED.txt
 runtime/misc/sync.fisb

@@ -28,7 +28,7 @@ class MsgBLOCK(MsgBase):
         Creation of this object at the start of a Harvest run does
         the following things:
 
-        * Remove all images (all the .tif files residing in the
+        * Remove all images (all the .png files residing in the
           image storage area).
         * Creates the ``imageDict``. The ``imageDict`` is a dictionary where
           the key is the name of the image as defined in ``IMAGE_LIST``.
@@ -40,7 +40,7 @@ class MsgBLOCK(MsgBase):
         Images are essentially self contained and managed. The life cycle is
         as follows:
 
-        * When Harvest is started, all ``.tif`` images are removed. Each image
+        * When Harvest is started, all ``.png`` images are removed. Each image
           type will get its own (empty) entry in ``imageDict``.
         * Fisb-decode level2 messages with data get sent to
           :func:`processMessage`.
@@ -76,7 +76,7 @@ class MsgBLOCK(MsgBase):
     def createImageReport(self, dt):
         """Called by the testing system to generate an image report.
 
-        Images are just ``.tif`` files and contain no obvious metadata.
+        Images are just ``.png`` files and contain no obvious metadata.
         For testing, whenever a periodic dump is done, the images are 
         transferred to a dump area and this report is generated which
         contains information about each image.
@@ -150,14 +150,14 @@ class MsgBLOCK(MsgBase):
         """
         nameList = []
         if imgType.startswith('ICING'):
-            nameList.append(imgType + '_SLD.tif')    
-            nameList.append(imgType + '_SEV.tif')    
-            nameList.append(imgType + '_PRB.tif')
+            nameList.append(imgType + '_SLD.png')
+            nameList.append(imgType + '_SEV.png')    
+            nameList.append(imgType + '_PRB.png')
         elif imgType.startswith('LIGHT'):
-            nameList.append(imgType + '_ALL.tif')    
-            nameList.append(imgType + '_POS.tif')    
+            nameList.append(imgType + '_ALL.png')    
+            nameList.append(imgType + '_POS.png')    
         else:
-            nameList.append(imgType + '.tif')
+            nameList.append(imgType + '.png')
 
         # Add full paths
         for i in range(0, len(nameList)):
@@ -166,8 +166,10 @@ class MsgBLOCK(MsgBase):
         return nameList
 
     def deleteImageFile(self, imgType):
-        """Delete all ``.tif`` files associated with the image type.
+        """Delete all ``.png`` and ``.png.aux.xml`` files associated with the image type.
 
+        Will also remove the file's entry from the database.
+        
         Args:
             imgType (str): Image type as found in ``IMAGE_LIST``
         """
@@ -176,6 +178,10 @@ class MsgBLOCK(MsgBase):
         for x in nameList:
             if os.path.isfile(x):
                 os.remove(x)
+
+            xAux = x + '.aux.xml'
+            if os.path.isfile(xAux):
+                os.remove(xAux)
 
         self.dbConn.MSG.delete_one({'_id': 'IMAGE-' + imgType})
 
@@ -212,7 +218,7 @@ class MsgBLOCK(MsgBase):
         return fcn
         
     def createImageFile(self, imgType, quietImageTime):
-        """Create a new ``.tif`` image file(s) for the given type if needed.
+        """Create a new ``.png`` image file(s) for the given type if needed.
 
         This function will create a new image only if needed. So it called each
         time through :func:`periodicUpdate`. If there is no image data, or the data
@@ -249,7 +255,7 @@ class MsgBLOCK(MsgBase):
         # if we get here, time to make an image
         imageList = imgDict['filename_list']
 
-        # Make one or more (for lightning and icing) .tif files.
+        # Make one or more (for lightning and icing) .png files.
         for filename in imageList:
             bbox = img.mapImg(filename, imgDict['bins_dict'], \
                    imgDict['scale_factor'], imgDict['image_map_fcn'])
@@ -405,7 +411,7 @@ class MsgBLOCK(MsgBase):
         imgDict['has_any_data'] = True
 
     def periodicUpdate(self):
-        """Performs periodic maintenance issues such as creating ``.tif``
+        """Performs periodic maintenance issues such as creating ``.png``
         images or removing images.
 
         Performs the following tasks:

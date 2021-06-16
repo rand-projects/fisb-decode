@@ -34,11 +34,6 @@ PROCESS_IMAGES = True
 #: exists.
 IMAGE_DIRECTORY = '../runtime/images'
 
-#: Set to ``True`` to have images smoothed. Smoothing the images results in a
-#: nicer image, but the images are about 4 times the size (image width is
-# multiplied by 2). Images are smoothed using a bilinear interpolation.
-SMOOTH_IMAGES = False
-
 #: Where the ``sync.fisb`` file lives. This file provides an offset in 
 #: seconds (as a float) from the current time to the simulated time.
 #: Used for coordinating Harvest with Trickle during testing.
@@ -119,7 +114,7 @@ NOT_INCLUDED_BLUE = 0x96
 #:   Maps specifically for testing. Shows all values.
 #: SHOW_NO_DATA (2)
 #:   Same as ``GENERAL``, but shows areas of NO-DATA.
-IMAGE_MAP_CONFIGURATION = 0
+IMAGE_MAP_CONFIGURATION = 1
 
 #: Set the cloudtop map colors to use (this doesn't apply when
 #: performing test group tests).

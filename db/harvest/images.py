@@ -1,6 +1,6 @@
 """Module containing image functions for harvest
 
-All images are GeoTiff files.
+All images are geolocated PNG files.
 
 Images use an 'alternate block number' which is described better elsewhere (see
 :func:`fisb.level2.msgBlock.alternateBlockNumber`),
@@ -409,7 +409,7 @@ def mapBinStr(x, y, binStr, rCh, gCh, bCh, aCh, mapTable, byteFcn):
 def mapImg(filename, binDict, resolution, mapFcn):
     """Given a set of bin numbers and values, create image.
 
-    Create a geoTiff file into the specified ``filename`` given a dictionary
+    Create a PNG file into the specified ``filename`` given a dictionary
     with bin numbers as keys and a byte string with bin values.
 
     If ``cfg.SMOOTH_IMAGES`` is True, will also smooth the image. In this case
@@ -417,7 +417,7 @@ def mapImg(filename, binDict, resolution, mapFcn):
     then rename the file to the original filename.
 
     Args:
-        filename (str): Complete filename and path to use. Usually ends in ``.tif``.
+        filename (str): Complete filename and path to use. Usually ends in ``.png``.
         binDict (dict): Dictionary with alternate block numbers as keys and image contents as values.
         resolution(int): Resolution of image block:
 
@@ -428,9 +428,10 @@ def mapImg(filename, binDict, resolution, mapFcn):
             for the specific image type.
 
     Returns:
-        list: Bounding box in leaflet format [ [ <SW corner> ], [<NE corner>] ]
-        The latitude is the 0 index and longitude is the 1 index.
+        list: Bounding box for leaflet. Consists of the NW and SE corners, with
+        the latitude first.
     """
+
     maxLatBin, minLongBin, \
     imageSize, bb = createGeoData(binDict, resolution)
     
@@ -455,28 +456,22 @@ def mapImg(filename, binDict, resolution, mapFcn):
     xMin = bb[UL][1]
     yMax = bb[UR][0]
     yMin = bb[LL][0]
-
+    
     # Complute leaflet bounding box. Note: This is in
-    # SW corner, NE corner format, with lat as the [0]
-    # component.
-    bbox = [ [float('%.6f'%(yMin)), float('%.6f'%(xMin))], \
-             [float('%.6f'%(yMax)), float('%.6f'%(xMax))] ]
-
-    # Calculate the resolution for geoTiff
+    # NW corner, SE corner format, with lat as the [0]
+    # component. Only needed if using leaflet PNG.
+    bbox = [ [float('%.6f'%(yMax)), float('%.6f'%(xMin))], \
+            [float('%.6f'%(yMin)), float('%.6f'%(xMax))] ]
+    
+    # Calculate the resolution for PNG
     xRes = (xMax - xMin) / float(imageSize[1])
     yRes = (yMax - yMin) / float(imageSize[0])
 
-    # Transformation for geoTiff
+    # Transformation for PNG
     xform = (xMin, xRes, 0, yMax, 0, -yRes)
-
-    # Create PNG filename
-    filenamePng = os.path.splitext(filename)[0] + '.png'
-
-    if cfg.SMOOTH_IMAGES:
-        filename = filename + '.org'
     
-    # Create the geoTiff
-    ds = gdal.GetDriverByName('GTiff').Create(filename, imageSize[1], imageSize[0], \
+    # Create the PNG
+    ds = gdal.GetDriverByName('MEM').Create('', imageSize[1], imageSize[0], \
         4, gdal.GDT_Byte)
 
     ds.SetGeoTransform(xform)
@@ -488,25 +483,15 @@ def mapImg(filename, binDict, resolution, mapFcn):
     ds.GetRasterBand(3).WriteArray(bCh)
     ds.GetRasterBand(4).WriteArray(aCh)
     ds.FlushCache()
-    ds = None
 
-    # Smooth file if desired
-    if cfg.SMOOTH_IMAGES:
-        ds = gdal.Open(filename)
-        ds = gdal.Translate(filename[0:-4], ds, width = (imageSize[1] * 2), \
-            height = 0, resampleAlg = 'bilinear')
-        ds = None
-        os.remove(filename)
-
-    # Make png
-    ds = gdal.Open(filename)
     pngDriver = gdal.GetDriverByName("PNG")
-    png_ds = pngDriver.CreateCopy(filenamePng, ds, 0)
+    png_ds = pngDriver.CreateCopy(filename, ds, 0)
     ds = None
     png_ds = None
-
+    
+    # Return bounding box.
     return bbox
-
+    
 def getLegendDict():
     """Create a dictionary showing the units and colors (with text values)
     for each image map. Used in clients to create a legend for an image.

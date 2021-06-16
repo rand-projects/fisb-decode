@@ -234,7 +234,7 @@ def getListOfImageFiles():
         list: List of all image file paths. Possibly empty.
     """
     imageFiles = [os.path.join(cfg.IMAGE_DIRECTORY, f) \
-        for f in os.listdir(cfg.IMAGE_DIRECTORY) if '.tif' in f]
+        for f in os.listdir(cfg.IMAGE_DIRECTORY) if '.png' in f]
     return imageFiles
     
 def prepareDirectories(testNumber):
@@ -251,6 +251,7 @@ def prepareDirectories(testNumber):
     imageFiles = getListOfImageFiles()
     for f in imageFiles:
         os.remove(f)
+        os.remove(f + '.aux.xml')
 
     # Delete all files in harvesting directory
     deleteFiles = [os.path.join(cfg.HARVEST_DIRECTORY, f) \
@@ -581,7 +582,7 @@ def writeTimeAndOffsetAsFile(dumpPath, dtStr, secondsOffset, timeOffset, timeAdj
 def dumpImageReport(dumpPath, dt):
     """If there are any images, create a text file with metainformation.
 
-    The ``.tif`` files do not have metadata associated with them. To check for
+    The ``.png`` files do not have metadata associated with them. To check for
     things like how old the file is, etc, we create an image report that contains
     a summary of information for each image file dumped. This is written to the same
     directory as other checkpointed information. Its name will be
@@ -640,6 +641,7 @@ def dump(dumpPath, dt, triggerList):
     imageFiles = getListOfImageFiles()
     for f in imageFiles:
         shutil.copy(f, dumpPath)
+        shutil.copy(f + 'aux.xml', dumpPath)
 
     # Dump image report
     dumpImageReport(dumpPath, dt)
