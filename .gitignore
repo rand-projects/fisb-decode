@@ -10,6 +10,7 @@ tg/tg-source/imported/TG??
 db/location/ov.txt
 docs/source/_build/
 docs/build/
+runtime/web-images/*.png
 runtime/images/*.png
 runtime/images/.nfs*
 runtime/images/*.png.aux.xml

@@ -34,6 +34,14 @@ PROCESS_IMAGES = True
 #: exists.
 IMAGE_DIRECTORY = '../runtime/images'
 
+#: Set to the directory you want the images served to the web to
+#: be stored (this is different than ``IMAGE_DIRECTORY``). The web
+#: files have unique names associated with a single message.
+WEB_IMAGE_DIRECTORY = '../runtime/web-images'
+
+#: URL prefix used for web png files.
+URL_PREFIX = 'http://127.0.0.1:5000/png/'
+
 #: Where the ``sync.fisb`` file lives. This file provides an offset in 
 #: seconds (as a float) from the current time to the simulated time.
 #: Used for coordinating Harvest with Trickle during testing.

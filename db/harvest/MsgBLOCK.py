@@ -1,6 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from osgeo import gdal
-import numpy, os, pprint
+import numpy, os, pprint, shutil
 
 from db.harvest.MsgBase import MsgBase
 import db.harvest.harvestConfig as cfg
@@ -8,6 +8,7 @@ import db.harvest.images as img
 import db.harvest.testing as test
 import db.harvest.harvestExceptions as ex
 import fisb.level2.utilities as util
+import db.harvest.utilities as utilH
 
 IMAGE_LIST =['NEXRAD_REGIONAL', 'NEXRAD_CONUS', \
                'CLOUD_TOPS', 'LIGHTNING', \
@@ -255,10 +256,28 @@ class MsgBLOCK(MsgBase):
         # if we get here, time to make an image
         imageList = imgDict['filename_list']
 
+        # URL dictionary. Most image types have only one image, but some can
+        # have up to 3.
+        urlDict = {}
+
         # Make one or more (for lightning and icing) .png files.
+        # Note: For files of the same base type, the bounding box (bbox) is the
+        # same for all.
         for filename in imageList:
             bbox = img.mapImg(filename, imgDict['bins_dict'], \
                    imgDict['scale_factor'], imgDict['image_map_fcn'])
+
+            # Get basename (i.e. no path or extension) for urlDict key.
+            basename = filename[filename.rfind('/') + 1: filename.rfind('.')]
+
+            # Create URL and add it to the dictionary.
+            webname = utilH.randomname(12, '.png')
+            url = cfg.URL_PREFIX + webname
+            urlDict[basename] = url
+
+            # Copy the file to the web image directory.
+            webpath = os.path.join(cfg.WEB_IMAGE_DIRECTORY, webname)
+            shutil.copyfile(filename, webpath)
 
         # Get the insert/creation timestamp
         insertTime = test.datetimeNow()
@@ -268,7 +287,7 @@ class MsgBLOCK(MsgBase):
         msgId = 'IMAGE-' + imgType
 
         msg = {'_id': msgId, 'type': 'IMAGE', 'unique_name': imgType, \
-            imgDict['obs_or_valid']: oldestTime, \
+            imgDict['obs_or_valid']: oldestTime, 'urls': urlDict, \
             'bbox': bbox, 'insert_time': insertTime, 'expiration_time': expirationTime}
 
         self.dbConn.MSG.replace_one({'_id': msgId}, \
