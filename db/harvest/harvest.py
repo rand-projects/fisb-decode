@@ -14,6 +14,7 @@ from bson.objectid import ObjectId
 import db.harvest.testing as test
 import db.harvest.harvestConfig as cfg
 import db.harvest.harvestExceptions as ex
+import db.harvest.utilities as utilH
 import db.harvest.images as img
 from db.harvest.MsgMETAR import MsgMETAR
 from db.harvest.MsgTAF import MsgTAF
@@ -333,6 +334,13 @@ def doMaintTasks(maintCounter):
         # ** Normally 1 hour                 **
 
         if (maintCounter % 360) == 0:
+            # Expire all web-image files older than 110 minutes.
+            # By the standard, any image over 105 minutes max is
+            # expired, and all images will have expiration times
+            # less than this (75 mins for radar and lightning).
+            # So 110 minutes is a safe expiration value.
+            utilH.removeFilesWithExtension(cfg.WEB_IMAGE_DIRECTORY, '.png', 110 * 60)
+
             pass
 
         return maintCounter + 1
@@ -427,6 +435,9 @@ def harvest(tgTestNumber):
 
         # Expire any old expired messages in db.
         maintCounter = doMaintTasks(maintCounter)
+
+        # Expire all web-image files
+        utilH.removeFilesWithExtension(cfg.WEB_IMAGE_DIRECTORY, '.png')
 
         # Loop through directory looking for files
         while True:

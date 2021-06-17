@@ -216,3 +216,11 @@ db.harvest.vectors module
    :members:
    :undoc-members:
    :show-inheritance:
+
+db.harvest.utilities module
+---------------------------
+
+.. automodule:: db.harvest.utilities
+   :members:
+   :undoc-members:
+   :show-inheritance:
