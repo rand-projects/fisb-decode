@@ -1,0 +1,8 @@
+# Run createpirepdb
+
+../db/location/createpirepdb.py $*
+
+
+
+
+

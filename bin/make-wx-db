@@ -1,0 +1,8 @@
+# Run createwxdb
+
+../db/location/createwxdb.py $*
+
+
+
+
+

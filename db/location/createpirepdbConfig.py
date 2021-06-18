@@ -1,4 +1,4 @@
-"""LocationDb configuration information.
+"""createpirepdb configuration information.
 """
 
 #: MongoDb URI where fisb_location DB is located.

@@ -3,8 +3,7 @@
 """Locationdb loads supplemental data into the fisb_location database.
 
 This information is used primarily to assisting in providing
-geographical locations for ``PIREPS`` and text based weather
-(``METAR``, ``TAF``, ``WINDS``).
+geographical locations for ``PIREPS``.
 
 Locationdb takes one argument which is the directory to find
 the following files:
@@ -48,7 +47,7 @@ from pymongo import MongoClient
 from pymongo import errors
 from bson.objectid import ObjectId
 
-import db.location.locationdbConfig as cfg
+import db.location.createpirepdbConfig as cfg
 
 # Directory where .csv files are located. Will
 # be replaced with any directory given as argument.

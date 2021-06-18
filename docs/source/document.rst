@@ -1133,7 +1133,7 @@ In particular make sure that:
 * In '``File Format``', select '``Custom delimiters``'. Make sure '``Tab``' is
   selected.
 * For '``Record and Fields Options``', **unselect** '``First record has field names``'.
-* Number of header lines to disgard is '``0``'.
+* Number of header lines to discard is '``0``'.
 * Geometry Definition has '``Well known text``' selected and
   '``Geometry CRS``' is '``Default CRS: EPSG:4326 - WGS 84``' (you will need
   to click the drop down arrow to find this option).
@@ -1878,7 +1878,7 @@ directory for processing by harvest. There are a few things to consider:
 
 * You need to have a somewhat accurate time set. Plus or minus 30 seconds, or even
   a minute, is fine. Stratux may not provide a time (it might if it has a working
-  GPS, but GPS is not manditory, or it might be intermittant). Having a time source
+  GPS, but GPS is not mandatory, or it might be intermittent). Having a time source
   such as a real time clock, internet source, or even setting the date and time
   by hand, are
   required. 'fisb-decode' has lots of logic to take FAA partial times and make them

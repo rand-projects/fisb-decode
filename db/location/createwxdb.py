@@ -1,5 +1,28 @@
 #!/usr/bin/env python3
 
+"""``createwxdb`` will place weather station location information
+in the ``fisb_location.WX`` collection.
+
+There are two required sources of information: NWS METAR station location
+information obtained from the ``index.xml`` file, and wind station location
+information from the ``winds.txt`` file (supplied).
+
+The latest version of ``index.xml`` can be obtained from
+`here <https://w1.weather.gov/xml/current_obs/index.xml>`_.
+
+Wind station location information is not the easiest thing to find.
+There is no readily available great list of wind stations. I supply
+a ``winds.txt`` file consisting of NWS data from NWS directive
+`10-812 <https://www.nws.noaa.gov/directives/sym/pd01008012curr.pdf>`_.
+
+Most wind station locations are associated with a METAR source (i.e. adding
+a 'K' in front results in a valid METAR station). In this case, I will use the
+location data from the METAR source instead of the winds source (I have also
+verified that in each case the locations are approximately the same). Some wind
+locations are not associated with a METAR source from ``index.xml``. In those
+cases the wind source is used. Some wind locations are located off-shore.
+"""
+
 import pprint, os, argparse
 
 from xml.dom import minidom
@@ -11,6 +34,16 @@ from bson.objectid import ObjectId
 import db.location.createwxdbConfig as cfg
 
 def createStationDict(indexXmlFile):
+    """Parses ``index.xml`` to obtain station id and
+    latitude, longitude information.
+
+    Args:
+        indexXmlFile (str): Path for ``index.xml``.
+
+    Returns:
+        dict: Dictionary with station name for key and
+        list for value containing [lng, lat].
+    """
     xmlFile = minidom.parse('index.xml')
 
     stationDict = {}
@@ -19,6 +52,8 @@ def createStationDict(indexXmlFile):
     for station in stations:
         children = station.childNodes
 
+        # Just in case a field is missing, make it easy to find
+        # and not reuse value from previous loop.
         stationId = None
         latitude = None
         longitude = None
@@ -36,6 +71,16 @@ def createStationDict(indexXmlFile):
     return stationDict
 
 def createWindDict(windFile):
+    """Parses ``winds.txt`` to obtain station id and
+    latitude, longitude information.
+
+    Args:
+        windFile (str): Path for ``winds.txt``.
+
+    Returns:
+        dict: Dictionary with station name for key and
+        list for value containing [lng, lat].
+    """
     windDict = {}
 
     with open(windFile, 'r') as f:
@@ -47,26 +92,29 @@ def createWindDict(windFile):
             lineParts = line.split(',')
 
             stationId = lineParts[0]
-            if '-' in lineParts[2]:
-                latitude = float('%.5f'%(float(lineParts[2]) - (float(lineParts[3]) / 60.0)))
-            else:
-                latitude = float('%.5f'%(float(lineParts[2]) + (float(lineParts[3]) / 60.0)))
-
-            if '-' in lineParts[4]:
-                longitude = float('%.5f'%(float(lineParts[4]) - (float(lineParts[5]) / 60.0)))
-            else:
-                longitude = float('%.5f'%(float(lineParts[4]) + (float(lineParts[5]) / 60.0)))
+            latitude = lineParts[1]
+            longitude = lineParts[2]
 
             windDict[stationId] = [longitude, latitude]
 
     return windDict
 
 def createwxdb(index_xml_file, winds_file):
+    """Fill ``fisb_location.WX`` with data from ``index.xml``
+    and ``winds.txt``.
+
+    Args:
+        index_xml_file (str): Path for ``index.xml``.
+        winds_file (str): Path for ``winds.txt``.
+    """
+    # Open database
     client = MongoClient(cfg.MONGO_URI, tz_aware=True)
     db = client.fisb_location
 
+    # Delete all existing entries.
     db.WX.delete_many({})
 
+    # Parse index.xml and winds.txt into dictionaries.
     stationDict = createStationDict(index_xml_file)
     windDict = createWindDict(winds_file)
     
@@ -83,34 +131,29 @@ def createwxdb(index_xml_file, winds_file):
 
         stationDict[k] = latLong
 
+    # Insert all entries into WX collection.
     stationKeys = list(stationDict.keys())    
     for station in stationKeys:
         db.WX.insert_one({'_id': station, 'coordinates': stationDict[station]})
     
 if __name__ == "__main__":
     hlpText = \
-"""Fill the fisb_location database with ID, location and 
-magnetic declination information.
+"""Fill the fisb_location database with weather station
+information.
 
-Argument is the directory where the following files live:
-    * Airports.csv
-    * Designated_Points.csv
-    * NAVAID_System.csv
-
-Also, you will need the 'wmm_file' program installed
-somewhere and the 'WMM.COF' file in the directory you are 
-running this from.
+Arguments are 'index.xml' from the NWS (see documentation
+on how to obtain) and the supplied 'winds.txt' file.
 """
     parser = argparse.ArgumentParser(description= hlpText, \
         formatter_class=RawTextHelpFormatter)
 
-    parser.add_argument('index_xml_file', help="Base directory where .csv files live")
-    parser.add_argument('winds_file', help="Base directory where .csv files live")
+    parser.add_argument('index_xml_file', help="index.xml from NWS")
+    parser.add_argument('winds_file', help="winds.txt file")
     
     args = parser.parse_args()
 
     index_xml_file = args.index_xml_file
     winds_file = args.winds_file
 
-# Call createWxLocationDb
+# Call createwxdb
 createwxdb(index_xml_file, winds_file)
