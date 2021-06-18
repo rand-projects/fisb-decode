@@ -11,3 +11,4 @@ db = conn.getDB("fisb_location");
 db.createCollection('AIRPORTS')
 db.createCollection('NAVAIDS')
 db.createCollection('DESIGNATED_POINTS')
+db.createCollection('WX')

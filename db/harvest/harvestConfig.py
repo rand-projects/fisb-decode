@@ -122,7 +122,7 @@ NOT_INCLUDED_BLUE = 0x96
 #:   Maps specifically for testing. Shows all values.
 #: SHOW_NO_DATA (2)
 #:   Same as ``GENERAL``, but shows areas of NO-DATA.
-IMAGE_MAP_CONFIGURATION = 1
+IMAGE_MAP_CONFIGURATION = 2
 
 #: Set the cloudtop map colors to use (this doesn't apply when
 #: performing test group tests).

@@ -309,7 +309,7 @@ def processReportingPoints(db, path):
     calculateDeclinations(db, 'DESIGNATED_POINTS')
 
 def locationDb():
-    """Main routine for locationdbs.
+    """Main routine for locationdb.
 
     Process and fill database with the 3 .csv files contents. Will
     also add magnetic declination information.

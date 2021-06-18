@@ -82,7 +82,7 @@ IDENT_BEARING_DISTANCE_RE = re.compile(r"^(?:(OV|OVER|OVR)?( |-))?([A-Z0-9]{3,5}
 IDENT_BEARING_DISTANCE1_RE = re.compile(r"^(?:(OV|OVER|OVR)?( |-))?([A-Z0-9]{3,5})? ?(([0-9]{3}) ?([0-9]{2}))*$")
 
 # Dictionary for handling cached location
-# queries. The key is the airport location
+# queries. The key is the station location
 # id and the value is the contents of the
 # 'geojson' key (in the style of the rest
 # of fisb-decode [i.e. overkill]).
@@ -101,8 +101,8 @@ def addTextWxLoc(db, msg):
     Adds a compatible ``geojson`` key and value for the given
     message.
 
-    The first time a new airport ident is used, it will be looked
-    up in the database (``fisb_location.AIRPORTS``). Afterwards,
+    The first time a new weather ident is used, it will be looked
+    up in the database (``fisb_location.WX``). Afterwards,
     the result is cached.
 
     Args:
@@ -120,8 +120,8 @@ def addTextWxLoc(db, msg):
         msg['geojson'] = txtWxLocDict[id]
         return msg
 
-    airport = db.AIRPORTS.find_one({'_id': id})
-    if airport is None:
+    station = db.WX.find_one({'_id': id})
+    if station is None:
         # No airport. Can't add location info. Just return.
         return msg
     
@@ -129,7 +129,7 @@ def addTextWxLoc(db, msg):
                 'features': [{'type': 'Feature', \
                               'geometry': { \
                                  'type': 'Point', \
-                                 'coordinates': airport['coordinates']}, \
+                                 'coordinates': station['coordinates']}, \
                                'properties': {'name': id, 'id': id}}]}
 
     txtWxLocDict[id] = geoField

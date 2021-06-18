@@ -360,10 +360,12 @@ def groundUplinkMessage(payload, isDetailed, testMode, rsrDict = None):
         # A collection of data channels for a TIS-B site ID is called
         # a Data Channel Block (DCB).
         #
-        # This table is taken from SBS-Description SRT-47-rev01 10/24/11.
-        # At the time, L4 and L5 were not defined. This table probably isn't
-        # entirely accurate. My understanding is that there are no surface
-        # stations, only the new L4, L5. My guess is that they use 8, 16, 24, 31.
+        # This table is taken from SBS-Description SRT-047-rev05 11/20/2020.
+        # Way too long URL is split below. Rejoin the parts to use it:
+        # "https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/
+        # 45845cd583ad3cd686257d62006b3b3e/$FILE/MA%20SBS%20Description%20
+        # Document%20SRT-047_V5_DCR-PMO-211_11202020signed18DEC20.pdf"
+        #
         #  H1 (15-F) : 1, 9, 17, 25
         #  H2 (14-E) : 2, 10, 18, 26
         #  H3 (13-D) : 3, 11, 19, 27
@@ -373,12 +375,13 @@ def groundUplinkMessage(payload, isDetailed, testMode, rsrDict = None):
         #  L1 (09-9) : 14, 22
         #  L2 (08-8) : 7, 30
         #  L3 (07-7) : 15, 23
-        #  L4 (06-6) : ??
-        #  L5 (05-5) : ??
-        #  S1 (04-4) : 31
+        #  L4 (06-6) : 16, 31
+        #  L5 (05-5) : 8, 24
+        #  S1 (04-4) : 32
         #  S2 (03-3) : 8
         #  S3 (02-2) : 16
         #  S4 (01-1) : 24
+        #  Unallocated: 0
         #
         # There is a relationship between transmission time slot and
         # data channel, but they are not the same. See DO-358B Appendix G,

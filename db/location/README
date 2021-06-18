@@ -5,3 +5,15 @@ to support PIREP location.
 Data is available from:
      https://adds-faa.opendata.arcgis.com/
 
+NWS Current Observation list is available from clicking on
+    https://w1.weather.gov/xml/current_obs/
+and then the orange XML link, or directly at:
+    https://w1.weather.gov/xml/current_obs/index.xml
+
+There is no readily available great list of wind stations.
+Start at:
+      http://www.nws.noaa.gov/directives/
+Select 10 (operations and services), then NDS 10-8 Aviation Wx Services,
+then 10-812 Aviation Wind and Temperatire Aloft Forecasts. Direct link is:
+     https://www.nws.noaa.gov/directives/sym/pd01008012curr.pdf
+
