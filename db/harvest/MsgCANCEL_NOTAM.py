@@ -17,36 +17,22 @@ class MsgCANCEL_NOTAM(MsgBase):
         the ``_id`` field in the various tables associated with
         NOTAMS. We just delete this entry.
 
-        There are two collections for NOTAMs: ``NOTAM`` and ``NOTAM_TFR``,
-        so we attempt to cancel from each. This also might be a
-        ``FIS_B_UNAVAILABLE`` message, so try there also.
-        These usually expire, but the message mechanisms
-        do allow for a cancellation even if the standard doesn't
-        indicate it.
+        How this works is we replace the message with an empty message
+        (except for required fields) that has a ``cancel`` field whose
+        value is the unique name. Essentially, we change the type of the
+        cancel message to ``NOTAM``.
 
         Args:
-            msg (dict): Level2 message with G_AIRMET cancellation.
+            msg (dict): Level2 message with NOTAM cancellation.
         """        
         if not self.checkThenAddIdDigest(msg, digest):
             return      
 
+        msg['type'] = 'NOTAM'
+        uniqueName = msg['unique_name']
+        msg['cancel'] = uniqueName
+
         self.dbConn.MSG.replace_one( \
-            {'_id': msg['_id']}, \
+            {'_id': 'NOTAM-' + uniqueName}, \
             msg, \
             upsert=True)
-
-        pkey = msg['unique_name']
-
-        # See if this is a NOTAM_TFR. We just check to see if it is
-        # there, if not we assume normal NOTAM. This might end up cancelling
-        # a non-existant NOTAM. NOTAM_TFR and NOTAM_FDC share numbers under
-        # 10000, so we check there first.
-        notamNum = int(pkey.split('-')[1])
-
-        if notamNum < 10000:
-            doc = self.dbConn.NOTAM_TFR.find_one({'_id': 'NOTAM_TFR-' + pkey})
-            if doc is not None:
-                self.dbConn.MSG.delete_one({'_id': 'NOTAM_TFR-' + pkey})
-                return                
-
-        self.dbConn.MSG.delete_one({'_id': 'NOTAM-' + pkey})

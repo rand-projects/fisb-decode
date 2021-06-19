@@ -460,8 +460,8 @@ def mapImg(filename, binDict, resolution, mapFcn):
     # Complute leaflet bounding box. Note: This is in
     # NW corner, SE corner format, with lat as the [0]
     # component. Only needed if using leaflet PNG.
-    bbox = [ [float('%.6f'%(yMax)), float('%.6f'%(xMin))], \
-            [float('%.6f'%(yMin)), float('%.6f'%(xMax))] ]
+    bbox = [ [float(round(yMax, 6)), float(round(xMin, 6))], \
+            [float(round(yMin, 6)), float(round(xMax, 6))] ]
     
     # Calculate the resolution for PNG
     xRes = (xMax - xMin) / float(imageSize[1])
@@ -498,7 +498,7 @@ def getLegendDict():
 
     The keys for this dictionary are the name of the
     image map. The value is also a dictionary who's ``units`` key is the name
-    of the units being used. The other entry to this dictioary is ``colors``.
+    of the units being used. The other entry to this dictionary is ``colors``.
     ``colors`` is a list of two element lists. The first entry is the integer ``RGB``
     color value, and the second entry is the text that goes with the color.
 
@@ -506,7 +506,7 @@ def getLegendDict():
     of colors.
 
     The color list will always have the colors in order of intensity. This includes
-    the icing severity table where 'heavy' and 'servere' are placed in the wrong
+    the icing severity table where 'heavy' and 'severe' are placed in the wrong
     order by the standard.
 
     This data will be placed in the LEGEND collection as its only entry.

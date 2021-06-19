@@ -132,8 +132,8 @@ def convertRawLongitudeLatitude(rawLongitude, rawLatitude, bitFactor):
 
     # Attempt to preserve only 6 places after the decimal (akin
     # to GPS precision)
-    longitude = float('%.6f'%(longitude))
-    latitude = float('%.6f'%(latitude))
+    longitude = float(round(longitude, 6))
+    latitude = float(round(latitude, 6))
 
     return (longitude, latitude)
 

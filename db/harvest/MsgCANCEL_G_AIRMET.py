@@ -13,9 +13,10 @@ class MsgCANCEL_G_AIRMET(MsgBase):
     def processMessage(self, msg, digest):
         """Cancel G_AIRMET message.
 
-        The ``unique_name`` field of the level2 message is the same as
-        the ``_id`` field in the ``G_AIRMET`` table. We just delete this
-        entry.
+        We create a new message with the same _id as the original
+        (replacing this messages ``CANCEL_G_AIRMET`` with ``G_AIRMET``).
+        The message has only the essential fields but adds a ``cancel`` slot
+        which contains the unique name.
 
         Args:
             msg (dict): Level2 message with G_AIRMET cancellation.
@@ -23,10 +24,11 @@ class MsgCANCEL_G_AIRMET(MsgBase):
         if not self.checkThenAddIdDigest(msg, digest):
             return      
 
+        uniqueName = msg['unique_name']
+        msg['type'] = 'G_AIRMET'
+        msg['cancel'] = uniqueName
+        
         self.dbConn.MSG.replace_one( \
-            {'_id': msg['_id']}, \
+            {'_id': 'G_AIRMET-' + uniqueName}, \
             msg, \
             upsert=True)
-
-        # Remove G_AIRMET
-        self.dbConn.MSG.delete_one({ '_id': 'G_AIRMET-' + msg['unique_name']})

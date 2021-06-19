@@ -19,7 +19,7 @@ from pymongo import MongoClient
 from pymongo import errors
 from bson.objectid import ObjectId
 
-import db.location.locationdbConfig as cfg
+import db.location.createpirepdbConfig as cfg
 import db.harvest.location as loc
 
 # Get items from configuration

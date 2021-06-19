@@ -243,7 +243,8 @@ def tfrNotam(rYear, rMonth, rDay, reportId, text, contentsGraphics, \
     if nTfr is None:
         raise ex.RegexDidNotMatchException("NOTAM-TFR could not match: '{}'".format(text))
 
-    newMsg['type'] = 'NOTAM_TFR'
+    newMsg['type'] = 'NOTAM'
+    newMsg['subtype'] = 'TFR'
     newMsg['unique_name'] = reportId
     newMsg['contents'] = text
     newMsg['station'] = station
@@ -340,6 +341,10 @@ def notam(rYear, rMonth, rDay, location, reportId, text, contentsGraphics, \
     newMsg['number'] = notamNumber
     newMsg['station'] = station
     newMsg = insertNotamDates(rYear, rMonth, rDay, text, newMsg)
+
+    # Change subtype if this is an SUA message (can be SUAC, SUAE, SUAW).
+    if accountableLocation.startswith('SUA'):
+        newMsg['subtype'] = 'D-SUA'
 
     # Don't always have a start of activity time (use received time as ISO ref)
     soat = rcvdTime

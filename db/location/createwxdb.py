@@ -44,7 +44,7 @@ def createStationDict(indexXmlFile):
         dict: Dictionary with station name for key and
         list for value containing [lng, lat].
     """
-    xmlFile = minidom.parse('index.xml')
+    xmlFile = minidom.parse(indexXmlFile)
 
     stationDict = {}
 
@@ -155,5 +155,5 @@ on how to obtain) and the supplied 'winds.txt' file.
     index_xml_file = args.index_xml_file
     winds_file = args.winds_file
 
-# Call createwxdb
-createwxdb(index_xml_file, winds_file)
+    # Call createwxdb
+    createwxdb(index_xml_file, winds_file)

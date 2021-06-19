@@ -1278,10 +1278,10 @@ def blockNumberToLatLong(blockNumber, scaleFactor):
         raise ex.ScaleFactorException('Illegal Scale factor')
 
     # Set consistent resolutions
-    latitude = float('%.6f'%(latitude))
-    longitude = float('%.6f'%(longitude))
-    binHeight = float('%.6f'%(binHeight))
-    binWidth = float('%.6f'%(binWidth))
+    latitude = float(round(latitude, 6))
+    longitude = float(round(longitude, 6))
+    binHeight = float(round(binHeight, 6))
+    binWidth = float(round(binWidth, 6))
 
     return (latitude, longitude, binHeight, binWidth)
 

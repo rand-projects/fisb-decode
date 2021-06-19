@@ -641,7 +641,6 @@ def dump(dumpPath, dt, triggerList):
     imageFiles = getListOfImageFiles()
     for f in imageFiles:
         shutil.copy(f, dumpPath)
-        shutil.copy(f + 'aux.xml', dumpPath)
 
     # Dump image report
     dumpImageReport(dumpPath, dt)

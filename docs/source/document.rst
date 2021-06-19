@@ -778,6 +778,35 @@ and bearings are magnetic and locations are WGS84 (GPS) true coordinates. So you
 have to know the declination for each point. The FAA data we use doesn't always
 have this information.
 
+There are two distinct location databases: one for weather, and the other for
+PIREPs.
+
+Weather Locations
+-----------------
+
+There are two files needed to create the weather location database: ``index.xml``
+from the NWS and ``winds.txt`` provided in
+the ``fisb-decode/db/location`` directory.
+
+``index.xml`` is the master list of observation stations for the NWS. You can either
+navigate
+`to this page <https://w1.weather.gov/xml/current_obs/>`_ and then select the orange
+*XML* link, or directly access the file from
+`here <https://w1.weather.gov/xml/current_obs/index.xml>`_.
+
+``winds.txt`` contains all of the winds aloft stations. These have three letter
+identifiers. Most are associated with airports, but some are located in the
+Gulf of Mexico or an ocean.
+
+Assuming you have the ``index.xml`` file in your home directory, and the ``winds.txt``
+in the ``fisb-decode/db/location`` (default) directory,
+from the ``bin`` directory type: ::
+
+  ./make-wx-db ~/index.xml ../db/location/winds.txt
+
+PIREP Locations
+---------------
+
 We will need 3 files from the
 `FAA's Aeronautical Data Delivery Service <https://adds-faa.opendata.arcgis.com/>`_.
 Unfortunately, there aren't any simple links to the data, you have to
@@ -846,11 +875,11 @@ downloaded and in some directory (your choice), we can
 fill the database with location information. From the
 ``fisb_decode/bin`` directory type something like: ::
 
-  ./locationdb <directory where .csv files are located>
+  ./make-pirep-db <directory where .csv files are located>
 
 My output with the ``.csv`` files in my home directory looks like: ::
 
-  ./locationdb ~/
+  ./make-pirep-db ~/
   airports...
 
 
@@ -1026,6 +1055,14 @@ It will provide you with hours of endless frustration.
 My goal here is to give you the minimal information to display
 'fisb-decode' images and vectors using QGIS. I leave it as an exercise for
 you to get QGIS installed on your system.
+
+You will note that the images below are attempting to load ``.tif`` files.
+I have switched to ``.png`` files, so just substitute ``.png`` whenever you
+see ``.tif``. Also note that while geotiff files have location information
+embedded inside, ``.png`` files do not. So with each ``.png`` file there will
+also be one with the extension of ``.png.aux.xml``. When loading an image into
+QGIS, make sure both files exist. The ``.xml`` file is used by QGIS to geolocate
+the image.
 
 When you start QGIS you should get a screen that looks like (after a splash screen):
 
@@ -1379,7 +1416,9 @@ can handle 138 entries before it declares overflow. An overflowed CRL can't
 be declared complete even if all its reports are complete, because there are
 more unreported reports.
 
-The directory ``fisb-decode/tg/results/tg30/01`` contains: ::
+The directory ``fisb-decode/tg/results/tg30/01`` contains
+(it will also contain a file with the extension ``.png.aux.xml``
+for each ``.png`` file): ::
 
   2020-10-30-0900277  ICING_10000_SEV.png image-report.txt     TURBULENCE_22000.png
   CLOUD_TOPS.png      ICING_10000_SLD.png LIGHTNING_ALL.png    TURBULENCE_24000.png

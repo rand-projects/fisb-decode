@@ -12,7 +12,7 @@ from geographiclib import geodesic
 import db.harvest.harvestConfig as cfg
 import db.harvest.harvestExceptions as ex
 
-DB_VECTOR_TYPES = ['NOTAM', 'NOTAM_TFR', 'AIRMET', \
+DB_VECTOR_TYPES = ['NOTAM', 'AIRMET', \
     'SIGMET', 'WST', 'CWA', \
     'G_AIRMET', 'PIREP', 'METAR', 'TAF', 'WINDS_06_HR', \
         'WINDS_12_HR', 'WINDS_24_HR']
@@ -136,7 +136,7 @@ def circleToPolygon(xCenter, yCenter, nm, numPoints = 32):
         deg = 360.0/ numPoints * i
         v = geodesic.Geodesic.WGS84.Direct(yCenter, xCenter, deg, nmInMeters)
 
-        coords.append([float('%.6f'%(v['lon2'])), float('%.6f'%(v['lat2']))])
+        coords.append([float(round(v['lon2'], 6)), float(round(v['lat2'], 6))])
 
     return coords
 
