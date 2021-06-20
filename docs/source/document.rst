@@ -15,7 +15,7 @@ This implementation roughly follows the DO-358B standard.
   purpose. 'fisb' is a multi-level system that turns binary FIS-B messages
   into fully independent weather messages.
 * The database part of the system ('harvest') creates .png images,
-  turns vector data into geojson, and manages the FIS-B message base using
+  turns vector data into geoJSON, and manages the FIS-B message base using
   MongoDB.
 
 'fisb-decode' is strictly a back-end 'meat and potatoes' system.
@@ -771,14 +771,16 @@ Getting Location Working
 
 Another optional, but useful, addition is to get location services working.
 Location services add longitude and latitude information to text based
-weather reports (METAR, TAF, WIND forecasts) and PIREPs. PIREPs are more
+weather reports (METAR, TAF, WIND forecasts),
+Special Use Airspace, and PIREPs. PIREPs are more
 difficult because it's often human input and the humans don't do very well
 at putting locations in the way they are supposed to. Also, PIREPs use bearings,
 and bearings are magnetic and locations are WGS84 (GPS) true coordinates. So you
 have to know the declination for each point. The FAA data we use doesn't always
 have this information.
 
-There are two distinct location databases: one for weather, and the other for
+There are three distinct location databases: one for weather, one
+for Special Use Airspace, and the other for
 PIREPs.
 
 Weather Locations
@@ -966,11 +968,56 @@ To see the changes more easily, wipe the ``fisb`` database
   mongo ../db/scripts/createFisb.js
 
 Then start ``harvest`` and ``decodeNetToDir``. You can run Mongo
-to look at the tables ``METAR``, ``TAF``, ``WINDS_06_HR``,
+to look at the table ``MSG`` with ``type`` values of ``METAR``,
+``TAF``, ``WINDS_06_HR``,
 ``WINDS_12_HR``, and ``WINDS_24_HR``. Pretty much all the them
 will have ``geojson`` tags with locations. Also look at the ``PIREP`` table.
 PIREPs are tricky and not all of them (but well over 90%) will have
 location information associated with them.
+
+Special Use Airspace (SUA) Locations
+------------------------------------
+
+Initially, FIS-B had a message dedicated to Special Use Airspace (SUA)
+notices known as ``SUA``, or product id 13. There were a number of problems
+with it, and its use was discouraged. It still exists, but in 2020 the
+product look-ahead range was changed from 250-500 NM (depending on
+ground station class) to 5 NM. This change made them effectively worthless.
+
+The replacement is the use of SUA NOTAM-D messages. These NOTAMS contain
+an airspace name, effective altitude string, and active times. It's
+important to note that these NOTAMs do not tell you when any SUA will
+be active. They apply to SUA airspaces that have a regular schedule, but
+also have a note that says '*other times by NOTAM*'. These are those
+NOTAMs.
+
+You can get a geoJSON dataset for the SUA airspaces
+from the same place you got the
+location data for PIREPs:
+`FAA's ADDS <https://adds-faa.opendata.arcgis.com/>`_.
+
+In this case, scroll down the page and find the '*Airspace*' icon. Click
+on it, then find the item called '*U.S. Special Use Airspace*'. Select
+it. It will take you to a page with a sidebar on the left and a button
+that says '*View Full Details*'. This then takes you to another page
+with a button that says '*Download*' near the top. Click on this. This
+pops up a left sidebar with various items. You want the '*GeoJSON*' one.
+Selecting this will download a file called
+``U.S._Special_Use_Airspace.geojson``.
+
+Assuming this file is in your home
+directory, from the 'fisb-decode' ``bin`` directory type: ::
+
+  ./make-sua-db ~/U.S._Special_Use_Airspace.geojson
+  
+This will process the file and place the contents in the ``SUA``
+collection of the MongoDB ``fisb_location`` database.
+
+To have harvest add this information (if available, not all SUA airspaces
+are listing) to SUA NOTAM-D messages, edit
+``../db/harvest/harvestConfig.py`` and change this line: ::
+
+  SUA_LOCATION_SUPPORT = True
 
 Congratulations! You now have a complete 'fisb-decode' system consisting
 of fully functioning 'fisb' and 'harvest' sub-systems.
