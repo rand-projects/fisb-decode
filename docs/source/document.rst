@@ -793,6 +793,7 @@ navigate
 `to this page <https://w1.weather.gov/xml/current_obs/>`_ and then select the orange
 *XML* link, or directly access the file from
 `here <https://w1.weather.gov/xml/current_obs/index.xml>`_.
+This file changes pretty frequently, so you may wish to update it from time to time.
 
 ``winds.txt`` contains all of the winds aloft stations. These have three letter
 identifiers. Most are associated with airports, but some are located in the
@@ -803,6 +804,24 @@ in the ``fisb-decode/db/location`` (default) directory,
 from the ``bin`` directory type: ::
 
   ./make-wx-db ~/index.xml ../db/location/winds.txt
+
+There are actually METAR stations that are not listed in ``index.xml``
+(``winds.txt`` seems pretty complete, but they may add a station from time to
+time). The best way
+to find missing stations is to let harvest run for a while, until it has a full set of METARS
+and wind products.
+Then go into MongoDb and run the following commands: ::
+
+  use fisb
+  db.MSG.find({'type': 'METAR', 'geojson': {$exists: false}}).pretty()
+  db.MSG.find({'type': 'WINDS_06_HR', 'geojson': {$exists: false}}).pretty()
+
+If either of the queries produce results, you have a missing METAR or wind station.
+In ``fisb-decode/db/location`` there is the javascript file ``wx-errata.js``. Research
+the latitude and longitude of your station and edit ``wx-errata.js``. Then add them to
+the database by typing (from the ``bin`` directory): ::
+
+  mongo ../db/location/wx-errata.js
 
 PIREP Locations
 ---------------

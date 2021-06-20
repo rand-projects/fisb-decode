@@ -1,0 +1,8 @@
+# Run createsuadb
+
+../db/location/createsuadb.py $*
+
+
+
+
+
