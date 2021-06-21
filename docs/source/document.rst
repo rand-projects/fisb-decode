@@ -1015,7 +1015,7 @@ This will process the file and place the contents in the ``SUA``
 collection of the MongoDB ``fisb_location`` database.
 
 To have harvest add this information (if available, not all SUA airspaces
-are listing) to SUA NOTAM-D messages, edit
+are listed) to SUA NOTAM-D messages, edit
 ``../db/harvest/harvestConfig.py`` and change this line: ::
 
   SUA_LOCATION_SUPPORT = True

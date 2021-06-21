@@ -30,7 +30,7 @@ class MsgNOTAM(MsgBase):
         msg = self.geometryToGeojson(msg)
 
         # See if SUA NOTAM-D
-        if ('subtype' in msg) and (msg['subtype'] == 'D-SUA'):
+        if (cfg.SUA_LOCATION_SUPPORT) and ('subtype' in msg) and (msg['subtype'] == 'D-SUA'):
             if ('airspace' in msg):
                 airspace = msg['airspace']
 
