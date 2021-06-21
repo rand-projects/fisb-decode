@@ -125,3 +125,8 @@ class BadCrlTypeException(Exception):
     """Got ``CRL`` message with bad product_id.
     """
     pass
+
+class BadAltitudeTypeException(Exception):
+    """Cannot parse altitude string from NOTAM-D SUA message.
+    """
+    pass

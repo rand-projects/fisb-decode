@@ -30,6 +30,9 @@ NOTAM_CONTENTS_RE = re.compile(r"NOTAM-(D|FDC|TMOA|TRA) ([^ ]+) ([^ ]+) (.+)", r
 # RegEx for basic SUA NOTAM-D parsing
 NOTAM_SUA_RE = re.compile(r".*AIRSPACE (.+) ACT (.+) \d{10}-\d{10}")
 
+# RegEx for parsing SUA NOTAM-D altitude string
+NOTAM_SUA_ALT_RE = re.compile(r"((FL\d+)|SFC|(\d+FT( AGL)?))(-| UP TO BUT NOT INCLUDING )((FL\d+)|(\d+FT( AGL)?))")
+
 # RegEx for FIS-B unavailable products (group(1) -> 6 digit date,
 # group(2) -> list of centers, group(3) -> message text)
 FISB_RE = re.compile(r"FIS-B ([0-3]\d[0-2]\d[0-5]\d)Z ([^ ]+) (.+)")
@@ -266,6 +269,94 @@ def tfrNotam(rYear, rMonth, rDay, reportId, text, contentsGraphics, \
 
     newMsg['expiration_time'] = util.twgoExpirationTime(newMsg, rcvdTime)
     return newMsg
+            
+def parseAlt(altString, subOneFromAlt):
+    """Convert NOTAM-D SUA altitude onto integer and units.
+
+    Note: For SUA it gets confusing because it is not always clear
+    when 'FT' means AGL or MSL. If it is not obvious (like 'SFC'),
+    we just return 'FT'. Flight levels are always considered MSL.
+    A few values are '<xxx>FT AGL', in which case we use AGL.
+
+    Args:
+        altString (str): String from RegEx with altitude. Should
+            be one of 'FL<xxx>', '<xxx>FT', 'SFC', or '<xxx>FT AGL'.
+        subOneFromAlt (bool): WIll be True if we need to subtract
+            one from the final value. This is only used for things
+            like 'UP TO BUT NOT INCLUDING FL180' where we should
+            return 17999 MSL.
+
+    Returns:
+        tuple: Tuple:
+
+        1. (int) Altitude in feet (flight levels are converted).
+        2. (str) Units. One of ``AGL``, ``MSL``, ``FT``.
+
+    Raises:
+        BadAltitudeTypeException: If the altitude type is bad. Should never happen
+            because the regular expression will only pass known values.
+    """
+
+    if altString == 'SFC':
+        return (0, 'AGL')
+
+    # Determine units.
+    if 'FL' in altString:
+        units = 'MSL'
+    elif 'AGL' in altString:
+        units = 'AGL'
+    elif 'FT' in altString:
+        units = 'FT'
+    else:
+        raise ex.BadAltitudeTypeException("Cannot parse altitude string: '{}'".format(altString))
+
+    # Convert altitude to integer.
+    if altString.startswith('FL'):
+        # Flight level.
+        altInt = int(altString[2:]) * 100
+
+        # This is only meaningful for flight levels.
+        if subOneFromAlt:
+            altInt = altInt - 1
+
+    else:
+        # Feet. This will always match because this is what the RegEx allows.
+        idx = altString.find('F')
+        altInt = int(altString[0:idx])
+
+    return (altInt, units)
+
+def parseSuaAltitudeString(altitudeString):
+    """Parse NOTAM-D altitude string into standard fisb-decode
+    altitude list.
+
+    Args:
+        altitudeString (str): Altitude string from the NOTAM-D SUA message.
+
+    Returns:
+        list: If the string is successfully parsed, will contain a list
+            with 4 items: High altitude, High Units, Low altitude, Low Units.
+            Units will be one of ``AGL``, ``MSL``, or ``FT``. ``FT`` is used when
+            that is the best guess we can make. ``None`` is returned if the 
+            altitude string doesn't match the regular expression.
+    """
+    suaAlt = NOTAM_SUA_ALT_RE.match(altitudeString)
+    if suaAlt is None:
+        return None
+
+    lowerAltitude = suaAlt.group(1)
+    upperAltitude = suaAlt.group(6)
+
+    # sep is either '-' or ' UP TO BUT NOT INCLUDING
+    sep = suaAlt.group(5)
+    subOneFromAlt = False
+    if sep != '-':
+        subOneFromAlt = True
+
+    lowAltInt, lowAltUnits = parseAlt(lowerAltitude, False)
+    highAltInt, highAltUnits = parseAlt(upperAltitude, subOneFromAlt)
+
+    return [highAltInt, highAltUnits, lowAltInt, lowAltUnits]
 
 def notam(rYear, rMonth, rDay, location, reportId, text, contentsGraphics, \
         productId, station, rcvdTime):
@@ -354,6 +445,11 @@ def notam(rYear, rMonth, rDay, location, reportId, text, contentsGraphics, \
         if nSua is not None:
             newMsg['airspace'] = nSua.group(1)
             newMsg['altitude_text'] = nSua.group(2)
+
+            # Try to parse the altitude text
+            altitudes = parseSuaAltitudeString(nSua.group(2))
+            if altitudes is not None:
+                newMsg['altitudes'] = altitudes
             
     # Don't always have a start of activity time (use received time as ISO ref)
     soat = rcvdTime
