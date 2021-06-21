@@ -129,14 +129,6 @@ db.harvest.MsgNOTAM module
    :undoc-members:
    :show-inheritance:
 
-db.harvest.MsgNOTAM_TFR module
-------------------------------
-
-.. automodule:: db.harvest.MsgNOTAM_TFR
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 db.harvest.MsgPIREP module
 --------------------------
 

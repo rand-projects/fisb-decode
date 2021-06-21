@@ -63,7 +63,7 @@ OPT_TEST = 3
 DB_TYPES = ['METAR', 'TAF', 'CRL_8', 'CRL_11', 'CRL_12', \
     'CRL_14', 'CRL_15', 'CRL_16', 'CRL_17', 'PIREP', \
     'SUA', 'WINDS_06_HR', 'WINDS_12_HR', 'WINDS_24_HR', \
-    'NOTAM', 'NOTAM_TFR', 'AIRMET', 'SIGMET', \
+    'NOTAM', 'AIRMET', 'SIGMET', \
     'WST', 'CWA', 'SERVICE_STATUS', \
     'G_AIRMET', 'FIS_B_UNAVAILABLE', 'RSR']
 
@@ -519,7 +519,7 @@ def dumpDatabase(dumpPath, dt):
                 for doc in cursor:
                     # For TWGO files, augment them if possible to
                     # show status based on current time. Some TG's benefit from this.
-                    if t in ['NOTAM', 'NOTAM_TFR', 'AIRMET', 'SIGMET', 'CWA', 'WST', 'G_AIRMET']:
+                    if t in ['NOTAM', 'AIRMET', 'SIGMET', 'CWA', 'WST', 'G_AIRMET']:
                         if 'geojson' in doc:
                             doc = augmentTwgoStatus(doc, dt)
 

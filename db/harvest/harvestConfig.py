@@ -92,6 +92,11 @@ TEXT_WX_LOCATION_SUPPORT = True
 #: effect.
 PIREP_LOCATION_SUPPORT = True
 
+#: Set to ``True`` if you have SUA data in the location database
+#: and wish to augment NOTAM-D SUA messages. Set to ``False``
+# for testing.`
+SUA_LOCATION_SUPPORT = True
+
 #: If ``True``, store the contents of any unmatched PIREP to
 #: the file in SAVE_UNMATCHED_PIREPS_FILE.
 SAVE_UNMATCHED_PIREPS = True

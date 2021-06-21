@@ -27,6 +27,9 @@ NOTAM_RE = re.compile(r"NOTAM-(D|FDC|TMOA|TRA) ([^ ]+) ([^ ]+) !([^ ]+) ([^ ]+) 
 # RegEx for a NOTAM-D or NOTAM-FDC for the NOTAM contents (starting with !)
 NOTAM_CONTENTS_RE = re.compile(r"NOTAM-(D|FDC|TMOA|TRA) ([^ ]+) ([^ ]+) (.+)", re.S)
 
+# RegEx for basic SUA NOTAM-D parsing
+NOTAM_SUA_RE = re.compile(r".*AIRSPACE (.+) ACT (.+) \d{10}-\d{10}")
+
 # RegEx for FIS-B unavailable products (group(1) -> 6 digit date,
 # group(2) -> list of centers, group(3) -> message text)
 FISB_RE = re.compile(r"FIS-B ([0-3]\d[0-2]\d[0-5]\d)Z ([^ ]+) (.+)")
@@ -345,7 +348,13 @@ def notam(rYear, rMonth, rDay, location, reportId, text, contentsGraphics, \
     # Change subtype if this is an SUA message (can be SUAC, SUAE, SUAW).
     if accountableLocation.startswith('SUA'):
         newMsg['subtype'] = 'D-SUA'
-
+    
+        # Parse the NOTAM-D SUA text
+        nSua = NOTAM_SUA_RE.match(notamContents)
+        if nSua is not None:
+            newMsg['airspace'] = nSua.group(1)
+            newMsg['altitude_text'] = nSua.group(2)
+            
     # Don't always have a start of activity time (use received time as ISO ref)
     soat = rcvdTime
     if 'start_of_activity_time' in newMsg:

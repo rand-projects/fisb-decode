@@ -30,6 +30,7 @@ class MsgCANCEL_NOTAM(MsgBase):
 
         msg['type'] = 'NOTAM'
         uniqueName = msg['unique_name']
+        msg['_id'] = 'NOTAM-' + uniqueName
         msg['cancel'] = uniqueName
 
         self.dbConn.MSG.replace_one( \

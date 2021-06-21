@@ -15,7 +15,7 @@ import db.harvest.harvestExceptions as ex
 DB_VECTOR_TYPES = ['NOTAM', 'AIRMET', \
     'SIGMET', 'WST', 'CWA', \
     'G_AIRMET', 'PIREP', 'METAR', 'TAF', 'WINDS_06_HR', \
-        'WINDS_12_HR', 'WINDS_24_HR']
+    'WINDS_12_HR', 'WINDS_24_HR']
 
 # Functions that define premininary keys for each vector type.
 # Used to name files and provide name for vector in vectordump
@@ -95,10 +95,10 @@ def pirepFcn(table, doc):
     """
     return 'PIREP~' + doc['report_type'] + '-' + doc['station'] + '-' + doc['tm']
 
-DB_VECTOR_FUNCTIONS = [notamFcn, notamTfrFcn, sigWxFcn, \
+DB_VECTOR_FUNCTIONS = [notamFcn, sigWxFcn, \
     sigWxFcn, sigWxFcn, sigWxFcn, \
-    gAirmetFcn, pirepFcn, genericFcn, genericFcn, \
-    genericFcn, genericFcn, genericFcn]
+    gAirmetFcn, pirepFcn, genericFcn, genericFcn, genericFcn, \
+    genericFcn, genericFcn]
 
 # Global variables set once at program startup
 # --------------------------------------------

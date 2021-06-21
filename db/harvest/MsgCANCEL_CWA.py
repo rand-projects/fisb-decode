@@ -27,6 +27,7 @@ class MsgCANCEL_CWA(MsgBase):
         # Message gets a new type so it fits in the CWA stream.
         uniqueName = msg['unique_name']
         msg['type'] = 'CWA'
+        msg['_id'] = 'CWA-' + uniqueName
         msg['cancel'] = uniqueName
 
         self.dbConn.MSG.replace_one( \

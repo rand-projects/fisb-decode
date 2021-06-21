@@ -25,7 +25,6 @@ from db.harvest.MsgWINDS_06_HR import MsgWINDS_06_HR
 from db.harvest.MsgWINDS_12_HR import MsgWINDS_12_HR
 from db.harvest.MsgWINDS_24_HR import MsgWINDS_24_HR
 from db.harvest.MsgNOTAM import MsgNOTAM
-from db.harvest.MsgNOTAM_TFR import MsgNOTAM_TFR
 from db.harvest.MsgCANCEL_NOTAM import MsgCANCEL_NOTAM
 from db.harvest.MsgSIGWX import MsgSIGWX
 from db.harvest.MsgSERVICE_STATUS import MsgSERVICE_STATUS
@@ -56,7 +55,7 @@ msgBLOCK = MsgBLOCK()
 # List of all the message types handled. Each is a subclass of MsgBase.py
 msgHandlerList = [MsgMETAR(), MsgTAF(), MsgCRL(), MsgPIREP(), \
                   MsgSUA(), MsgWINDS_06_HR(), MsgWINDS_12_HR(), \
-                  MsgWINDS_24_HR(), MsgNOTAM(), MsgNOTAM_TFR(), \
+                  MsgWINDS_24_HR(), MsgNOTAM(), \
                   MsgCANCEL_NOTAM(),MsgG_AIRMET(), MsgSERVICE_STATUS(), \
                   MsgSIGWX(), MsgCANCEL_G_AIRMET(), MsgCANCEL_CWA(), \
                   MsgFIS_B_UNAVAILABLE(), msgBLOCK]

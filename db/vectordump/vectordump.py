@@ -31,7 +31,8 @@ OUTPUT_FILES = ['V-AIRMET-PG.csv', 'V-G_AIRMET_00_HR-LS.csv', \
     'V-G_AIRMET_06_HR-PG.csv', 'V-METAR-PT.csv', 'V-TAF-PT.csv', \
     'V-PIREP-PT.csv', 'V-WINDS_06_HR-PT.csv', 'V-WINDS_12_HR-PT.csv', \
     'V-WINDS_24_HR-PT.csv', 'V-NOTAM-D-PT.csv', 'V-NOTAM-FDC-PT.csv', \
-    'V-NOTAM-TFR-PT.csv', 'V-NOTAM-TFR-PG.csv', 'V-METAR-PT.csv']
+    'V-NOTAM-TFR-PT.csv', 'V-NOTAM-TFR-PG.csv', 'V-METAR-PT.csv', \
+    'V-NOTAM-D-SUA-PG.csv']
 
 def vectordump():
     """Dump all vector data to ``.csv`` files.

@@ -34,9 +34,6 @@ class MsgBase(ABC):
     - ``NOTAM`` => :mod:`db.harvest.MsgNOTAM`
 
       - ``NOTAM``
-    - ``NOTAM_TFR`` => :mod:`db.harvest.MsgNOTAM_TFR`
-
-      - ``NOTAM_TFR``
     - ``PIREP`` => :mod:`db.harvest.MsgPIREP`
 
       - ``PIREP``

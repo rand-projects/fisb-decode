@@ -15,8 +15,8 @@ class MsgNOTAM(MsgBase):
         """Store NOTAM message to database.
 
         If ``cfg.IMMEDIATE_CRL_UPDATE`` is ``True``, and this
-        is a ``TRA`` or ``TMOA`` NOTAM, will also
-        update the collection ``CRL_16`` or ``CRL_17`` with completed reports.
+        is a ``TRA``, ``TFR``, or ``TMOA`` NOTAM, will also
+        update the collection ``CRL_16``, ``CRL_8`` or ``CRL_17`` with completed reports.
 
         Args:
             msg (dict): Level 2 ``NOTAM``
@@ -29,6 +29,16 @@ class MsgNOTAM(MsgBase):
         # Convert to geojson
         msg = self.geometryToGeojson(msg)
 
+        # See if SUA NOTAM-D
+        if ('subtype' in msg) and (msg['subtype'] == 'D-SUA'):
+            if ('airspace' in msg):
+                airspace = msg['airspace']
+
+                suaLoc = self.dbConnLocation.SUA.find_one({'_id': airspace})
+                if suaLoc is not None:
+                    del suaLoc['_id']
+                    msg['geojson'] = suaLoc
+
         self.dbConn.MSG.replace_one( \
             { '_id': msg['_id']}, \
             msg, \
@@ -36,7 +46,7 @@ class MsgNOTAM(MsgBase):
 
         msgSubtype = msg['subtype']
         if cfg.IMMEDIATE_CRL_UPDATE and \
-            ((msgSubtype == 'TMOA') or (msgSubtype == 'TRA')):
+            (msgSubtype in ['TFR', 'TMOA', 'TRA']):
 
             hasTextAndGraphics = False
             if ('contents' in msg) and ('geojson' in msg):
@@ -44,5 +54,7 @@ class MsgNOTAM(MsgBase):
 
             if msgSubtype == 'TMOA':
                 self.updateCRL('CRL_17', msg['unique_name'], msg['station'], hasTextAndGraphics)
-            else:
+            elif msgSubtype == 'TRA':
                 self.updateCRL('CRL_16', msg['unique_name'], msg['station'], hasTextAndGraphics)
+            elif msgSubtype == 'TFR':
+                self.updateCRL('CRL_8', msg['unique_name'], msg['station'], hasTextAndGraphics)

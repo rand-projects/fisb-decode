@@ -26,6 +26,7 @@ class MsgCANCEL_G_AIRMET(MsgBase):
 
         uniqueName = msg['unique_name']
         msg['type'] = 'G_AIRMET'
+        msg['_id'] = 'G_AIRMET-' + uniqueName
         msg['cancel'] = uniqueName
         
         self.dbConn.MSG.replace_one( \

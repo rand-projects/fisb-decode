@@ -119,8 +119,8 @@ class MsgCRL(MsgBase):
 
             # Run a query that creates a dictionary of all the _id's for
             # given type.
-            if productId == 8: # NOTAM_TFR
-                idDict = self.dictFromQuery({'type': 'NOTAM_TFR'}, \
+            if productId == 8: # NOTAM-TFR
+                idDict = self.dictFromQuery({'type': 'NOTAM', 'subtype': 'TFR'}, \
                                             {'unique_name': 1, 'contents': 1, 'geojson': 1})
             elif productId == 11: # AIRMET
                 idDict = self.dictFromQuery({'type': 'AIRMET'}, \
