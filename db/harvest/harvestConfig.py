@@ -147,3 +147,9 @@ CLOUDTOP_MAP = 4
 #: 1 - more conventional scale (basically takes each color down a notch
 #:     to look more like a conventional radar).
 RADAR_MAP = 1
+
+#: Icing severity map
+#:
+#: 0 - Map for testing.
+#: 1 - Follows AWC colors.
+ICING_SEV_MAP = 1

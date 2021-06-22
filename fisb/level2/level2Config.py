@@ -82,8 +82,10 @@ PIREP_USE_REPORT_TIME_TO_EXPIRE = True
 #: better options exist. The minimum retention time after
 #: last reception is 60 minutes (this is what the standard
 #: requires if there is no explicit stop time in the message).
-#: Keep this value at least 61.
-TWGO_DEFAULT_EXPIRATION_TIME = 61
+#: 70 is a good time since it will keep TFR NOTAMS around for
+#: 3 20 minute cycles (the cycles are every 10 minutes, but for
+#: NOTAM-TFR every other cycle is a dummy cycle).
+TWGO_DEFAULT_EXPIRATION_TIME = 70
 
 #: Number of minutes after which a cancellation message should
 #: be expired. These are for things like NOTAMs, CWAs, and
@@ -91,7 +93,12 @@ TWGO_DEFAULT_EXPIRATION_TIME = 61
 #: can be distributed on the rest server. The time here should 
 #: be longer than the time you will accept as an upper bound
 #: for updates from the rest server.
-CANCEL_EXPIRATION_TIME = 40
+#:
+#: NOTE: Cancellation messages are sent for 2 retransmission
+#: intervals by FIS-B. Retransmission for G-AIRMET is 5 minutes,
+#: NOTAM is 10 minutes, and CWA is 10 minutes. So setting this
+#: to 30 minutes should more than suffice.
+CANCEL_EXPIRATION_TIME = 30
 
 #: Bypass any smart expiration times for TWGO messages and
 #: set expiration times at least 60 minutes in the future.

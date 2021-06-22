@@ -145,7 +145,7 @@ class MsgCRL(MsgBase):
 
             # Replace reports with an annotated one
             msg['reports'] = self.updateReports(msg['reports'], idDict)
-            
+
         self.dbConn.MSG.replace_one( \
             { '_id': msg['_id']}, \
             msg, \

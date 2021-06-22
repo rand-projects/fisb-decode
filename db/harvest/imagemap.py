@@ -415,7 +415,7 @@ ICING_SLD_MAP_0 = { \
 #00ff00 Light
 #ffff00 Moderate
 #ff00ff Severe
-#ff0000 Heavy
+#ff0000 Heavy (Never sent, not part of original FIP)
 #000000 Reserved
 #b6b6b6 No Data (may vary)
 #ecda96 Not Included (may vary)
@@ -427,6 +427,29 @@ ICING_SEV_MAP_0 = { \
                    3: (0xffff00, 255, 'Moderate', 'Type'), \
                    4: (0xff00ff, 255, 'Severe', 'Type'), \
                    5: (0xff0000, 255, 'Heavy', 'Type'), \
+                   6: (0x0, 0, 'Reserved', 'Type'), \
+                   7: (NDcolor, NDalpha, NO_DATA_STR, 'Type'), \
+                   255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'Type'), \
+}
+
+#000000 None
+#caffff Trace
+#94cdfd Light
+#5b9bfc Moderate
+#da2fda Severe
+#0a3bfa Heavy (Never seny, not part of original FIP)
+#000000 Reserved
+#b6b6b6 No Data (may vary)
+#ecda96 Not Included (may vary)
+
+# Follows AWC color scheme
+ICING_SEV_MAP_1 = { \
+                   0: (0x0, icing0alpha, 'None', 'Type'), \
+                   1: (0xcaffff, 255, 'Trace', 'Type'), \
+                   2: (0x94cdfd, 255, 'Light', 'Type'), \
+                   3: (0x5b9bfc, 255, 'Moderate', 'Type'), \
+                   4: (0xda2fda, 255, 'Severe', 'Type'), \
+                   5: (0x0a3bfa, 255, 'Heavy', 'Type'), \
                    6: (0x0, 0, 'Reserved', 'Type'), \
                    7: (NDcolor, NDalpha, NO_DATA_STR, 'Type'), \
                    255: (NOT_INCLUDED, NIalpha, NOT_INCL_STR, 'Type'), \
@@ -444,6 +467,7 @@ ICING_SEV_MAP_0 = { \
 #b6b6b6 No Data (may vary)
 #ecda96 Not Included (may vary)
 
+# This sort of follows the AWC colors, but the ranges don't really match.
 ICING_PRB_MAP_0 = { \
                    0: (0x0, icing0alpha, '<= 5', '%'), \
                    1: (0x76d3ff, 255, '5-20', '%'), \
@@ -491,7 +515,12 @@ else:
 
     LIGHTNING_MAP = LIGHTNING_MAP_0
     ICING_SLD_MAP = ICING_SLD_MAP_0
-    ICING_SEV_MAP = ICING_SEV_MAP_0
+
+    if cfg.ICING_SEV_MAP == 1:
+        ICING_SEV_MAP = ICING_SEV_MAP_1
+    else:
+        ICING_SEV_MAP = ICING_SEV_MAP_0
+
     ICING_PRB_MAP = ICING_PRB_MAP_0
 
 # List of all the image maps. Used by getLegendDict().

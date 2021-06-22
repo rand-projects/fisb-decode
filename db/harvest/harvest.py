@@ -255,7 +255,7 @@ def processMessage(msg, currentUtc):
 
 def expireMessages():
     presentTime = test.datetimeNow()
-
+    
     dbConn.MSG.delete_many({'expiration_time': {'$lte': presentTime}})
 
 def doMaintTasks(maintCounter):

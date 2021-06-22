@@ -509,6 +509,10 @@ def getLegendDict():
     the icing severity table where 'heavy' and 'severe' are placed in the wrong
     order by the standard.
 
+    NOTE: Per SRT-047 Rev 04 (8/20/2018), the icing products are derived from
+    the NWS Forecast Icing Potential (FIP) products. The ``SEVERE`` icing category is
+    NOT sent by this product, therefore FIS-B should not expect to get this value.
+
     This data will be placed in the LEGEND collection as its only entry.
     A truncated sample will look like: ::
 
