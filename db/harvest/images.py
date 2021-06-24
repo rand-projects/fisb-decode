@@ -513,7 +513,8 @@ def getLegendDict():
     the NWS Forecast Icing Potential (FIP) products. The ``SEVERE`` icing category is
     NOT sent by this product, therefore FIS-B should not expect to get this value.
 
-    This data will be placed in the LEGEND collection as its only entry.
+    This data will be placed in the STATIC collection with _id 'LEGEND'
+    as its only entry.
     A truncated sample will look like: ::
 
       {"_id" : "LEGEND",

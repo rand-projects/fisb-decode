@@ -14,4 +14,4 @@ db.MSG.createIndex({type: 1})
 db.MSG.createIndex({insert_time: 1})
 db.MSG.createIndex({expiration_time: 1})
 
-db.createCollection('LEGEND')
+db.createCollection('STATIC')

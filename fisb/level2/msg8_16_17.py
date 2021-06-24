@@ -28,7 +28,8 @@ NOTAM_RE = re.compile(r"NOTAM-(D|FDC|TMOA|TRA) ([^ ]+) ([^ ]+) !([^ ]+) ([^ ]+) 
 NOTAM_CONTENTS_RE = re.compile(r"NOTAM-(D|FDC|TMOA|TRA) ([^ ]+) ([^ ]+) (.+)", re.S)
 
 # RegEx for basic SUA NOTAM-D parsing
-NOTAM_SUA_RE = re.compile(r".*AIRSPACE (.+) ACT (.+) \d{10}-\d{10}")
+#NOTAM_SUA_RE = re.compile(r".*AIRSPACE (.+) ACT (.+) \d{10}-\d{10}")
+NOTAM_SUA_RE = re.compile(r".*AIRSPACE (LGT OUT/NIGHT VISION GOGGLE TRAINING )?(.+) ACT (.+) \d{10}-\d{10}")
 
 # RegEx for parsing SUA NOTAM-D altitude string
 NOTAM_SUA_ALT_RE = re.compile(r"((FL\d+)|SFC|(\d+FT( AGL)?))(-| UP TO BUT NOT INCLUDING )((FL\d+)|(\d+FT( AGL)?))")
@@ -443,11 +444,11 @@ def notam(rYear, rMonth, rDay, location, reportId, text, contentsGraphics, \
         # Parse the NOTAM-D SUA text
         nSua = NOTAM_SUA_RE.match(notamContents)
         if nSua is not None:
-            newMsg['airspace'] = nSua.group(1)
-            newMsg['altitude_text'] = nSua.group(2)
+            newMsg['airspace'] = nSua.group(2)
+            newMsg['altitude_text'] = nSua.group(3)
 
             # Try to parse the altitude text
-            altitudes = parseSuaAltitudeString(nSua.group(2))
+            altitudes = parseSuaAltitudeString(nSua.group(3))
             if altitudes is not None:
                 newMsg['altitudes'] = altitudes
             
