@@ -150,7 +150,7 @@ def msg11_12_15(frame, productId, \
     reportType = twgo_type
     newMsg['type'] = reportType
     newMsg['unique_name'] = reportId
-    newMsg['station'] = station
+    newMsg['station'] = station # Don't remove this, needed for CRLs
     newMsg['issued_time'] = issueTimeIso
     if hasGraphics:
         if startIso is not None:

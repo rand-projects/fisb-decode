@@ -131,7 +131,7 @@ def msg14(records, recordCount, productId, \
     newMsg['type'] = 'G_AIRMET'
     newMsg['unique_name'] = reportId
     newMsg['subtype'] = fcHour
-    newMsg['station'] = station
+    newMsg['station'] = station # Don't remove this, needed for CRLs
     newMsg['issued_time'] = issuedTimeIso
     newMsg['for_use_from_time'] = startIso
     newMsg['for_use_to_time'] = stopIso
