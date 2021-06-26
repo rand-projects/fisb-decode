@@ -2,7 +2,7 @@
 """
 
 import sys, os, datetime, copy
-import math
+import math, random
 
 import fisb.level2.level2Exceptions as ex
 import fisb.level2.level2Config as cfg
@@ -1391,3 +1391,29 @@ def twgoExpirationTime(msg, rcvdTime, notamExpirationTime=None):
 
     # Otherwise use default value added to received time
     return addMinutesToIso8601(rcvdTime, cfg.TWGO_DEFAULT_EXPIRATION_TIME)
+
+CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+CHARS_LEN_MINUS_1 = len(CHARS) - 1
+
+def randomname(length, postfix = ''):
+    """Create a random name of the specified length, add a postfix string
+    if desired.
+
+    Random name is created from the string in ``CHAR`` which consists of
+    upper and lower alphabetic characters and digits. Mostly, this routine
+    is used for creating filenames.
+
+    Args:
+        length (int): Number of characters to generate.
+        postfix (str): String to append to the end. Usually an extension
+            like ``'.png'``
+
+    Returns:
+        str: Random string with any ``postfix`` added to it.
+    """
+    name = ''
+    for _ in range(0, length):
+        name += CHARS[random.randint(0, CHARS_LEN_MINUS_1)]
+    
+    return name + postfix

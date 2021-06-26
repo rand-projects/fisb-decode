@@ -152,8 +152,10 @@ def pirep(contents, rYear, rMonth, rDay, rcvdTime):
 
     newMsg = {}
     newMsg['type'] = 'PIREP'
-    newMsg['unique_name'] = parsed.group(5) + parsed.group(4) +\
-            parsed.group(6).replace(" ", "")
+
+    # Just make up a random name
+    newMsg['unique_name'] = util.randomname(12)
+    
     newMsg['report_type'] = parsed.group(5)
     newMsg['station'] = parsed.group(4)
     newMsg['contents'] = contents

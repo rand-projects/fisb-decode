@@ -438,19 +438,24 @@ def notam(rYear, rMonth, rDay, location, reportId, text, contentsGraphics, \
     newMsg = insertNotamDates(rYear, rMonth, rDay, text, newMsg)
 
     # Change subtype if this is an SUA message (can be SUAC, SUAE, SUAW).
-    if accountableLocation.startswith('SUA'):
+    if (notamSubtype == 'D') and accountableLocation.startswith('SUA'):
         newMsg['subtype'] = 'D-SUA'
     
+    # TMOA, TRA, and D-SUA can have airspace and altitude_text fields.
+    # D-SUA can also parse top level altitudes field.
+    if newMsg['subtype'] in ['TMOA', 'TRA', 'D-SUA']:
+
         # Parse the NOTAM-D SUA text
         nSua = NOTAM_SUA_RE.match(notamContents)
         if nSua is not None:
             newMsg['airspace'] = nSua.group(2)
             newMsg['altitude_text'] = nSua.group(3)
 
-            # Try to parse the altitude text
-            altitudes = parseSuaAltitudeString(nSua.group(3))
-            if altitudes is not None:
-                newMsg['altitudes'] = altitudes
+            # Try to parse the altitude text (D-SUA only)
+            if newMsg['subtype'] == 'D-SUA':
+                altitudes = parseSuaAltitudeString(nSua.group(3))
+                if altitudes is not None:
+                    newMsg['altitudes'] = altitudes
             
     # Don't always have a start of activity time (use received time as ISO ref)
     soat = rcvdTime
