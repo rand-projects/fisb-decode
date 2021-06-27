@@ -30,7 +30,7 @@ from db.harvest.MsgSIGWX import MsgSIGWX
 from db.harvest.MsgSERVICE_STATUS import MsgSERVICE_STATUS
 from db.harvest.MsgG_AIRMET import MsgG_AIRMET
 from db.harvest.MsgCANCEL_G_AIRMET import MsgCANCEL_G_AIRMET
-from db.harvest.MsgCANCEL_CWA import MsgCANCEL_CWA
+from db.harvest.MsgCANCEL_ASC import MsgCANCEL_ASC
 from db.harvest.MsgFIS_B_UNAVAILABLE import MsgFIS_B_UNAVAILABLE
 from db.harvest.MsgBLOCK import MsgBLOCK
 
@@ -57,7 +57,7 @@ msgHandlerList = [MsgMETAR(), MsgTAF(), MsgCRL(), MsgPIREP(), \
                   MsgSUA(), MsgWINDS_06_HR(), MsgWINDS_12_HR(), \
                   MsgWINDS_24_HR(), MsgNOTAM(), \
                   MsgCANCEL_NOTAM(),MsgG_AIRMET(), MsgSERVICE_STATUS(), \
-                  MsgSIGWX(), MsgCANCEL_G_AIRMET(), MsgCANCEL_CWA(), \
+                  MsgSIGWX(), MsgCANCEL_G_AIRMET(), MsgCANCEL_ASC(), \
                   MsgFIS_B_UNAVAILABLE(), msgBLOCK]
     
 # ------- End of globals

@@ -64,7 +64,7 @@ DB_TYPES = ['METAR', 'TAF', 'CRL_8', 'CRL_11', 'CRL_12', \
     'CRL_14', 'CRL_15', 'CRL_16', 'CRL_17', 'PIREP', \
     'SUA', 'WINDS_06_HR', 'WINDS_12_HR', 'WINDS_24_HR', \
     'NOTAM', 'AIRMET', 'SIGMET', \
-    'WST', 'CWA', 'SERVICE_STATUS', \
+    'CWA', 'SERVICE_STATUS', \
     'G_AIRMET', 'FIS_B_UNAVAILABLE', 'RSR']
 
 # Global variables set once at program startup
@@ -365,7 +365,7 @@ def augmentCrlStatus(msg):
         return msg
 
     # An overflow CRL is also incomplete
-    if 'has_overflow' in msg:
+    if ('overflow' in msg) and (msg['overflow'] == 1):
         msg['status'] = 'INCOMPLETE'
         return msg
         
@@ -519,7 +519,7 @@ def dumpDatabase(dumpPath, dt):
                 for doc in cursor:
                     # For TWGO files, augment them if possible to
                     # show status based on current time. Some TG's benefit from this.
-                    if t in ['NOTAM', 'AIRMET', 'SIGMET', 'CWA', 'WST', 'G_AIRMET']:
+                    if t in ['NOTAM', 'AIRMET', 'SIGMET', 'CWA', 'G_AIRMET']:
                         if 'geojson' in doc:
                             doc = augmentTwgoStatus(doc, dt)
 

@@ -125,10 +125,8 @@ class MsgCRL(MsgBase):
             elif productId == 11: # AIRMET
                 idDict = self.dictFromQuery({'type': 'AIRMET'}, \
                                             {'unique_name': 1, 'contents': 1, 'geojson': 1})
-            elif productId == 12: # SIGMET, WST
-                idDict = self.dictFromQuery({'$or': \
-                    [ {'type': 'WST'}, \
-                      {'type': 'SIGMET'} ]}, \
+            elif productId == 12: # SIGMET/WST
+                idDict = self.dictFromQuery({'type': 'SIGMET'}, \
                                             {'unique_name': 1, 'contents': 1, 'geojson': 1})
             elif productId == 15: # CWA
                 idDict = self.dictFromQuery({'type': 'CWA'}, \

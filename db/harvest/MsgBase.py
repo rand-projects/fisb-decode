@@ -40,7 +40,7 @@ class MsgBase(ABC):
     - ``SERVICE_STATUS`` => :mod:`db.harvest.MsgSERVICE_STATUS`
 
       - ``SERVICE_STATUS``
-    - ``AIRMET``, ``SIGMET``, ``WST``, ``CWA`` => :mod:`db.harvest.MsgSIGWX`
+    - ``AIRMET``, ``SIGMET``, ``CWA`` => :mod:`db.harvest.MsgSIGWX`
 
       - ``SIGWX``
     - ``SUA`` => :mod:`db.harvest.MsgSUA`

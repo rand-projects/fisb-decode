@@ -71,13 +71,20 @@ def msg11_12_15(frame, productId, \
     # Create the report id
     reportId = str(reportYear) + '-' + str(records0['report_number'])
 
-    # Handle special case of a cancelled product 15 (CWA).
+    # Handle special case of a cancelled 11, 12, or 15 message.
     # These are the only text messages we should get.
-    if (productId == 15) and \
-       (contentsText['record_format'] == 2) and \
+    if (contentsText['record_format'] == 2) and \
        (records0['report_status'] == 0):
+    
+        if productId == 15:
+            cancelType = 'CANCEL_CWA'
+        elif productId == 11:
+            cancelType = 'CANCEL_CWA'
+        else:
+            cancelType = 'CANCEL_SIGMET'
+    
         newMsg = {}
-        newMsg['type'] = 'CANCEL_CWA'
+        newMsg['type'] = cancelType
         newMsg['unique_name'] = reportId
         newMsg['expiration_time'] = util.addMinutesToIso8601(rcvdTime, \
             cfg.CANCEL_EXPIRATION_TIME)
@@ -148,6 +155,15 @@ def msg11_12_15(frame, productId, \
     newMsg = {}
 
     reportType = twgo_type
+
+    # Make SIGMET and WST both map to SIGMET. Add a subtype
+    # field to tell the difference between the two. We do this
+    # because CRL-12 handles both types, and this makes cancellations
+    # easier.
+    if reportType in ['SIGMET', 'WST']:
+        newMsg['subtype'] = reportType
+        reportType = 'SIGMET'
+    
     newMsg['type'] = reportType
     newMsg['unique_name'] = reportId
     newMsg['station'] = station # Don't remove this, needed for CRLs

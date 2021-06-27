@@ -60,7 +60,7 @@ TG_DIR = '../tg'
 
 #: For standard compliance set this to ``True``. This will
 #: update the CRL status of incoming reports that have 
-#: a CRL status (NOTAM-TFR, AIRMET, SIGMET, WST,
+#: a CRL status (NOTAM-TFR, AIRMET, SIGMET/WST,
 #: CWA, G_AIRMET). If you aren't using CRLs, this can be set to
 #: ``False`` and save some processing time.
 IMMEDIATE_CRL_UPDATE = True

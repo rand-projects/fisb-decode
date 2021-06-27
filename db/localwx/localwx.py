@@ -14,13 +14,13 @@ Program usage: ::
     
     For curses mode, the following keys are used (either upper or lower case):
      q - Quit
-     a - Toggle AIRMETs (Will show WST, SIGMET, CWA)
+     a - Toggle AIRMETs (Will show SIGMET/WST, CWA)
      f - Toggle FDC NOTAMS 
      g - Toggle G-AIRMETS
      m - Toggle METARs
      n - Toggle NOTAMS
      o - Toggle NOTAM obstructions
-     s - Toggle all AIRMETs (SIGMETs, WST, CWA, AIRMETs)
+     s - Toggle all AIRMETs (SIGMET/WST, CWA, AIRMETs)
      t - Toggle TAFS
      u - Toggle FIS-B Unavailable messages
      w - Toggle Wind
@@ -31,7 +31,7 @@ Program usage: ::
     optional arguments:
       -h, --help   show this help message and exit
       --fdc        Show FDC NOTAMS
-      --airmet     Show AIRMETs (will show CWA, WST, SIGMET)
+      --airmet     Show AIRMETs (will show CWA, SIGMET/WST)
       --nogairmet  Don't show G-AIRMET forecasts
       --nowinds    Don't show wind forecast
       --nonotam    Don't show any NOTAMS
@@ -266,7 +266,7 @@ def fisbUnavailable(db):
     return fisbStr
     
 def findSigWx(db):
-    """Create string containing any AIRMET, SIGMET, WST, or CWA reports.
+    """Create string containing any AIRMET, SIGMET/WST,  or CWA reports.
 
     AIRMETs are optionally shown based on parameters at runtime.
 
@@ -276,7 +276,7 @@ def findSigWx(db):
         db (object): Handle to database connection.
     
     Returns:
-        str: Containing any pertinent AIRMET, SIGMET, WST, or CWA reports.
+        str: Containing any pertinent AIRMET, SIGMET/WST, or CWA reports.
     """
     if SHOW_ALL_AIRMETS == False:
         return ''
@@ -284,7 +284,7 @@ def findSigWx(db):
     wxStr = ''
 
     for r in db.MSG.find({'$or': [ {'type': 'AIRMET'}, {'type': 'SIGMET'}, \
-        {'type': 'WST'}, {'type': 'CWA'} ]}, \
+        {'type': 'CWA'} ]}, \
         {'contents': 1, 'type': 1, 'issued_time': 1, 'geojson':1}).sort('issued_time', -1):
 
         if (SHOW_AIRMET == False) and (r['type'] == 'AIRMET'):
@@ -385,13 +385,13 @@ def isCrlStatusComplete(db):
         bool: ``True if all CRLs are complete, else ``False``.
     """
     for x in CRL_TYPES:
-        r = db.MSG.find_one({'type': x},{'reports': 1})
+        r = db.MSG.find_one({'type': x},{'reports': 1, 'overflow': 1})
 
         if r is None:
             return False  # no entry
 
         # check for the rare overflow
-        if 'has_overflow' in r:
+        if r['overflow'] == 1:
             return False
 
         reports = r['reports']
@@ -767,13 +767,13 @@ if __name__ == "__main__":
     
 For curses mode, the following keys are used (either upper or lower case):
  q - Quit
- a - Toggle AIRMETs (Will show WST, SIGMET, CWA)
+ a - Toggle AIRMETs (Will show SIGMET/WST, CWA)
  f - Toggle FDC NOTAMS 
  g - Toggle G-AIRMETS
  m - Toggle METARs
  n - Toggle NOTAMS
  o - Toggle NOTAM obstructions
- s - Toggle all AIRMETs (SIGMETs, WST, CWA, AIRMETs)
+ s - Toggle all AIRMETs (SIGMET/WST, CWA, AIRMET)
  t - Toggle TAFS
  u - Toggle FIS-B Unavailable messages
  w - Toggle Wind
@@ -784,7 +784,7 @@ For curses mode, the following keys are used (either upper or lower case):
         formatter_class=RawTextHelpFormatter)
 
     parser.add_argument('--fdc', help="Show FDC NOTAMS", action="store_true")
-    parser.add_argument('--airmet', help="Show AIRMETs (will show CWA, WST, SIGMET)", action="store_true")
+    parser.add_argument('--airmet', help="Show AIRMETs (will show CWA, SIGMET/WST)", action="store_true")
     parser.add_argument('--nogairmet', help="Don't show G-AIRMET forecasts", action="store_true")
     parser.add_argument('--nowinds', help="Don't show wind forecast", action="store_true")
     parser.add_argument('--nonotam', help="Don't show any NOTAMS", action="store_true")

@@ -13,7 +13,7 @@ import db.harvest.harvestConfig as cfg
 import db.harvest.harvestExceptions as ex
 
 DB_VECTOR_TYPES = ['NOTAM', 'AIRMET', \
-    'SIGMET', 'WST', 'CWA', \
+    'SIGMET', 'CWA', \
     'G_AIRMET', 'PIREP', 'METAR', 'TAF', 'WINDS_06_HR', \
     'WINDS_12_HR', 'WINDS_24_HR']
 
@@ -33,7 +33,7 @@ def genericFcn(table, doc):
     return table + '~' + doc['_id']
 
 def sigWxFcn(table, doc):    
-    """Create and return partial key for SIGMET, AIRMET, WST, and CWA messages.
+    """Create and return partial key for SIGMET, AIRMET, and CWA messages.
 
     Args:
         table (str): Database table.

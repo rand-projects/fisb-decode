@@ -3,7 +3,7 @@ import db.harvest.harvestConfig as cfg
 import db.harvest.harvestExceptions as ex
 
 class MsgSIGWX(MsgBase):
-    """Methods for handling ``AIRMET``, ``SIGMET``, ``WST``, and
+    """Methods for handling ``AIRMET``, ``SIGMET``, and
     ``CWA`` messages.
     """
     def __init__(self):
@@ -11,17 +11,17 @@ class MsgSIGWX(MsgBase):
         """
         # All message types must indicate the actual dictionary
         # 'type' handled
-        super().__init__(['AIRMET', 'SIGMET', 'WST', 'CWA'])
+        super().__init__(['AIRMET', 'SIGMET', 'CWA'])
         
     def processMessage(self, msg, digest):
-        """Store ``AIRMET``, ``SIGMET``, ``WST``, and ``CWA``
+        """Store ``AIRMET``, ``SIGMET``, and ``CWA``
         messages to database.
 
         If ``cfg.IMMEDIATE_CRL_UPDATE`` is ``True``, will also
         update the appropriate CRL collection with completed reports.
 
         Args:
-            msg (dict): Level 2 ``SIGMET``, ``AIRMET``, ``WST``,
+            msg (dict): Level 2 ``SIGMET``, ``AIRMET``,
               or ``CWA`` message to store. All messages get stored
               to the ``MSG`` collection.
         """
@@ -39,7 +39,7 @@ class MsgSIGWX(MsgBase):
         if cfg.IMMEDIATE_CRL_UPDATE:
             msgType = msg['type']
 
-            if msgType in ['SIGMET', 'WST']:
+            if msgType == 'SIGMET':
                 crlTable = 'CRL_12'
             elif msgType == 'AIRMET':
                 crlTable = 'CRL_11'

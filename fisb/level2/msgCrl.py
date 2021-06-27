@@ -42,6 +42,9 @@ import fisb.level2.level2Exceptions as ex
 #: the text of these messages.
 BAD_MESSAGES_CRL12 = ['20-7489', '20-7676']
 
+PRODUCT_TYPE = ['','','','','','','','','NOTAM/TFR','','', \
+        'AIRMET','SIGMET','','G-AIRMET','CWA','NOTAM/TRA','NOTAM/TMOA']
+
 def msgCrl(rcvdTime, frame, station):
     """Process CRL (Current Report List) messages.
 
@@ -66,10 +69,13 @@ def msgCrl(rcvdTime, frame, station):
     newMsg['unique_name'] = station
     newMsg['station'] = station
     newMsg['product_id'] = productId
+    newMsg['product_type'] = PRODUCT_TYPE[productId]
     newMsg['range_nm'] = frame['product_range_nm']
-
-    if frame['o_flag'] == 1:
-        newMsg['has_overflow'] = True
+    
+    if frame['o_flag'] != 1:
+        newMsg['overflow'] = 0
+    else:
+        newMsg['overflow'] = 1
 
     # Expiration of time of the CRL depends upon the normal transmission time of
     # the message.  It is set at twice the nominal transmission rate of the
