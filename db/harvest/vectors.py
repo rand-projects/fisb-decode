@@ -96,7 +96,7 @@ def pirepFcn(table, doc):
     return 'PIREP~' + doc['report_type'] + '-' + doc['station'] + '-' + doc['tm']
 
 DB_VECTOR_FUNCTIONS = [notamFcn, sigWxFcn, \
-    sigWxFcn, sigWxFcn, sigWxFcn, \
+    sigWxFcn, sigWxFcn, \
     gAirmetFcn, pirepFcn, genericFcn, genericFcn, genericFcn, \
     genericFcn, genericFcn]
 
