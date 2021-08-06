@@ -1,0 +1,34 @@
+# Script used by  fisb-msg-archive.service to
+# archive fis-b messages (usually to
+# ../runtime/msg-archive).
+#
+# This service will only run level 0 and its only
+# purpose in life is to archive messages. It does no
+# processing. If you plan to run harvest, do not run this.
+# Instead, use the services for harvest and just set
+# ARCHIVE_MESSAGES and ARCHIVE_DIRECTORY to the correct
+# values in ../fisb/level0/level0Config.py
+#
+# YOU WILL NEED TO CHANGE THE PATHS BOTH IN
+# THIS FILE AND ../misc/fisb-msg-archive.service
+# TO MATCH YOUR SYSTEM.
+#
+# You also need to change the configuration file
+# to ../fisb/level0/level0Config.py for the correct
+# setup.
+#
+# Pay special attention to the following configuration parameters.
+#
+# ARCHIVE_MESSAGES = True
+# ARCHIVE_DIRECTORY = '../runtime/msg-archive'
+# WRITE_MESSAGE_TO_FILE = False
+# SHOW_MESSAGE_SOURCE = False
+# CALCULATE_RSR = False
+
+# !CHANGE PATH!
+export PYTHONPATH=/home/mbarnes/fisb-decode
+
+# !CHANGE PATH!
+cd /home/mbarnes/fisb-decode/bin
+
+./decode0Net 2>/dev/null 1>/dev/null
