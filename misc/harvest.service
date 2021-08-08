@@ -1,0 +1,27 @@
+# To install:
+#
+# Make changes as indicated below to fit your system.
+# Also make changes to ../bin/harvest_service.
+#
+# sudo cp harvest.service /etc/systemd/system
+# sudo systemctl enable --now harvest.service
+# sudo systemctl status harvest.service
+#
+# You can use 'systemctl stop' and 'systemctl start'.
+# To disable use 'systemctl disable'
+# The service will be started now, as well as on any reboot.
+
+[Unit]
+Description=FIS-B Harvest service
+
+[Service]
+Type=simple
+
+# !CHANGE!
+User=mbarnes
+
+# !CHANGE!
+ExecStart=/bin/bash /home/mbarnes/fisb-decode/bin/harvest_service
+
+[Install]
+WantedBy=multi-user.target

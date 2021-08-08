@@ -1,0 +1,18 @@
+# Script used by  harvest.service
+#
+# YOU WILL NEED TO CHANGE THE PATHS BOTH IN
+# THIS FILE AND ../misc/harvest.service
+# TO MATCH YOUR SYSTEM.
+#
+# You also need to change the configuration file
+# ../db/harvest/harvestConfig.py for the correct
+# setup.
+#
+
+# !CHANGE PATH!
+export PYTHONPATH=/home/mbarnes/fisb-decode
+
+# !CHANGE PATH!
+cd /home/mbarnes/fisb-decode/bin
+
+./harvest 2>/dev/null 1>/dev/null

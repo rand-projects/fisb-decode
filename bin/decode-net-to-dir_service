@@ -1,0 +1,18 @@
+# Script used by  decode-net-to-dir.service
+#
+# YOU WILL NEED TO CHANGE THE PATHS BOTH IN
+# THIS FILE AND ../misc/decode-net-to-dir.service
+# TO MATCH YOUR SYSTEM.
+#
+# You also need to change the configuration files
+# in ../fisb (all levels) for the correct
+# setup.
+#
+
+# !CHANGE PATH!
+export PYTHONPATH=/home/mbarnes/fisb-decode
+
+# !CHANGE PATH!
+cd /home/mbarnes/fisb-decode/bin
+
+./decodeNetToDir 2>/dev/null 1>/dev/null
