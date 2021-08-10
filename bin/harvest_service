@@ -10,9 +10,10 @@
 #
 
 # !CHANGE PATH!
-export PYTHONPATH=/home/mbarnes/fisb-decode
+export PATH_TO_FISB=<path>
 
-# !CHANGE PATH!
-cd /home/mbarnes/fisb-decode/bin
+export PYTHONPATH=$PATH_TO_FISB/fisb-decode
+
+cd $PATH_TO_FISB/fisb-decode/bin
 
 ./harvest 2>/dev/null 1>/dev/null
