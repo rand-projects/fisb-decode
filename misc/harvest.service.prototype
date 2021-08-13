@@ -16,6 +16,8 @@
 
 [Unit]
 Description=FIS-B Harvest service
+Requires=mongod.service
+After=mongod.service
 
 [Service]
 Type=simple

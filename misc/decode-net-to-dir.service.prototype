@@ -14,8 +14,13 @@
 # To disable use 'systemctl disable'
 # The service will be started now, as well as on any reboot.
 
+# NOTE: The After/Requires=mongod.service is not required if you are not
+# dependent on mongo (i.e. not using RSR).
+
 [Unit]
 Description=Collect raw fis-b data
+Requires=mongod.service
+After=mongod.service
 
 [Service]
 Type=simple
