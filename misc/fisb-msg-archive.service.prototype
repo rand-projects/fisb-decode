@@ -4,11 +4,11 @@
 # CHANGE <path> to correct path.
 #
 # Make changes as indicated below to fit your system.
-# Also make changes to ../bin/decode-net-to-dir_service.
+# Also make changes to ../bin/fisb-msg-archive_service.
 #
-# sudo cp decode-net-to-dir.service /etc/systemd/system
-# sudo systemctl enable --now decode-net-to-dir.service
-# sudo systemctl status decode-net-to-dir.service
+# sudo cp fisb-msg-archive.service /etc/systemd/system
+# sudo systemctl enable --now fisb-msg-archive.service
+# sudo systemctl status fisb-msg-archive.service
 #
 # You can use 'systemctl stop' and 'systemctl start'.
 # To disable use 'systemctl disable'
@@ -24,7 +24,7 @@ Type=simple
 User=<username>
 
 # !CHANGE!
-ExecStart=/bin/bash /<path>/fisb-decode/bin/decode-net-to-dir_service
+ExecStart=/bin/bash <path>/fisb-decode/bin/fisb-msg-archive_service
 
 [Install]
 WantedBy=multi-user.target

@@ -4,18 +4,18 @@
 # CHANGE <path> to correct path.
 #
 # Make changes as indicated below to fit your system.
-# Also make changes to ../bin/fisb-msg-archive_service.
+# Also make changes to ../bin/harvest_service.
 #
-# sudo cp fisb-msg-archive.service /etc/systemd/system
-# sudo systemctl enable --now fisb-msg-archive.service
-# sudo systemctl status fisb-msg-archive.service
+# sudo cp harvest.service /etc/systemd/system
+# sudo systemctl enable --now harvest.service
+# sudo systemctl status harvest.service
 #
 # You can use 'systemctl stop' and 'systemctl start'.
 # To disable use 'systemctl disable'
 # The service will be started now, as well as on any reboot.
 
 [Unit]
-Description=Collect raw fis-b data
+Description=FIS-B Harvest service
 
 [Service]
 Type=simple
@@ -24,7 +24,7 @@ Type=simple
 User=<username>
 
 # !CHANGE!
-ExecStart=/bin/bash /<path>/fisb-decode/bin/fisb-msg-archive_service
+ExecStart=/bin/bash <path>/fisb-decode/bin/harvest_service
 
 [Install]
 WantedBy=multi-user.target
