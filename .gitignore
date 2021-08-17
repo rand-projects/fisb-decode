@@ -17,6 +17,12 @@ runtime/images/*.png.aux.xml
 runtime/harvest/*.msg
 runtime/misc/PIREPS-UNMATCHED.txt
 runtime/misc/sync.fisb
+bin/decode-net-to-dir_service
+bin/harvest_service
+bin/fisb-msg-archive_service
+misc/decode-net-to-dir.service
+misc/harvest.service
+misc/fisb-msg-archive.service
 *.ERR
 foo
 foo0

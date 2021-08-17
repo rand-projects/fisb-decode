@@ -1,19 +1,12 @@
 # Script used by  decode-net-to-dir.service
 #
-# YOU WILL NEED TO CHANGE THE PATHS BOTH IN
-# THIS FILE AND ../misc/decode-net-to-dir.service
-# TO MATCH YOUR SYSTEM.
+# USE ../bin/systemd-create TO FILL IN THE CORRECT VALUES.
+# DO NOT MAKE CHANGES TO THIS FILE
 #
-# You also need to change the configuration files
-# in ../fisb (all levels) for the correct
-# setup.
-#
-
-# !CHANGE PATH!
 export PATH_TO_FISB=<path>
 
-export PYTHONPATH=$PATH_TO_FISB/fisb-decode
+export PYTHONPATH=$PATH_TO_FISB
 
-cd $PATH_TO_FISB/fisb-decode/bin
+cd $PATH_TO_FISB/bin
 
 ./decodeNetToDir 2>/dev/null 1>/dev/null

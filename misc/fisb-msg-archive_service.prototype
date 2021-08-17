@@ -1,6 +1,8 @@
 # Script used by  fisb-msg-archive.service to
-# archive fis-b messages (usually to
-# ../runtime/msg-archive).
+# archive fis-b messages (usually to ../runtime/msg-archive).
+#
+# USE ../bin/systemd-create TO FILL IN THE CORRECT VALUES.
+# DO NOT MAKE CHANGES TO THIS FILE
 #
 # This service will only run level 0 and its only
 # purpose in life is to archive messages. It does no
@@ -8,14 +10,6 @@
 # Instead, use the services for harvest and just set
 # ARCHIVE_MESSAGES and ARCHIVE_DIRECTORY to the correct
 # values in ../fisb/level0/level0Config.py
-#
-# YOU WILL NEED TO CHANGE THE PATHS BOTH IN
-# THIS FILE AND ../misc/fisb-msg-archive.service
-# TO MATCH YOUR SYSTEM.
-#
-# You also need to change the configuration file
-# to ../fisb/level0/level0Config.py for the correct
-# setup.
 #
 # Pay special attention to the following configuration parameters.
 #
@@ -25,11 +19,10 @@
 # SHOW_MESSAGE_SOURCE = False
 # CALCULATE_RSR = False
 
-# !CHANGE PATH!
 export PATH_TO_FISB=<path>
 
-export PYTHONPATH=$PATH_TO_FISB/fisb-decode
+export PYTHONPATH=$PATH_TO_FISB
 
-cd $PATH_TO_FISB/fisb-decode/bin
+cd $PATH_TO_FISB/bin
 
 ./decode0Net 2>/dev/null 1>/dev/null

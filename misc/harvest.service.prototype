@@ -1,17 +1,14 @@
 # To install:
 #
-# CHANGE username to username to run under.
-# CHANGE path to correct path.
-#
-# Make changes as indicated below to fit your system.
-# Also make changes to ../bin/harvest_service.
+# USE ../bin/systemd-create TO FILL IN THE CORRECT VALUES.
+# DO NOT MAKE CHANGES TO THIS FILE
 #
 # sudo cp harvest.service /etc/systemd/system
 # sudo systemctl enable --now harvest.service
 # sudo systemctl status harvest.service
 #
 # You can use 'systemctl stop' and 'systemctl start'.
-# To disable use 'systemctl disable'
+# To disable use 'systemctl disable'.
 # The service will be started now, as well as on any reboot.
 
 [Unit]
@@ -22,10 +19,8 @@ After=mongod.service
 [Service]
 Type=simple
 
-# !CHANGE!
 User=<username>
 
-# !CHANGE!
 ExecStart=/bin/bash <path>/fisb-decode/bin/harvest_service
 
 [Install]
