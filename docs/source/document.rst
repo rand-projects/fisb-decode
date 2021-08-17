@@ -2094,6 +2094,10 @@ With a Kingston 240GB A400 SATA drive in an Inateck 2.5 USB 3.0 (UASP support)
 enclosure, the system has been rock solid. Such was not the case when running with
 SD cards. Speed is not the same as your desktop, but not annoyingly slow either.
 
+Note: Mongo version 5 (or later) is very restricted on the systems it runs. If you have trouble
+installing Mongo (usually indicated by non-helpful messages that are actually 'illegal
+instruction' errors), try installing a later Mongo 4 version like 4.4.8.
+
 Running 'fisb' and 'harvest' (with MongoDB) does not use very many resources.
 On a 4GB Pi, available memory is more than 3GB at all times and system
 run times are always under 5%.
