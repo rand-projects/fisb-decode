@@ -511,8 +511,9 @@ Change ``../db/harvest/harvestConfig.py``: ::
   CLOUDTOP_MAP = 0                         (0-4 will work, see source comments)
   RADAR_MAP = 0                            (0-1 will work, see source comments)
   
-There are basically two programs to be executed at the same time (eventually
-I will create ``systemd`` scripts for this, but at the beginning it's easier
+There are basically two programs to be executed at the same time (there are
+``systemd`` commands and scripts to automate all this,
+but at the beginning it's easier
 to open two windows and run each program by itself). I will assume, since
 this is a live system, that you are using ``dump978-fa`` over a network
 in server mode.
@@ -1972,6 +1973,86 @@ dates make no sense. As of now, there is code to ignore these messages, both
 at the message level and at the CRL level. If this becomes a more common
 problem, it would be better to create a system to read these from a file
 and ignore them.
+
+Automation using systemd
+------------------------
+
+Once your system is properly configured, you can automate everything
+using ``systemd``. This will start-up fis-b decode and harvest at boot time.
+This assumes you are running a Linux system that uses
+systemd for scheduling system tasks.
+
+The most important thing is to make sure your fis-b decode and harvest
+are properly configured.
+Next, determine the non-root username you wish to run under, and the path to
+`fis-b decode` on your system. Then, from the ``bin`` directory, type: ::
+
+  ./systemd-create username path-to-fisb-decode
+
+If your account name is ``fred`` and the ``fisb-decode`` directory is located at
+``/home/fred/fisb-decode`` you would type: ::
+
+  ./systemd-create fred /home/fred/fisb-decode
+
+This will create a number of files based on prototype files in the ``../misc``
+directory. Some of these files are ``.system`` files that will be placed in the
+``/etc/systemd/system`` area, and the others are scripts (with the name ending in
+``_system``) placed in the same ``bin`` directory
+where you ran the command. These will be called by systemd.
+
+There are three sets of ``.system`` and ``_system`` files. They are:
+
+* ``decode-net-to-dir.service`` and ``decode-net-to-dir_service``.
+  This runs ``decodeNetToDir``.
+* ``harvest.service`` and ``harvest_service``.
+  This runs ``harvest``.
+* ``fisb-msg-archive.service`` and ``fisb-msg-archive_service``.
+  This runs ``decode0Net``. It is used solely if you want to set up a system
+  to archive fis-b messages. If you are running ``decode-net-to-dir`` you
+  should not run ``fisb-msg-archive`` at the same time. You can configure
+  ``decode-net-to-dir`` to archive messages. If you run them both on the same
+  account, you will just collect double messages.
+
+To install ``decode-net-to-dir`` and ``harvest`` as services (this will also start them
+and make sure they are started at boot), type (from the ``bin`` directory): ::
+
+  sudo cp ../misc/decode-net-to-dir.service /etc/systemd/system
+  sudo systemctl enable --now decode-net-to-dir.service
+  sudo systemctl status decode-net-to-dir.service
+
+If you are successful, you should get something similar to the following output
+from the status request: ::
+   
+   ● decode-net-to-dir.service - Collect raw fis-b data
+     Loaded: loaded (/etc/systemd/system/decode-net-to-dir.service; enabled; vendor preset: enabled)
+     Active: active (running) since Fri 2021-08-13 04:15:29 UTC; 4 days ago
+   Main PID: 612 (bash)
+      Tasks: 10 (limit: 9448)
+     Memory: 531.1M
+     CGroup: /system.slice/decode-net-to-dir.service
+             ├─612 /bin/bash /home/mbarnes/fisb-decode/bin/decode-net-to-dir_service
+             ├─638 /bin/bash /home/mbarnes/fisb-decode/bin/decode-net-to-dir_service
+             ├─639 python3 ../fisb/levelNet/levelNet.py
+             ├─640 python3 ../fisb/level0/level0.py
+             ├─641 python3 ../fisb/level1/level1.py
+             ├─642 python3 ../fisb/level2/level2.py
+             └─643 python3 ../fisb/level3/level3.py --dir ../runtime/harvest
+
+Repeat the steps for harvest: ::
+
+  sudo cp ../misc/harvest.service /etc/systemd/system
+  sudo systemctl enable --now harvest.service
+  sudo systemctl status harvest.service
+
+If you using ``fisb-msg-archive`` instead, use the steps above but change the
+name in the appropriate places.
+
+In general, if you wish to start, stop, or disable (make it not run at boot),
+issue to following command (illustrated for ``harvest.service``): ::
+
+  sudo systemctl start harvest.service
+  sudo systemctl stop harvest.service
+  sudo systemctl disable harvest.service
 
 Using Stratux as a data source
 ------------------------------

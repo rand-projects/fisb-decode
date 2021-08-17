@@ -21,7 +21,7 @@ Type=simple
 
 User=<username>
 
-ExecStart=/bin/bash <path>/fisb-decode/bin/harvest_service
+ExecStart=/bin/bash <path>/bin/harvest_service
 
 [Install]
 WantedBy=multi-user.target

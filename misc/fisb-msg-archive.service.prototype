@@ -19,7 +19,7 @@ Type=simple
 
 User=<username>
 
-ExecStart=/bin/bash <path>/fisb-decode/bin/fisb-msg-archive_service
+ExecStart=/bin/bash <path>/bin/fisb-msg-archive_service
 
 [Install]
 WantedBy=multi-user.target

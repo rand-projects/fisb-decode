@@ -15,7 +15,7 @@
 # dependent on mongo (i.e. not using RSR).
 
 [Unit]
-Description=Collect raw fis-b data
+Description=Collect fis-b data for harvest
 Requires=mongod.service
 After=mongod.service
 
@@ -24,7 +24,7 @@ Type=simple
 
 User=<username>
 
-ExecStart=/bin/bash <path>/fisb-decode/bin/decode-net-to-dir_service
+ExecStart=/bin/bash <path>/bin/decode-net-to-dir_service
 
 [Install]
 WantedBy=multi-user.target

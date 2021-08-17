@@ -65,10 +65,10 @@ db.harvest.MsgBLOCK module
    :undoc-members:
    :show-inheritance:
 
-db.harvest.MsgCANCEL_CWA module
+db.harvest.MsgCANCEL_ASC module
 -------------------------------
 
-.. automodule:: db.harvest.MsgCANCEL_CWA
+.. automodule:: db.harvest.MsgCANCEL_ASC
    :members:
    :undoc-members:
    :show-inheritance:
