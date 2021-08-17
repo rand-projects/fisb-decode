@@ -2047,8 +2047,9 @@ Repeat the steps for harvest: ::
 If you using ``fisb-msg-archive`` instead, use the steps above but change the
 name in the appropriate places.
 
-In general, if you wish to start, stop, or disable (make it not run at boot),
-issue to following command (illustrated for ``harvest.service``): ::
+In general, if you wish to start, stop, or disable (make it not run at boot)
+a service,
+issue one of the following commands (illustrated for ``harvest.service``): ::
 
   sudo systemctl start harvest.service
   sudo systemctl stop harvest.service
