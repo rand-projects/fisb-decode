@@ -422,6 +422,28 @@ security you can add it (add security using Mongo commands, then change
 You should not expose the Mongo database to the internet
 or other places you don't trust without adding security.
 
+**WARNING:** MongoDB 5.0 and greater requires the processor to support AVX
+instructions, which is not found in older hardware, some virtualization
+software, etc. For Linux systems, the best way to check for this is: ::
+
+  grep avx /proc/cpuinfo
+
+If it doesn't return anything, you don't have AVX support (otherwise it
+will return a long stream of information). In that case,
+you will need to use MongoDB-4.4.x (latest is 4.4.8) and hold the
+packages so they don't upgrade to 5.0. You can hold the packages like: ::
+
+  apt-mark hold <package-name>
+
+The packages you will want to hold are:
+
+ * ``mongodb-org``
+ * ``mongodb-org-database-tools-extra``
+ * ``mongodb-org-mongos``
+ * ``mongodb-org-server``
+ * ``mongodb-org-shell``
+ * ``mongodb-org-tools``
+
 Images in harvest require GDAL and its python bindings to be installed.
 **HOWEVER**, If you will be using QGIS
 (QGIS is an open-source
