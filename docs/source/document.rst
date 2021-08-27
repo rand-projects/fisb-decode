@@ -422,28 +422,29 @@ security you can add it (add security using Mongo commands, then change
 You should not expose the Mongo database to the internet
 or other places you don't trust without adding security.
 
-**WARNING:** MongoDB 5.0 and greater requires the processor to support AVX
-instructions, which is not found in older hardware, some virtualization
-software, etc. For Linux systems, the best way to check for this is: ::
+.. note ::
+   MongoDB 5.0 and greater requires the processor to support AVX
+   instructions, which is not found in older hardware, some virtualization
+   software, etc. For Linux systems, the best way to check for this is: ::
 
-  grep avx /proc/cpuinfo
+     grep avx /proc/cpuinfo
 
-If it doesn't return anything, you don't have AVX support (otherwise it
-will return a long stream of information). In that case,
-you will need to download MongoDB-4.4.8 (the MongoDB site has a
-dropdown box which allows you to specify the vestion) and hold the
-packages so they don't upgrade to 5.0. You can hold the packages like: ::
+   If it doesn't return anything, you don't have AVX support (otherwise it
+   will return a long stream of information). In that case,
+   you will need to download MongoDB-4.4.8 (the MongoDB site has a
+   dropdown box which allows you to specify the vestion) and hold the
+   packages so they don't upgrade to 5.0. You can hold the packages by typing: ::
 
-  apt-mark hold <package-name>
+     apt-mark hold <package-name>
 
-The packages you will want to hold are:
+   The packages you will want to hold are:
 
- * ``mongodb-org``
- * ``mongodb-org-database-tools-extra``
- * ``mongodb-org-mongos``
- * ``mongodb-org-server``
- * ``mongodb-org-shell``
- * ``mongodb-org-tools``
+     * mongodb-org
+     * mongodb-org-database-tools-extra
+     * mongodb-org-mongos
+     * mongodb-org-server
+     * mongodb-org-shell
+     * mongodb-org-tools
 
 Images in harvest require GDAL and its python bindings to be installed.
 **HOWEVER**, If you will be using QGIS
@@ -568,15 +569,16 @@ the standard level 0-3 programs, so any errors will show up as
 ``LEVEL0.ERR``, ``LEVEL1.ERR``, ``LEVEL2.ERR``, or ``LEVEL3.ERR``.
 Harvest errors will be in ``HARVEST.ERR``. From the monitoring directory
 you can check in the ``../runtime`` directories to look for images and
-files being processed (note: the files in
+files being processed (**note**: the files in
 ``../runtime/harvest`` are processed very quickly, so
 this directory will mostly look empty).
 
-Note: When running both ``decodeNetToDir`` and ``harvest``, and you want
-to stop them both, stop ``decodeNetToDir`` first. If you stop
-``harvest`` first, ``decodeNetToDir`` will keep creating files. By
-stopping ``decodeNetToDir`` first, ``harvest`` will gobble up any
-unprocessed files and delete them, leaving the intake area clean.
+.. note ::
+  When running both ``decodeNetToDir`` and ``harvest``, and you want
+  to stop them both, stop ``decodeNetToDir`` first. If you stop
+  ``harvest`` first, ``decodeNetToDir`` will keep creating files. By
+  stopping ``decodeNetToDir`` first, ``harvest`` will gobble up any
+  unprocessed files and delete them, leaving the intake area clean.
 
 If things seem to be quiet (i.e. the programs are running and no errors
 are being created), the next step is to run Mongo and make sure the
@@ -2118,9 +2120,14 @@ With a Kingston 240GB A400 SATA drive in an Inateck 2.5 USB 3.0 (UASP support)
 enclosure, the system has been rock solid. Such was not the case when running with
 SD cards. Speed is not the same as your desktop, but not annoyingly slow either.
 
-Note: Mongo version 5 (or later) is very restricted on the systems it runs. If you have trouble
-installing Mongo (usually indicated by non-helpful messages that are actually 'illegal
-instruction' errors), try installing a later Mongo 4 version like 4.4.8.
+.. note::
+   Mongo version 5 (or later) is very restricted on the systems it runs.
+   If you have trouble
+   installing Mongo (usually indicated by non-helpful messages that are
+   actually 'illegal
+   instruction' errors), try installing an earlier MongoDB 4
+   version like 4.4.8.
+   See the earlier note about MongoDB 5.
 
 Running 'fisb' and 'harvest' (with MongoDB) does not use very many resources.
 On a 4GB Pi, available memory is more than 3GB at all times and system
