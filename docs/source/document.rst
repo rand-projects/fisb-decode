@@ -430,7 +430,8 @@ software, etc. For Linux systems, the best way to check for this is: ::
 
 If it doesn't return anything, you don't have AVX support (otherwise it
 will return a long stream of information). In that case,
-you will need to use MongoDB-4.4.x (latest is 4.4.8) and hold the
+you will need to download MongoDB-4.4.8 (the MongoDB site has a
+dropdown box which allows you to specify the vestion) and hold the
 packages so they don't upgrade to 5.0. You can hold the packages like: ::
 
   apt-mark hold <package-name>
