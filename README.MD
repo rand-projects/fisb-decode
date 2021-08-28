@@ -11,7 +11,7 @@ This implementation roughly follows the DO-358B standard.
   structures of FIS-B and can be used as a stand-alone system for this
   purpose. 'fisb' is a multi-level system that turns binary FIS-B messages
   into fully independent weather messages.
-* The database part of the system ('harvest') creates .tif images,
+* The database part of the system ('harvest') creates .png images,
   turns vector data into geojson, and manages the FIS-B message-base using
   mongoDB.
 
