@@ -422,7 +422,7 @@ security you can add it (add security using Mongo commands, then change
 You should not expose the Mongo database to the internet
 or other places you don't trust without adding security.
 
-.. note ::
+.. warning::
    MongoDB 5.0 and greater requires the processor to support AVX
    instructions, which is not found in older hardware, some virtualization
    software, etc. For Linux systems, the best way to check for this is: ::
@@ -432,7 +432,7 @@ or other places you don't trust without adding security.
    If it doesn't return anything, you don't have AVX support (otherwise it
    will return a long stream of information). In that case,
    you will need to download MongoDB-4.4.8 (the MongoDB site has a
-   dropdown box which allows you to specify the vestion) and hold the
+   dropdown box which allows you to specify the version) and hold the
    packages so they don't upgrade to 5.0. You can hold the packages by typing: ::
 
      apt-mark hold <package-name>
@@ -446,18 +446,19 @@ or other places you don't trust without adding security.
      * mongodb-org-shell
      * mongodb-org-tools
 
-Images in harvest require GDAL and its python bindings to be installed.
-**HOWEVER**, If you will be using QGIS
-(QGIS is an open-source
-Geographical Information System viewing program described
-later), just install QGIS: **DO NOT** install
-``gdal-bin`` or ``libgdal-dev``. QGIS will install GDAL as
-part of its installation. If you install both QGIS and the below packages, they
-might conflict. The below packages are needed if you are installing on a headless
-server without a window system (i.e. no QGIS), or if you don't want to install QGIS.
-Install the following packages (if you will not be installing QGIS): ::
+.. warning::
+   Images in harvest require GDAL and its python bindings to be installed.
+   **HOWEVER**, If you will be using QGIS
+   (QGIS is an open-source
+   Geographical Information System viewing program described
+   later), just install QGIS: **DO NOT** install
+   ``gdal-bin`` or ``libgdal-dev``. QGIS will install GDAL as
+   part of its installation. If you install both QGIS and the below packages, they
+   might conflict. The below packages are needed if you are installing on a headless
+   server without a window system (i.e. no QGIS), or if you don't want to install QGIS.
+   Install the following packages (**if you will NOT be installing QGIS**): ::
 
-  sudo apt install gdal-bin libgdal-dev
+     sudo apt install gdal-bin libgdal-dev
 
 Next you will install various python dependencies.
 From the ``bin`` directory type: ::
@@ -2127,7 +2128,7 @@ SD cards. Speed is not the same as your desktop, but not annoyingly slow either.
    actually 'illegal
    instruction' errors), try installing an earlier MongoDB 4
    version like 4.4.8.
-   See the earlier note about MongoDB 5.
+   See the earlier warning about MongoDB 5.
 
 Running 'fisb' and 'harvest' (with MongoDB) does not use very many resources.
 On a 4GB Pi, available memory is more than 3GB at all times and system
