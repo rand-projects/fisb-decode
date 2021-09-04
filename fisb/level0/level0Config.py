@@ -29,7 +29,7 @@ ALLOW_SERVICE_STATUS = True
 #: as a new file in the form ``YYYY-MM-DD.978``. It's a good idea
 #: to compress old files as each file is about 155MB from a
 #: medium tier (3 messages a second) station.
-ARCHIVE_MESSAGES = True
+ARCHIVE_MESSAGES = False
 
 #: Directory to store archived messages in.
 ARCHIVE_DIRECTORY = '../runtime/msg-archive'
@@ -43,10 +43,26 @@ WRITE_MESSAGE_TO_FILE = False
 #: Directory to store messages in if ``WRITE_MESSAGE_TO_FILE`` is ``True``.
 MESSAGE_DIRECTORY = '/share/fis-b/level0-out'
 
-#: Show the original message in the output. Useful for
-#: creating a set of test messages. In normal use, should
-#: be set to ``False``.
+#: Show the original message in the output as a comment.
+#: In normal use, should be set to ``False``.
 SHOW_MESSAGE_SOURCE = False
+
+#: Show a summary of the contents of the level 0 message
+#: as a set of comments. Very helpful when debugging messages
+#: at all levels (0, 1, 2, 3).
+#: A content summary will look like this:
+#:
+#: # 2021-08-08T12:19:21.145Z (40.038192~-86.255593) [8 frames]
+#: #
+#: # Count FT ProdId  Description
+#: # ----- -- ------  -----------------------------------
+#: #     1 15    N/A  SERVICE-STATUS (targets: 8)
+#: #     3 00      8  NOTAM (graphics)
+#: #     1 00    413  METAR
+#: #     3 00    413  PIREP
+#:
+#: In normal use, should be set to ``False``.
+SHOW_SUMMARY = False
 
 #: If ``True``, calculate the '*reception success rate*'.
 #: The RSR is basically the number of messages we got from a particular
@@ -59,7 +75,7 @@ SHOW_MESSAGE_SOURCE = False
 #: problems with fading, but otherwise can be turned off, or at least set
 #: to a higher value like every 30 seconds, vs every second.
 #: Set to ``True`` for TG06 test. 
-CALCULATE_RSR = True
+CALCULATE_RSR = False
 
 #: Calculate and store the RSR every '*this
 #: many seconds*'. For testing, set this to ``1``.
@@ -110,4 +126,4 @@ GENERATED_TEST_DIR = '../tg/tg-source/generated'
 #: ``requirements-fisb.txt`` ones), set this to ``False``.
 #: The only reason for having this setting is that if you are NOT
 #: using harvest, you will get dependency exceptions.
-ALLOW_DECODE_TEST = True
+ALLOW_DECODE_TEST = False

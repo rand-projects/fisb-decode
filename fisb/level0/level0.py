@@ -11,6 +11,7 @@ import os, io, sys, json, argparse, traceback
 import fisb.level0.level0Config as cfg
 import fisb.level0.level0Exceptions as ex
 import fisb.level0.utilities as util
+import fisb.level0.summary as summary
 
 # Only import if harvest requirements are installed.
 if cfg.ALLOW_DECODE_TEST:
@@ -203,6 +204,10 @@ if __name__ == "__main__":
                     else:
                         if cfg.SHOW_MESSAGE_SOURCE:
                             print('#' + line + '\n')
+
+                        if cfg.SHOW_SUMMARY:
+                            print(summary.createSummary(msg))
+
                         print(jsonMsg, flush=True)
 
                     # Save raw message in a file if archiving.

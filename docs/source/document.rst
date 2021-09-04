@@ -122,7 +122,7 @@ Initial fisb-decode decoding
 ----------------------------
 
 For all the examples that follow, we will making extensive use of
-fisb-decode configurations files. There are a lot of them: they are
+fisb-decode configuration files. There are a lot of them: they are
 well documented, but if they are not set up for what you are trying
 to do, you will not get the expected result. The configuration files
 are guaranteed to be set with random values each time the

@@ -94,12 +94,37 @@ def msg8_16_17(contentsText, contentsGraphics, productId, \
     # for which states are in which FAA Service Area.
     #
     # The usual case for all products other than TMOA and TRA is to use the 
-    # report year and the report number. For TMOA and TRA we use the APDU month
+    # report year and the report number (and append any location). For TMOA and TRA we use the APDU month
     # such that the report will match in the CRL
+    #
+    # An important concept is that any NOTAM that is part of a CRL
+    # (NOTAM-TFR, NOTAM-TMOA, and NOTAM-TRA) must have an report id that
+    # is ONLY the information found in the CRL (like year/month and
+    # report number). However, that approach will get you into trouble
+    # with NOTAM-Ds and NOTAM-FDCs where the report year and id are
+    # reused all over the place. NOTAM-Ds and NOTAM-FDCs have a location
+    # that will solve that problem. NOTAM cancellations will also put
+    # a location for NOTAM-Ds and NOTAM-FDCs. NOTAM-TFRs and FIS-B
+    # unavailable with have no location, or an empty location.
+    #
+    # The result of all this is that if we get a location for type 8 NOTAMs
+    # that present and not empty we will add it as part of the report id.
+    # We need to do all this before we check for cancelled NOTAMs.
+
     if productId in [16, 17]:
         reportId = str(month) + '-' + str(records0['report_number'])
     else:
         reportId = str(records0['report_year']) + '-' + str(records0['report_number'])
+
+        # Append location if present. We can't put a location on a NOTAM
+        # TFR, but they don't come with one, so that is OK. FIS-B
+        # UNAVAILABLE messages don't have one either, but it doesn't
+        # make a difference. Adding the location makes NOTAM-Ds and NOTAM-FDCs
+        # not collide.
+        if 'location' in contentsText:
+            location = contentsText['location'].strip()
+            if len(location) > 0:
+                reportId = reportId + '-' + location
 
     # If this is a cancellation, create and send it.
     if records0['report_status'] == 0:
@@ -420,12 +445,6 @@ def notam(rYear, rMonth, rDay, location, reportId, text, contentsGraphics, \
     # Create the message
     newMsg['type'] = 'NOTAM'
     newMsg['subtype'] = notamSubtype
-
-    # The TG messages sometimes reuse the same report number and report year. This
-    # doesn't really happen in the real world. We will do that except for messages
-    # that have a CRL. The CRL uses only the report number and year, and so must we.
-    if (notamSubtype == 'D') and (location != ''):
-        reportId = reportId + '-' + location
 
     newMsg['unique_name'] = reportId
     newMsg['location'] = location

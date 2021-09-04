@@ -175,6 +175,25 @@ def calculateRSR(rsrDict, timeInSecs, ba7, station):
     else:
         timeDict[cursec] = {station: 1}
 
+def createSlotId(zeroBasedDataChannel, secsPastMidnightMod32):
+    """Given a dataChannel (zero-based) and the number of seconds past
+    UTC midnight mod 32, return the slot id.
+
+    Args:
+        zeroBasedDataChannel (int): Data channel zero-based. Actual
+            data channels are 1-based, but the calculation is easier using
+            zero-based values.
+        secPastMidnightMod32 (int): Number of seconds past UTC midnight mod 32.
+
+    Returns:
+        int: slot id
+    """
+    slotId = zeroBasedDataChannel + secsPastMidnightMod32 + 1
+    if slotId > 32:
+        slotId = slotId - 32
+
+    return slotId
+
 def groundUplinkMessage(payload, isDetailed, testMode, rsrDict = None):
     """Process a ground uplink message.
 
@@ -392,17 +411,28 @@ def groundUplinkMessage(payload, isDetailed, testMode, rsrDict = None):
         #
         # If we are not dealing with an accurate time, don't try to calculate
         # the data channel.
-        if payloadTimeIndex != -1:
-            # Get time in seconds past midnight (for data channel determination)
-            secsPastMidnightMod32 = int((dtTime - dtTime.replace(hour=0, minute=0,\
-                second=0)).total_seconds()) % 32
 
-            dataChannel0Based = slot_id - secsPastMidnightMod32
-
-            if dataChannel0Based < 0:
-                dataChannel0Based += 32
-            
-            d['data_channel'] = dataChannel0Based + 1
+        # Dictionary associating TIS-B site ID to data channels
+        # The data channels in the returned array is 0-based instead of
+        # one based.
+        SITE_ID_TO_DATA_CHANNEL = { \
+            0: [], \
+            1: [23], \
+            2: [15], \
+            3: [7], \
+            4: [31], \
+            5: [7, 23], \
+            6: [15, 30], \
+            7: [14, 22], \
+            8: [29, 6], \
+            9: [13, 21], \
+            10: [20, 28, 5], \
+            11: [27, 4, 12], \
+            12: [3, 11, 19], \
+            13: [2, 10, 18, 26], \
+            14: [1, 9, 17, 25], \
+            15: [0, 8, 16, 24]
+            }
 
         # Defines the FIS-B Tier for this station. This also implies
         # the look ahead range for many products.
@@ -419,6 +449,43 @@ def groundUplinkMessage(payload, isDetailed, testMode, rsrDict = None):
 
         # Reserved bits 5-8 in Ground uplink header byte 8
         d['reserved_8_58'] = ba[7] & 0x0F
+
+        # For the following calculations to work, we need an accurate 
+        # clock.        
+        if payloadTimeIndex != -1:
+            # Get time in seconds past midnight (for data channel determination)
+            secsPastMidnightMod32 = int((dtTime - dtTime.replace(hour=0, minute=0,\
+                second=0)).total_seconds()) % 32
+
+            dataChannel0Based = slot_id - secsPastMidnightMod32
+
+            if dataChannel0Based < 0:
+                dataChannel0Based += 32
+            
+            d['data_channel'] = dataChannel0Based + 1
+
+            # To get the order of the packet within the current second,
+            # determine the slot ids for this TIS-B site and current second.
+            slotIdsThisSecond = [createSlotId(zeroBasedDataChannel, secsPastMidnightMod32) \
+                for zeroBasedDataChannel in SITE_ID_TO_DATA_CHANNEL[tisbId]]
+
+            # Sorting this list puts the items in the order they will be
+            # transmitted.
+            slotIdsThisSecond.sort()
+
+            # Number of messages a second from this station. This basically
+            # reflects if this a surface (1 mps), low (2 mps), medium (3 mps),
+            # or high (4 mps) station.
+            d['messages_per_second'] = len(slotIdsThisSecond)
+            
+            # 'sequence_this_second' is the order this message is transmitted
+            # in the current second. If there are 3 messages transmitted
+            # a second from the station, subsequent packets will have this
+            # value set to 1, 2, then 3.
+            # This is principally used to detect missing messages. If you
+            # are using this for that purpose, you also need to processing
+            # empty messages.
+            d['sequence_this_second'] = slotIdsThisSecond.index(slot_id + 1) + 1
 
     # Now examine the rest of the frame data for frames
     currentOffset = 8
