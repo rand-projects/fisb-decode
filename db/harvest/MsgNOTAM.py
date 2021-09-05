@@ -25,6 +25,17 @@ class MsgNOTAM(MsgBase):
               message to store. All messages get stored
               to the ``NOTAM`` collection.
         """
+        # NOTAM-TFRs send out an empty message every other
+        # transmission. For those messages, there will be a 'renew-only'
+        # slot.
+        # TODO: For now, these messages are just ignored.
+        # When implemented, these messages will need to be checked that
+        # they exist. If the do exist, the expiration date will need to be
+        # checked to see if it is later than the current one, and if so, the
+        # expiration changed and the message sent out again.
+        if 'renew-only' in msg:
+            return
+
         if not self.checkThenAddIdDigest(msg, digest):
             return
 

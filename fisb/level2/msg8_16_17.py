@@ -105,10 +105,15 @@ def msg8_16_17(contentsText, contentsGraphics, productId, \
     # reused all over the place. NOTAM-Ds and NOTAM-FDCs have a location
     # that will solve that problem. NOTAM cancellations will also put
     # a location for NOTAM-Ds and NOTAM-FDCs. NOTAM-TFRs and FIS-B
-    # unavailable with have no location, or an empty location.
+    # unavailable will have no location, or an empty location.
+    #
+    # In reviewing NOTAM-TFRs, these are 'reconstructed' by the FIS-B provider,
+    # and I have never seen anything other than an empty location, making them
+    # safe for CRLs (even though the FAA version often has a center location
+    # associated with it).
     #
     # The result of all this is that if we get a location for type 8 NOTAMs
-    # that present and not empty we will add it as part of the report id.
+    # that are present and not empty, we will add it as part of the report id.
     # We need to do all this before we check for cancelled NOTAMs.
 
     if productId in [16, 17]:
@@ -136,12 +141,25 @@ def msg8_16_17(contentsText, contentsGraphics, productId, \
 
         return newMsg
 
-    # To save space some large NOTAMS don't send the text every time,
-    # just the active status. So if the text is empty, just return.
     text = records0['text']
 
+    # To save bandwidth NOTAM-TFRs don't send the text every transmission,
+    # but alternate each transmission with sending an empty message with 
+    # empty text, just the active status. So if the text is empty, send out a dummy
+    # NOTAM-TFR with the 'renew-only' slot set to some value. The value of the
+    # slot doesn't matter, just the fact that it exists. We also send 
+    # it with a default expiration time of cfg.TWGO_DEFAULT_EXPIRATION_TIME.
     if len(text) == 0:
-        return None
+        newMsg = {}
+        newMsg['type'] = 'NOTAM'
+        newMsg['subtype'] = 'TFR'
+        newMsg['unique_name'] = reportId
+        newMsg['station'] = station
+        newMsg['renew-only'] = '1'
+        newMsg['expiration_time'] = util.addSecondsToIso8601(rcvdTime, \
+            cfg.TWGO_DEFAULT_EXPIRATION_TIME)
+
+        return newMsg
     
     # FAA text is full of trailing whitespace. Get rid of it.
     text = util.cleanFAAText(text)

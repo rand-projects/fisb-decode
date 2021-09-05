@@ -149,10 +149,19 @@ class TwgoMatcher(L1Base):
                 del frame['contents']                
                 return frame
 
-            # A lot of ACTICE records have a text field of "". Ignore these
-            # This includes NOTAM-TFRs that only get a header every other transmission.
+            # A lot of ACTIVE records have a text field of "". Ignore these unless
+            # they are of product type 8 which is an empty NOTAM-TFR-- in which case
+            # just send it out. NOTAM-TFRs get sent text only every other transmission.
+            # The ones with no text are just 'renewals'. This will result in a special
+            # level 2 message and special handling in Harvest.
             if len(record['text']) == 0:
-                return None
+                if productId != 8:
+                    return None
+                else:
+                    # NOTAM-TFRs with empty text are renewals.
+                    frame['contents_text'] = frame['contents']
+                    del frame['contents']                
+                    return frame
 
             # If here, we don't have a text part yet. Send it out.
             if msgHxRecord['text_contents'] is None:

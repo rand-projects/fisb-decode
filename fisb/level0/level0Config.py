@@ -62,7 +62,7 @@ SHOW_MESSAGE_SOURCE = False
 #: #     3 00    413  PIREP
 #:
 #: In normal use, should be set to ``False``.
-SHOW_SUMMARY = False
+SHOW_SUMMARY = True
 
 #: If ``True``, calculate the '*reception success rate*'.
 #: The RSR is basically the number of messages we got from a particular
