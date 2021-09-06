@@ -199,6 +199,7 @@ lines match: ::
   ARCHIVE_MESSAGES = False  
   WRITE_MESSAGE_TO_FILE = False
   SHOW_MESSAGE_SOURCE = False
+  SHOW_SUMMARY = True
   CALCULATE_RSR = False
   DLAC_4BIT_HACK = False
   ALLOW_DECODE_TEST = False
@@ -317,6 +318,7 @@ Make ``../fisb/level0/level0Config.py`` match: ::
   ARCHIVE_MESSAGES = False  
   WRITE_MESSAGE_TO_FILE = False
   SHOW_MESSAGE_SOURCE = False
+  SHOW_SUMMARY = False
   CALCULATE_RSR = False
   DLAC_4BIT_HACK = False
   ALLOW_DECODE_TEST = False
@@ -502,6 +504,7 @@ already set): ::
   ARCHIVE_MESSAGES = False
   WRITE_MESSAGE_TO_FILE = False
   SHOW_MESSAGE_SOURCE = False
+  SHOW_SUMAMRY = False
   CALCULATE_RSR = False
   DLAC_4BIT_HACK = False
   ALLOW_DECODE_TEST = False
@@ -622,8 +625,8 @@ Here are the collection names and what they contain:
 **MSG**
   Holds all messages.
   
-**LEGEND**
-  Legend information for PNG images.
+**STATIC_ITEMS**
+  Various static tables such as legend information for PNG images.
 
 Building Documentation
 ======================

@@ -12,6 +12,51 @@ class MsgNOTAM(MsgBase):
         # All message types must indicate the actual dictionary
         # 'type' handled
         super().__init__(['NOTAM'])
+    
+    def renewNotamTFR(self, msg):
+        """Check the renewal NOTAM-TFR message to update the expiration_time
+        if needed.
+
+        We must have the actual NOTAM-TFR (with text) and the expiration time on
+        that object must be earlier than the renewal time. We just return ``None``
+        if the criteria doesn't match. Otherwise, we return the original message
+        with a new expiration time.
+
+            Args:
+                msg (dict): Renewal message dictionary. Doesn't contain TFR text,
+                    just an updated expiration_time.
+
+            Returns:
+                (dict): Returns the original NOTAM-TFR with an updated expiration
+                    time if the message existed and the new expiration time is later
+                    than the original message. Otherwise returns None.
+        """
+        
+        # See if the original NOTAM-TFR exists.
+        # The station must also match.
+        #
+        # NOTE: Haven't really thought out the implications of multiple stations
+        # feeding the same message and how that affects the CRLs.
+        pkey = msg['type'] + '-' + msg['unique_name']
+        origMsg = self.dbConn.MSG.find_one({'_id': pkey, 'station': msg['station']})
+
+        # Message didn't match.
+        if origMsg == None:
+            return None
+
+        # Make sure new expiration date is > than orig expiration date
+        if origMsg['expiration_time'] >= msg['expiration_time']:
+            return None
+
+        # This is a renewal with a later expiration time.
+        # Set new expiration time
+        origMsg['expiration_time'] = msg['expiration_time']
+
+        # Delete existing digest, and insert_time (_id is fine, it will just get overriden.)
+        del origMsg['insert_time']
+        del origMsg['digest']
+
+        return origMsg
         
     def processMessage(self, msg, digest):
         """Store NOTAM message to database.
@@ -24,17 +69,23 @@ class MsgNOTAM(MsgBase):
             msg (dict): Level 2 ``NOTAM``
               message to store. All messages get stored
               to the ``NOTAM`` collection.
+            digest (str): Message digest of received JSON message.
         """
         # NOTAM-TFRs send out an empty message every other
         # transmission. For those messages, there will be a 'renew-only'
         # slot.
-        # TODO: For now, these messages are just ignored.
-        # When implemented, these messages will need to be checked that
-        # they exist. If the do exist, the expiration date will need to be
-        # checked to see if it is later than the current one, and if so, the
-        # expiration changed and the message sent out again.
+        # 
+        # Check to see if the original NOTAM-TFR exists and if the
+        # new expiration time is later than the current one. If so,
+        # the message will be the original message with the new 
+        # expiration date. We use the new digest from the renewal
+        # so the original message doesn't match.
         if 'renew-only' in msg:
-            return
+            msg = self.renewNotamTFR(msg)
+            
+            # If msg is None, there is no processing to be done.
+            if msg == None:
+                return
 
         if not self.checkThenAddIdDigest(msg, digest):
             return

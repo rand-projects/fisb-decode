@@ -136,7 +136,7 @@ def msg8_16_17(contentsText, contentsGraphics, productId, \
         newMsg = {}
         newMsg['type'] = 'CANCEL_NOTAM'
         newMsg['unique_name'] = reportId
-        newMsg['expiration_time'] = util.addSecondsToIso8601(rcvdTime, \
+        newMsg['expiration_time'] = util.addMinutesToIso8601(rcvdTime, \
             cfg.CANCEL_EXPIRATION_TIME)
 
         return newMsg
@@ -156,7 +156,7 @@ def msg8_16_17(contentsText, contentsGraphics, productId, \
         newMsg['unique_name'] = reportId
         newMsg['station'] = station
         newMsg['renew-only'] = '1'
-        newMsg['expiration_time'] = util.addSecondsToIso8601(rcvdTime, \
+        newMsg['expiration_time'] = util.addMinutesToIso8601(rcvdTime, \
             cfg.TWGO_DEFAULT_EXPIRATION_TIME)
 
         return newMsg

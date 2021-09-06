@@ -359,7 +359,7 @@ def doMaintTasks(maintCounter):
 def updateLegendCollection():
     legendDict = img.getLegendDict()
     
-    dbConn.STATIC.replace_one( \
+    dbConn.STATIC_ITEMS.replace_one( \
             { '_id': 'LEGEND'}, \
             legendDict, \
             upsert=True)

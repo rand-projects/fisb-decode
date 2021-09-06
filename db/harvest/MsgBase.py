@@ -71,7 +71,18 @@ class MsgBase(ABC):
         self.typesList = typesList
 
     def checkThenAddIdDigest(self, msg, digest):
-        """
+        """Check ``msg`` for duplicate. Return False if so.
+
+          ``msg`` is altered to add ``_id``, ``digest`` and ``insert_time``
+          if the message is not a duplicate.
+
+          Args:
+            msg (dict): Message to be checked.
+            digest (str): JSON message digest when received.
+
+          Returns:
+            (bool): False if this is a duplicate. True if this is a new message.
+                If True, ``msg`` will be altered as described above.
         """
         # See if message already exists
         # If so, and the digests are equal, return False

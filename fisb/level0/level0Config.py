@@ -62,7 +62,7 @@ SHOW_MESSAGE_SOURCE = False
 #: #     3 00    413  PIREP
 #:
 #: In normal use, should be set to ``False``.
-SHOW_SUMMARY = True
+SHOW_SUMMARY = False
 
 #: If ``True``, calculate the '*reception success rate*'.
 #: The RSR is basically the number of messages we got from a particular
@@ -75,7 +75,7 @@ SHOW_SUMMARY = True
 #: problems with fading, but otherwise can be turned off, or at least set
 #: to a higher value like every 30 seconds, vs every second.
 #: Set to ``True`` for TG06 test. 
-CALCULATE_RSR = False
+CALCULATE_RSR = True
 
 #: Calculate and store the RSR every '*this
 #: many seconds*'. For testing, set this to ``1``.
