@@ -6,7 +6,7 @@ from fisb.level1.L1Base import L1Base
 class TwgoMatcher(L1Base):
     """Handle matching NOTAMS text and graphic portions.
 
-    Take TWGO objects that have text and graphic parts (all but G-AIRMET, SUA)
+    Takes TWGO objects that have text and graphic parts (all but G-AIRMET, SUA)
     and will match them. The standard requires any text part comes
     out immediately, but will also match and send out the text and graphics
     when available.
@@ -49,7 +49,6 @@ class TwgoMatcher(L1Base):
 
         * If we have a text part, send out both.
         * If we have no text part, just store away waiting for text part.
-
     """
     
     def __init__(self, expungeTimeMins):

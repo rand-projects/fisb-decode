@@ -409,7 +409,9 @@ has more dependencies. Harvest (optionally) can use external location
 data from the FAA and World Magnetic Model to add location information
 to PIREPs,  METARs, TAFs, and wind forecasts.
 
-The first step in getting harvest running is to install MongoDB. Download
+The first step in getting harvest running is to install MongoDB.
+**Don't do this until you read the warning section below**.
+Download
 and install the
 `community version <https://www.mongodb.com/try/download/community>`_
 for your platform. Follow the
@@ -424,27 +426,38 @@ or other places you don't trust without adding security.
 
 .. warning::
    MongoDB 5.0 and greater requires the processor to support AVX
-   instructions, which is not found in older hardware, some virtualization
+   instructions, which are not found in older hardware, some virtualization
    software, etc. For Linux systems, the best way to check for this is: ::
 
      grep avx /proc/cpuinfo
 
    If it doesn't return anything, you don't have AVX support (otherwise it
    will return a long stream of information). In that case,
-   you will need to download MongoDB-4.4.8 (the MongoDB site has a
-   dropdown box which allows you to specify the version) and hold the
-   packages so they don't upgrade to 5.0. You can hold the packages by typing: ::
+   you will need to download MongoDB-4.4 (the MongoDB site has a
+   dropdown box which allows you to specify the version [4.4.8 or the
+   upcoming 4.4.9]) and hold the
+   packages so they don't upgrade to 5.0.
 
-     apt-mark hold <package-name>
+   The instructions for installing MongoDB are tricky if you are not
+   installing the latest version. The copy and paste lines reflect the
+   current version, not an older one. You will need to do some editing.
+   Also they list ``mongodb-org-database`` as a package, but the actual
+   name is ``mongodb-org-database-tools-extra``.
 
-   The packages you will want to hold are:
+   For Ubuntu, loading the 4.4.8 version looks like this: ::
 
-     * mongodb-org
-     * mongodb-org-database-tools-extra
-     * mongodb-org-mongos
-     * mongodb-org-server
-     * mongodb-org-shell
-     * mongodb-org-tools
+     wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+     sudo apt update
+     sudo apt-get install -y mongodb-org=4.4.8 mongodb-org-database-tools-extra=4.4.8 mongodb-org-server=4.4.8 mongodb-org-shell=4.4.8 mongodb-org-mongos=4.4.8 mongodb-org-tools=4.4.8
+     sudo apt-mark hold mongodb-org
+     sudo apt-mark hold mongodb-org-database-tools-extra
+     sudo apt-mark hold mongodb-org-mongos
+     sudo apt-mark hold mongodb-org-server
+     sudo apt-mark hold mongodb-org-shell
+     sudo apt-mark hold mongodb-org-tools
+
+   You can follow the rest of the ``systemctl`` commands in the instructions as is.
 
 .. warning::
    Images in harvest require GDAL and its python bindings to be installed.
