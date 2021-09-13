@@ -2149,3 +2149,61 @@ SD cards. Speed is not the same as your desktop, but not annoyingly slow either.
 Running 'fisb' and 'harvest' (with MongoDB) does not use very many resources.
 On a 4GB Pi, available memory is more than 3GB at all times and system
 run times are always under 5%.
+
+Obtaining FIS-B Related Documents
+---------------------------------
+
+Besides the DO-358B document from the standard body that you can purchase,
+and the test files which are available from the same source for free--
+there are other helpful FIS-B documents.
+
+Probably the most useful of these is the *SRT-047 Surveillance and
+Broadcast Services Description Document* series. There are five revisions
+of this, although I have never been able to locate revision 3
+(which should be dated March 31, 2018). Each of these documents is filled
+with interesting insights that can't be found in the standard. Don't
+just look at the last revision-- all revisions contain gems.
+
+The easiest way to locate these is by thier associated TSOs. If the links
+below become outdated, try to find the associated TSO and the SRT-047
+file will be an attachment.
+
+`TSO-C195 <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/17A0F0AB5A874C55862577AD0052A38E?OpenDocument>`_
+
+  Holds SRT-047 Revision 1.
+  Also contains ``SBS Description Document Files.zip``
+  where the Appendix D binary data files can be found.
+  
+`TSO-C157a <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/97B744BB38CDCB4A86257910004F3BB0?OpenDocument>`_
+
+  Contains SRT-047 Revision 2. Also contains ``TSO attachments.zip`` which
+  holds additional information including the binary data files for Appendix D.
+  These are essentially the same files as for Revision 1, but with some
+  additions.
+  Version 5.0 of the *MITRE Aerodrome and Airspace FIS-B Product Definitions*
+  (2012) can also be found inside the zip file.
+  
+  `Version 4.0 <https://github.com/cyoung/stratux/blob/master/notes/Aero_FISB_ProdDef_Rev4.pdf>`_
+  of the MITRE document (2009) is also
+  available on the
+  Stratux GitHub repository.
+  The MITRE documents are useful primarily for historical
+  purposes, although you can get a another perspecive on FIS-B that is
+  different from the standard. It's also fun to see examples of FIS-B
+  messages that never made it into production.
+
+`TSO-C195a <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/A742D5047D73C258862579B3005501D2?OpenDocument>`_
+
+  Alternate source for SRT-047 Revision 2. Also contains the same zip file
+  as noted above, but under a different name.
+
+`TSO-C157b <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/AD3F155C9961413386257E570064EF87?OpenDocument>`_
+
+  Contains SRT-047 Revision 4.
+
+`TSO-C195b <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/45845CD583AD3CD686257D62006B3B3E?OpenDocument>`_
+
+  Contains SRT-047 Revision 5 (latest as of September, 2021). This document
+  claims to have embedded METAR and TAF stations as Excel files embedded
+  within it. But these do not seem to be available. I suspect they are
+  found in the source Word file, but never made it into the PDF.
