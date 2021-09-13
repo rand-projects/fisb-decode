@@ -2164,7 +2164,7 @@ of this, although I have never been able to locate revision 3
 with interesting insights that can't be found in the standard. Don't
 just look at the last revision-- all revisions contain gems.
 
-The easiest way to locate these is by thier associated TSOs. If the links
+The easiest way to locate these is by their associated TSOs. If the links
 below become outdated, try to find the associated TSO and the SRT-047
 file will be an attachment.
 
