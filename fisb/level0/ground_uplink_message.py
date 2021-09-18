@@ -362,6 +362,16 @@ def groundUplinkMessage(payload, isDetailed, testMode, rsrDict = None):
         # is 0.25 ms (250 us) long. Therefore, each FIS-B message gets 5.5 ms
         # of transmit time (22 MSOs). A typical ground uplink message is
         # 4 ms in length (so there is some clear space between slots).
+        #
+        # Interesting fact: Per DO-282B, if you know the MSO where a message
+        # was supposed to start, and the MSO when it did start, you can use
+        # this information to determine distance to the ground station (each
+        # message also contains the lat/long of the station). If you are
+        # receiving three or more ground stations, you can use this information
+        # to estimate your position. Of course, knowing the precise second
+        # offset requires a precise time, which implies having a very
+        # accurate time source. This would normally be GPS. If you have
+        # GPS, you also have your position.
         d['mso'] = slot_id * 22
 
         # This is the time in ms after the start of the UTC second that
