@@ -8,7 +8,9 @@ fadump-sdrplay-server
 
 Patches:
 
-Both of the following patches are optional.
+The demodulator patch is optional, but very helpful. The
+soapy_source patch is MANDITORY if using an RSP1A. Not needed
+for other SDRs.
 
 The source I used to apply the patches to is FlightAware 978
 Release 5.0.
