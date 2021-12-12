@@ -54,28 +54,59 @@ to your ``.bashrc`` in your home directory. This is assuming you cloned
 '``fisb-decode``' into your home directory. Change the path as needed to
 match your installation.
 
+fisb-978 Setup
+--------------
+
+There are two programs that can be used to feed data to
+'fisb-decode'. The original program, *Flightaware 978*
+('dump978-fa'),
+is described in the next section.
+
+The newer program, or set of programs, is
+`fisb-978 <https://github.com/rand-projects/fisb-978>`_.
+The advantage to 'fisb-978' is that in cases of less than
+optimum reception, it will have a higher rate of packet 
+decodes. Sometimes a much higher rate. For this reason,
+it is preferred over 'dump978-fa'.
+
+The sample data below is from 'dump978-fa', but is almost 
+identical to what 'fisb-978' produces.
+
+Like 'dump978-fa', 'fisb-978' will produce both FIS-B and
+ADS-B error corrected data.
 
 dump978-fa Setup
 ----------------
 
-Unrelated to fisb-decode is
+An alternative program that works with 'fisb-decode' is
 `FlightAware's 978 <https://github.com/flightaware/dump978>`_.
-This is the program you should use to capture FIS-B packets from
-a radio for concurrent or later processing. There are other dump978
-programs out there, but ``dump978-fa`` provides an arrival timestamp
-which is critical for fisb-decode. Read their instructions to get your
+Read their instructions to get your
 radio working with ``dump978-fa``.
+
+``dump978-fa`` doesn't work out of the box with all radios supported by
+SoapySDR. I use a RSP1A and I needed to create a patch.
+The ``fisb-decode/misc/dump978fa``
+directory has this patch, as well as examples of the commands I
+use to capture data. *However, FIS-B 978 is now preferred over 'dump-978' 
+because of its improved performance*.
+
+Capturing Data
+--------------
 
 For the initial setup, we will be using some already captured data, but
 at some point you will want to use your own live or recorded data. Live
 data is best, but works only if you are close to an airport or tower.
-To record data, bring a laptop with ``dump978-fa`` close to a tower or
-airport base station.
+To record data, bring a laptop with software (such as
+`rx_sdr <https://github.com/rxseger/rx_tools>`_) that will capture
+978 Mhz data close to a tower or
+base station. A sample rate of 2083334 with complex 16-bit integer
+output (usually called CS16) is required.
+
 Visit `http://towers.stratux.me <http://towers.stratux.me/>`_ for a
 list of tower locations (this isn't guaranteed to be up to date, but is a good starting
 point). Here you can get your basic radio setup working and debugged.
 
-What you are looking for is lines from ``dump978-fa`` that look like: ::
+What you are looking for is lines from that look similar to: ::
 
  +38f18185534cbdc0058001001a4092ad19f8f8f8f8058001001a4093f26ef8f8f8f8058001
  001a40957526f8f8f8f8058001001a409231f4f8f8f8f8058001001a4093fb33f8f8f8f8058
@@ -99,16 +130,9 @@ If instead, you see smaller, sporadic packets starting with '``-``': ::
   -0b28c90b386ab185446c0706013426407105c4e6c4e6c40a3a820300000000000000
   ;rs=43;rssi=-10.8;t=1595572682.219;
 
-you are looking at aircraft sending UAT data. If this is all you are seeing,
+you are looking at aircraft sending ADS-B data. If this is all you are seeing,
 it implies that your radio setup is working, but you are not near a FIS-B
 ground station.
-
-``dump978-fa`` doesn't work out of the box with all radios supported by
-SoapySDR. I use a RSP1A and I needed to create a patch. The modulator
-code can also benefit with a patch if you are, like me, using a beam
-from 6 miles away to capture data. The ``fisb-decode/misc/dump978fa``
-directory has these patches, as well as examples of the commands I
-use to capture data.
 
 Once you are getting solid FIS-B packet reception, try to save some in
 a file for later processing. If you record an hours worth, you will have
