@@ -448,9 +448,8 @@ def groundUplinkMessage(payload, isDetailed, testMode, rsrDict = None):
         # the look ahead range for many products.
         # Not required to be processed by the standard.
         #
-        # FAA denoted this as a hex digit.
         tisbId = (ba[7] & 0xF0) >> 4
-        d['tisb_site_id'] = DIGIT_TO_HEX[tisbId]
+        d['tisb_site_id'] = str(tisbId)
 
         d['tisb_site_id_type'] = TISB_TIER_LOOKUP[tisbId]
 

@@ -61,7 +61,18 @@ def msgServiceStatus(rcvdTime, frame, station):
 
     for plane in contentsList:
         icao = plane['address']
-        icao = icao + ADDR_QUALIFIER_TYPES[plane['address_type']]
+        icao += ADDR_QUALIFIER_TYPES[plane['address_type']]
+
+        if 'services' in plane:
+            serviceCode = '/'
+            for x in plane['services']:
+                if x == 'TIS-B':
+                    serviceCode += 'T'
+                elif x == 'ADS-R':
+                    serviceCode += 'R'
+                elif x == 'ADS-SLR':
+                    serviceCode += 'S'
+            icao += serviceCode
     
         trafficList.append(icao)
 
