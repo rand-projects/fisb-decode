@@ -440,7 +440,8 @@ def icingRL(ba):
     the FAA rates severe icing as more 
     intense than heavy. It appears that the icing severity does not appear in
     numeric order and *severe* is worse than *heavy* even though *severe* is
-    4 and *heavy* is 5.
+    4 and *heavy* is 5. The FAA can get away with this because *severe* is
+    never used.
     
     ``ba`` is a byte array with ``ba[0]`` at the top of the block reference
     indicator.
