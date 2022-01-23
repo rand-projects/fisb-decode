@@ -8,13 +8,14 @@ locations defined in :mod:`db.localwx.localwxConfig`.
 Program usage: ::
 
     usage: localwx.py [-h] [--fdc] [--airmet] [--nogairmet] [--nowinds] [--nonotam]
-                      [--nounavail] [--obst] [--all] [--curses]
+                      [--nounavail] [--ad] [--obst] [--all] [--curses]
 
     Display local weather from database.
     
     For curses mode, the following keys are used (either upper or lower case):
      q - Quit
      a - Toggle AIRMETs (Will show SIGMET/WST, CWA)
+     d - Toggle aerodrome (AD) NOTAMS
      f - Toggle FDC NOTAMS 
      g - Toggle G-AIRMETS
      m - Toggle METARs
@@ -92,6 +93,7 @@ SHOW_G_AIRMET = True
 SHOW_WINDS = True
 SHOW_NOTAMS = True
 SHOW_OBST = False
+SHOW_AD = True
 SHOW_METAR = True
 SHOW_TAF = True
 SHOW_UNAVAILABLE = True
@@ -503,6 +505,8 @@ def notams(db):
                     continue
                 if (r['subtype'] == 'FDC') and not SHOW_FDC:
                     continue
+                if (r['subtype'] == 'AD') and not SHOW_AD:
+                    continue                
 
                 # Insert spaces after new lines in NOTAMS (usually affects FDC NOTAMS)
                 addedSpaces = r['contents'].replace('\n','\n                    ')
@@ -673,7 +677,7 @@ def cursesDisplay(db):
     """
     global SHOW_FDC, SHOW_AIRMET, SHOW_G_AIRMET, SHOW_WINDS, \
         SHOW_NOTAMS, SHOW_TAF, SHOW_METAR, SHOW_ALL_AIRMETS, \
-        SHOW_OBST, SHOW_UNAVAILABLE
+        SHOW_OBST, SHOW_AD, SHOW_UNAVAILABLE
     
     scr = curses.initscr()
     scr.clear()
@@ -711,6 +715,9 @@ def cursesDisplay(db):
                     refreshScreen(db, scr)
                 elif x in [65, 65+32]: # a AIRMET toggle
                     SHOW_AIRMET = not SHOW_AIRMET
+                    refreshScreen(db, scr)
+                elif x in [68, 68+32]: # d NOTAM AD (aerodrome) toggle
+                    SHOW_AD = not SHOW_AD
                     refreshScreen(db, scr)
                 elif x in [71, 71+32]: # g G_AIRMET toggle
                     SHOW_G_AIRMET = not SHOW_G_AIRMET
@@ -768,6 +775,7 @@ if __name__ == "__main__":
 For curses mode, the following keys are used (either upper or lower case):
  q - Quit
  a - Toggle AIRMETs (Will show SIGMET/WST, CWA)
+ d - Toggle aerodrome NOTAMS
  f - Toggle FDC NOTAMS 
  g - Toggle G-AIRMETS
  m - Toggle METARs
@@ -790,6 +798,7 @@ For curses mode, the following keys are used (either upper or lower case):
     parser.add_argument('--nonotam', help="Don't show any NOTAMS", action="store_true")
     parser.add_argument('--nounavail', help="Don't show any FIS-B Unavailable notices", action="store_true")
     parser.add_argument('--obst', help="Show NOTAM obstructions", action="store_true")
+    parser.add_argument('--ad', help="Don't show aerodrome (AD) NOTAMs", action="store_true")
     parser.add_argument('--all', help="Show everything", action="store_true")
     parser.add_argument('--curses', help="Show on updating display", action="store_true")
     
@@ -816,6 +825,9 @@ For curses mode, the following keys are used (either upper or lower case):
     if args.obst:
         SHOW_OBST = True
 
+    if args.ad:
+        SHOW_AD = False
+
     if args.all:
         SHOW_FDC = True
         SHOW_AIRMET = True
@@ -823,6 +835,7 @@ For curses mode, the following keys are used (either upper or lower case):
         SHOW_WINDS = True
         SHOW_NOTAMS = True
         SHOW_OBST = True
+        SHOW_AD = True
         SHOW_UNAVAILABLE = True
 
     if args.curses:
