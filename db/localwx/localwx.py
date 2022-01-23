@@ -503,10 +503,10 @@ def notams(db):
 
                 if (r['keyword'] == 'OBST') and not SHOW_OBST:
                     continue
+                elif (r['keyword'] == 'AD') and not SHOW_AD:
+                    continue                
                 if (r['subtype'] == 'FDC') and not SHOW_FDC:
                     continue
-                if (r['subtype'] == 'AD') and not SHOW_AD:
-                    continue                
 
                 # Insert spaces after new lines in NOTAMS (usually affects FDC NOTAMS)
                 addedSpaces = r['contents'].replace('\n','\n                    ')
