@@ -2192,42 +2192,62 @@ The easiest way to locate these is by their associated TSOs. If the links
 below become outdated, try to find the associated TSO and the SRT-047
 file will be an attachment.
 
-`TSO-C195 <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/17A0F0AB5A874C55862577AD0052A38E?OpenDocument>`_
+FIS-B related information is associated with TSO-C157 and TSO-C195. Both of these
+have updates (a, b, c, etc). The best way to access them is to go to the
+`Dynamic Regulatory System <https://drs.faa.gov/browse>`_
+and expand the section on the left that includes TSOs. Then clink on 'Technical
+Standard Orders (TSO)'. From the top filter menu under 'Status' select
+'Current', Historical', and 'Pending' (otherwise you will only get 'Current').
+Select all the TSO-C157 and TSO-C195
+variants. Lastly, click on 'Apply'. You can now view the TSOs. The SRT documents
+(and other interesting items) are found by clicking the 'Attachments/Public
+Comments' box associated the individual TSOs.
+
+`TSO-C195 <https://drs.faa.gov/browse/excelExternalWindow/376c5013-c1ec-459e-af87-b9599fb13103?modalOpened=true>`_
 
   Holds SRT-047 Revision 1.
   Also contains ``SBS Description Document Files.zip``
   where the Appendix D binary data files can be found.
   
-`TSO-C157a <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/97B744BB38CDCB4A86257910004F3BB0?OpenDocument>`_
+`TSO-C195a <https://drs.faa.gov/browse/excelExternalWindow/e065005a-a72a-46bc-84e8-c33f6e9c659d?modalOpened=true>`_
+
+  Alternate source for SRT-047 Revision 2. Also contains the same zip file
+  as noted above, but under a different name. It contains Version 5.0 of the
+  MITRE document also found in TSO-C157a.
+
+`TSO-C195b <https://drs.faa.gov/browse/excelExternalWindow/9374fc02-523e-44e8-936b-c6a6f597d2db?modalOpened=true>`_
+
+  Contains SRT-047 Revision 5 (latest as of September, 2021). This document
+  claims to have embedded METAR and TAF stations as Excel files embedded
+  within it. But these do not seem to be available. I suspect they are
+  found in the source Word file, but never made it into the PDF. TSO-C157c also
+  has SRT-047 Revision 5, but that version is signed, and many megabytes smaller.
+  Otherwise, they appear identical.
+
+`TSO-C157 <https://drs.faa.gov/browse/excelExternalWindow/7be02f75-9ad5-4057-9d2a-8437d2f0f64f?modalOpened=true>`_
+
+  There are no attachments to this document.
+
+`TSO-C157a <https://drs.faa.gov/browse/excelExternalWindow/f2c88b29-3ca1-415a-bf8b-578449c1a8f4?modalOpened=true>`_
 
   Contains SRT-047 Revision 2. Also contains ``TSO attachments.zip`` which
   holds additional information including the binary data files for Appendix D.
   These are essentially the same files as for Revision 1, but with some
   additions.
+
   Version 5.0 of the *MITRE Aerodrome and Airspace FIS-B Product Definitions*
-  (2012) can also be found inside the zip file.
-  
-  `Version 4.0 <https://github.com/cyoung/stratux/blob/master/notes/Aero_FISB_ProdDef_Rev4.pdf>`_
-  of the MITRE document (2009) is also
-  available on the
-  Stratux GitHub repository.
+  (2012) can also be found inside the zip file. Version 4.0 (2009) can be found
+  on the `Stratux github <https://github.com/cyoung/stratux/blob/master/notes/Aero_FISB_ProdDef_Rev4.pdf>`_.
   The MITRE documents are useful primarily for historical
-  purposes, although you can get a another perspecive on FIS-B that is
+  purposes, although you can get another perspecive on FIS-B that is
   different from the standard. It's also fun to see examples of FIS-B
   messages that never made it into production.
-
-`TSO-C195a <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/A742D5047D73C258862579B3005501D2?OpenDocument>`_
-
-  Alternate source for SRT-047 Revision 2. Also contains the same zip file
-  as noted above, but under a different name.
-
-`TSO-C157b <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/AD3F155C9961413386257E570064EF87?OpenDocument>`_
+  
+`TSO-C157b <https://drs.faa.gov/browse/excelExternalWindow/cc840327-3297-4709-8c3d-03982bbe7c44?modalOpened=true>`_
 
   Contains SRT-047 Revision 4.
 
-`TSO-C195b <https://rgl.faa.gov/Regulatory_and_Guidance_Library/rgTSO.nsf/0/45845CD583AD3CD686257D62006B3B3E?OpenDocument>`_
+`TSO-C157c <https://drs.faa.gov/browse/excelExternalWindow/3847b689-d571-4f8a-ba5a-822df1f9c35a?modalOpened=true>`_
 
-  Contains SRT-047 Revision 5 (latest as of September, 2021). This document
-  claims to have embedded METAR and TAF stations as Excel files embedded
-  within it. But these do not seem to be available. I suspect they are
-  found in the source Word file, but never made it into the PDF.
+  Contains SRT-047 Revision 5. This is the smaller signed version. TSO-C195b has
+  the larger unsigned version, but the contents appear identical.
