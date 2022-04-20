@@ -4,10 +4,9 @@ Service Status frames holds the aircraft currently being tracked by
 UAT ADS-B (i.e. the planes that get a hockey puck).
 
 Originally, information for this section was based on
-*SRT-047 Rev 01 (2011) section 3.3.4.1.2*. This seems to be accurate.
+*SRT-047 Rev 01 (2011) section 3.3.4.1.2*.
 
-Currently, information is based on Doc 9861 AN/460 '*Manual on the Universal
-Access Transceiver (UAT)*'.
+Currently, information is based on DO-282C.
 
 With DO-282C, the previous reserved 4 MSB bits of byte [0] are to be used
 for the type of service being provided. As of 1/19/22, this is not yet
