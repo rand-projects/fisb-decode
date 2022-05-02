@@ -104,7 +104,11 @@ output (usually called CS16) is required.
 
 Visit `http://towers.stratux.me <http://towers.stratux.me/>`_ for a
 list of tower locations (this isn't guaranteed to be up to date, but is a good starting
-point). Here you can get your basic radio setup working and debugged.
+point). The
+`FAA also provides a list <https://www.faa.gov/foia/electronic_reading_room/media/ADS-B_Ground_Stations_as_of_08-31-2018.pdf>`_
+valid as of 8/31/2018.
+
+Here you can get your basic radio setup working and debugged.
 
 What you are looking for is lines from that look similar to: ::
 
