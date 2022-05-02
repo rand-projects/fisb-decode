@@ -2183,8 +2183,9 @@ there are other helpful FIS-B documents.
 
 Probably the most useful of these is the *SRT-047 Surveillance and
 Broadcast Services Description Document* series. There are five revisions
-of this, although I have never been able to locate revision 3
-(which should be dated March 31, 2018). Each of these documents is filled
+of this, the most elusive of which is
+`Revision 3 <https://www.dropbox.com/s/in7hc058o6cizea/SBS_Description_Document_Rev3.pdf?dl=0>`_.
+Each of these documents is filled
 with interesting insights that can't be found in the standard. Don't
 just look at the last revision-- all revisions contain gems.
 
