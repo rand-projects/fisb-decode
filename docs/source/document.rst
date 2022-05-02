@@ -2190,7 +2190,9 @@ just look at the last revision-- all revisions contain gems.
 
 The easiest way to locate these is by their associated TSOs. If the links
 below become outdated, try to find the associated TSO and the SRT-047
-file will be an attachment.
+file will be an attachment. Another place to find the latest SRT-047 is the
+FAA `ADS-B Quick Links <https://www.faa.gov/air_traffic/technology/adsb/quicklinks/>`_
+page under *SBS Description Document*.
 
 FIS-B related information is associated with TSO-C157 and TSO-C195. Both of these
 have updates (a, b, c, etc). The best way to access them is to go to the
