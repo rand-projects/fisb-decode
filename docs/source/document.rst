@@ -466,8 +466,10 @@ or other places you don't trust without adding security.
    you will need to download MongoDB-4.4 (the MongoDB site has a
    dropdown box which allows you to specify the version [4.4.8 or the
    upcoming 4.4.9]) and hold the
-   packages so they don't upgrade to 5.0.
-
+   packages so they don't upgrade to 5.0. Note that some VM software (looking
+   at you Proxmox) will default to a CPU without AVX implemented. If your
+   hardware does have this instruction, try to set the CPU type to '``host``'.
+   
    The instructions for installing MongoDB are tricky if you are not
    installing the latest version. The copy and paste lines reflect the
    current version, not an older one. You will need to do some editing.
@@ -2258,3 +2260,9 @@ Comments' box associated the individual TSOs.
 
   Contains SRT-047 Revision 5. This is the smaller signed version. TSO-C195b has
   the larger unsigned version, but the contents appear identical.
+
+A couple of other documents with interesting information and references to
+other documents are 
+`ADS-B/ADS-R Critical Services Specification <https://imlive.s3.amazonaws.com/Federal%20Government/ID133825730251125154988746465871038370/Attachment%204%20-%20SBS%20ADS-B%20and%20ADS-R%20Critical%20Services%20Spec_FAA-E-3011_Rev.%20A.pdf>`_
+and 
+`TIS-B/FIS-B Essential Services Specification <https://imlive.s3.amazonaws.com/Federal%20Government/ID72950714344654893346519331034830643480/Attachment%205%20-%20SBS%20Essential%20Services%20System%20Specification_FAA-E-3006%20Rev.%20B%20dated%208-23-2019.pdf>`_.

@@ -106,15 +106,19 @@ def decodeServiceStatusFrame(ba, frameLength, reserved_2_24, isDetailed):
 
         # Make service list if services present
         if (services != 0) and (services < 8):
-            services_list = []
+            services_string = ""
             if (services & 0x01) != 0:
-                services_list.append('TIS-B')
+                services_string += services_string("T")
             if (services & 0x02) != 0:
-                services_list.append('ADS-R')
+                services_string += services_string("R")
             if (services & 0x04) != 0:
-                services_list.append('ADS-SLR')
-            
-            entry['services'] = services_list
+                services_string += services_string("S")
+        elif services == 0:
+            services_string = "X"
+        elif services >= 8:
+            services_string = "?"
+        
+        entry['services'] = services_string
 
         # See definitions above. This is pretty much always 0.
         entry['address_type'] = addrType
