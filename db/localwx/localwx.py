@@ -485,16 +485,18 @@ def tafs(db):
 
     return tafStr
 
-def notams(db):
+def notams(db, cols):
     """Create string containing all desired NOTAMS.
 
     Args:
         db (object): Handle to database connection.
-    
+        cols (int): Number of columns available for each line.
+
     Returns:
         str: String with NOTAMS.
     """    
     notamStr = ''
+    cols = cols - 1
     if SHOW_NOTAMS:
         for x in NOTAM_LIST:
             for r in db.MSG.find({'type': 'NOTAM', 'location': x}, \
@@ -507,17 +509,24 @@ def notams(db):
                     continue                
                 if (r['subtype'] == 'FDC') and not SHOW_FDC:
                     continue
-
+                
                 # Insert spaces after new lines in NOTAMS (usually affects FDC NOTAMS)
-                addedSpaces = r['contents'].replace('\n','\n                    ')
-                notamStr = notamStr + addedSpaces + '\n'
+
+                if (r['subtype'] == 'FDC'):
+                    wrappedNotam = r['contents'].replace('\n','\n                 ')
+                else:
+                    wrappedNotam = textwrap.fill(r['contents'], width=cols, \
+                                             subsequent_indent = ' '*17, \
+                                             replace_whitespace = False)
+                
+                notamStr = notamStr + wrappedNotam + '\n'
     
     if notamStr != '':
         notamStr = '\n' + notamStr
 
     return notamStr
 
-def myWx(db):
+def myWx(db, cols = 90):
     """Create string with entire weather contents.
 
     Args:
@@ -526,7 +535,7 @@ def myWx(db):
     Returns:
         str: Entire report with each line separated by newlines.
     """
-    screenStr = fisbUnavailable(db) + metars(db) + tafs(db) + winds(db) + notams(db) + \
+    screenStr = fisbUnavailable(db) + metars(db) + tafs(db) + winds(db) + notams(db, cols) + \
         gAirmet(db) + findSigWx(db)
 
     # Get rid of any starting \n (rare case in curses where
@@ -554,7 +563,7 @@ def myWxCurses(db, rows, cols):
     curRow = 0
     cursesWxStr = ''
     
-    for line in myWx(db).splitlines():
+    for line in myWx(db, cols).splitlines():
         if len(line) > cols:
             line = line[0:cols - 1]
         if curRow != 0:
